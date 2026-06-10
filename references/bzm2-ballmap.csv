@@ -1,0 +1,61 @@
+pad,name,function,io_type,voltage_domain,default_state,pinsel0_function,pinsel1_function,side,notes
+1,VDDINT_1,Internal stack voltage reference,Output,stack midpoint (~0.355 V),-,-,-,E,decoupling/reference only - not a load-carrying rail
+2,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,E,
+3,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,E,
+4,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,E,
+5,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,E,
+6,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,E,
+7,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,E,
+8,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,E,
+9,TDO,JTAG data out,Output,VDDIO 1.2 V,-,-,-,N,vendor table notes PINSEL-related configuration
+10,TDI,JTAG data in,Input,VDDIO 1.2 V,-,-,-,N,
+11,TCK,JTAG clock,Input (clock),VDDIO 1.2 V,-,-,-,N,
+12,VDDINT_2,Internal stack voltage reference,Output,stack midpoint (~0.355 V),-,-,-,N,decoupling/reference only - not a load-carrying rail
+13,RSVD,Reserved,Output,-,-,-,-,N,reference designs treat this pad as the PLL supply decoupling point (VDDPLL)
+14,VSS,Ground,Input,VSS,-,-,-,N,
+15,TRIP_RX_OUT,Chain status output,Output,VDDIO 1.2 V,high-Z pull-down,TRIP_OUT,RX_OUT,N,
+16,TX_RESET_OUT,UART/reset output,Output,VDDIO 1.2 V,output,TX_OUT,RESET_OUT,N,host-side UART RX connects here in PINSEL=0 systems
+17,RESET_TX_IN,Reset/UART input,Input,VDDIO 1.2 V,input pull-up,RESET_IN,TX_IN,N,reset is active low
+18,RX_TRIP_IN,UART/trip input,Input,VDDIO 1.2 V,input pull-up,RX_IN,TRIP_IN,N,host-side UART TX connects here in PINSEL=0 systems
+19,VDDIO,IO voltage rail,Input,VDDIO 1.2 V,-,-,-,N,second VDDIO pad - tie to the 1.2 V rail (do not leave on decoupling only; see pinout reference)
+20,REFCLKOUT2,Reference clock to next ASIC,Input (no pull),VDDIO 1.2 V,no pull-up/down,-,-,N,pin muxed in debug mode; < 50 MHz
+21,VSS,Ground,Input,VSS,-,-,-,W,
+22,VSS,Ground,Input,VSS,-,-,-,W,
+23,VSS,Ground,Input,VSS,-,-,-,W,
+24,VSS,Ground,Input,VSS,-,-,-,W,
+25,VSS,Ground,Input,VSS,-,-,-,W,
+26,VSS,Ground,Input,VSS,-,-,-,W,
+27,VSS,Ground,Input,VSS,-,-,-,W,
+28,VSS,Ground,Input,VSS,-,-,-,W,
+29,REFCLKIN,Reference clock input,Input,VDDIO 1.2 V,no pull-up/down,-,-,S,<= 50 MHz; 50 MHz standard
+30,VDDIO,IO voltage rail,Input-Output,VDDIO 1.2 V,-,-,-,S,primary VDDIO connection
+31,RX_TRIP_OUT,Chain UART output,Output,VDDIO 1.2 V,high-Z pull-down,RX_OUT,TRIP_OUT,S,chain-forwarding; unused single-ASIC
+32,RESET_TX_OUT,Chain reset output,Output,VDDIO 1.2 V,output,RESET_OUT,TX_OUT,S,chain-forwarding; unused single-ASIC
+33,TX_RESET_IN,Chain UART input,Input,VDDIO 1.2 V,input pull-up,TX_IN,RESET_IN,S,chain-forwarding; unused single-ASIC
+34,TRIP_RX_IN,Chain trip input,Input,VDDIO 1.2 V,high-Z pull-down,TRIP_IN,RX_IN,S,chain-forwarding; unused single-ASIC
+35,VSS,Ground,Input,VSS,-,-,-,S,
+36,PINSEL,ASIC orientation select,Input,VDDIO 1.2 V,input pull-up,mode 0,mode 1,S,boot strap: float/high = PINSEL 1; strap to VSS for PINSEL 0
+37,RSVD,Reserved,Output,-,-,-,-,S,reference designs treat this pad as the 0.75 V backup rail (VDD_P75) used if the on-chip LDO path is unavailable
+38,REFCLKOUT1,Reference clock to next ASIC,Output,VDDIO 1.2 V,output,-,-,S,pin muxed in debug mode; < 50 MHz
+39,TMS,JTAG mode select,Input,VDDIO 1.2 V,-,-,-,S,
+40,TRST,JTAG reset,Input,VDDIO 1.2 V,-,-,-,S,
+41,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,C,inner land field
+42,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,C,inner land field
+43,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+44,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+45,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+46,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+47,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+48,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+49,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,C,inner land field
+50,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,C,inner land field
+51,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,C,inner land field
+52,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,C,inner land field
+53,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+54,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+55,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+56,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+57,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+58,VSS,Ground,Input,VSS,-,-,-,C,inner land field
+59,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,C,inner land field
+60,VDD,Core hash supply,Input,VDD_HASH (0.71 V nom),-,-,-,C,inner land field

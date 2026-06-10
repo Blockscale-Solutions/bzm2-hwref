@@ -13,19 +13,53 @@ It is written as a practical reference for:
 - validation engineers
 - host software developers
 
-## Link Characteristics
+## Physical Layer And Link Characteristics
 
-The vendor material and legacy host software consistently assume:
+### Fixed 9-bit multidrop framing
 
-- default ASIC UART baud: `5 Mbps`
-- `1.2 V` IO signaling on UART-related pads
-- a reference / slow-clock environment derived from a `50 MHz` source during
-  early bring-up
+This is the most important host-side fact about the link, and the one that
+disqualifies most off-the-shelf USB-UART bridges:
+
+- the UART operates in a **fixed 9-bit mode** - it is not configurable down to
+  standard 8-bit framing
+- each character carries `8` data bits plus a 9th bit between the data MSB and
+  the stop bit
+- the 9th bit is an **address flag** implementing single-master / multi-slave
+  (multidrop) operation:
+  - 9th bit = `1`: this byte is an address byte - the start of a new command;
+    every ASIC compares the low 8 bits against its own `ASIC_ID`
+  - 9th bit = `0`: this byte is data belonging to the command in flight
+- an ASIC that does not match the address byte ignores the rest of the command
+  and waits for the next byte with the 9th bit set
+
+### Baud and signaling
+
+- supported baud range: `2.5` to `10 Mbps` with a `50 MHz` reference clock
+- the documented bring-up convention (and the rate legacy host software uses)
+  is `5 Mbps`
+- `1.2 V` IO signaling on the UART-related pads - level shifting is required
+  against almost any host
 
 Practical recommendation:
 
 - establish communication at `5 Mbps` first
 - validate signal integrity there before attempting any custom timing changes
+
+### Host bridge selection
+
+The combination of `5 Mbps` and true 9-bit framing rules out most common
+USB-UART bridges. Verified guidance for host hardware:
+
+- **works:** MaxLinear `XR21V1410` (single channel) / `XR21V1414` (quad) -
+  native 9-bit address-match (multidrop) mode at up to `12 Mbps`
+- **does not work:** `CH340`-family (tops out near `2 Mbps`) and `FT231X`
+  (`3 Mbps` max) cannot reach `5 Mbps`, and neither offers usable per-byte
+  9th-bit control at speed
+- emulating the 9th bit with MARK/SPACE parity flipping on an 8-bit UART is
+  technically possible but impractical at these rates - per-byte parity
+  reconfiguration cannot keep up at `5 Mbps`
+- SoC/MCU UARTs with hardware 9-bit multidrop support (common on many MCUs)
+  are also suitable as direct hosts
 
 ## Addressing Model
 
@@ -311,7 +345,7 @@ functional correctness problems.
 TDM lets ASICs stream data back to the host in time slots associated with ASIC
 IDs.
 
-The extracted datasheet text describes:
+TDM behavior:
 
 - an ASIC owns TX opportunity when the slot matches its `ASIC_ID`
 - the ASIC begins transmission after a programmed TDM delay
@@ -351,8 +385,8 @@ operation.
 `DTS_VS` can also be used as a direct query opcode when explicit on-demand
 sensor retrieval is needed.
 
-This is the model now exposed in the Rust debug CLI and HTTP API in this
-repository.
+This is the model exposed in the Mujina reference firmware's debug CLI and
+HTTP API.
 
 ## DTS / VS Payload Layout
 
@@ -409,11 +443,16 @@ Where:
 
 ## `NOOP` Timing Caution
 
-The datasheet text includes a specific warning for `NOOP`:
+A specific transport rule applies to `NOOP`:
 
 - do not issue back-to-back `NOOP` commands with only one stop bit of spacing
 - in non-TDM mode, maintain at least a three-byte gap between consecutive
   `NOOP`s
+
+Byte-count note to avoid off-by-a-layer confusion: at the wire-packet level a
+`NOOP` request is `2` bytes with a `5`-byte response; at the host framing
+level the transmitted frame is `4` bytes (length prefix + header) and the
+`BZ2` payload is the `3` data bytes inside that response.
 
 Treat this as a real transport rule during low-level validation.
 
@@ -427,17 +466,17 @@ For production-capable software, a good division of labor is:
 - use direct `READREG`, `READRESULT`, `NOOP`, `LOOPBACK`, and `DTS_VS` for
   debug and validation
 
-That is also how the Rust tooling in this repository is structured.
+That is also how the Mujina reference tooling is structured.
 
-## Practical Validation With This Repository
+## Practical Validation Tooling
 
-Relevant follow-on references in this repository:
+Relevant follow-on references:
 
 - [ASIC Integration Guide](blockscale-asic-integration-guide.md)
-- [BZM2 UART Debug Guide](bzm2-uart-debug.md)
-- [BZM2 Port Note](bzm2-port.md)
+- [BZM2 UART Debug Guide](bzm2-uart-debug.md) and
+  [BZM2 Port Note](bzm2-port.md) - Mujina firmware port notes
 
-The Rust debug CLI already exposes:
+The Mujina debug CLI already exposes:
 
 - `NOOP` scans
 - loopback scans

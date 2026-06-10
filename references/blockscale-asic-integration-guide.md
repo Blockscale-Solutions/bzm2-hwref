@@ -102,12 +102,12 @@ The ASIC-facing requirements remain the same.
 
 ## Package, IO, And Mechanical Constraints
 
-The extracted vendor collateral describes:
+Package and mechanical envelope:
 
 - package size: `7.5 x 7 mm`
 - package type: exposed-die molded `FCLGA`
-- total signal / land interfaces sized around `60` SLI pads and `60` LGA pads
-- operating junction target range: roughly `55 C` to `85 C`
+- `60` SLI pads and `60` LGA pads
+- operating junction temperature range: `50 C` to `85 C`
 - absolute maximum junction temperature: `115 C`
 
 Design implications:
@@ -161,13 +161,13 @@ debug-only data.
 
 ### External reference clock
 
-The ASIC expects an external reference clock on `REFCLKIN`. The extracted
-datasheet text describes:
+The ASIC takes its reference clock on `REFCLKIN`:
 
-- `REFCLKIN` as the ASIC reference clock input
-- maximum reference clock on that pin up to `50 MHz`
+- `REFCLKIN` is the ASIC reference clock input, specified up to `50 MHz`
+- `50 MHz` is the standard choice - the UART baud range and the documented
+  bring-up flow are both defined against a `50 MHz` reference
 
-The same collateral also exposes `REFCLKOUT1` and `REFCLKOUT2`, primarily as
+The ASIC also exposes `REFCLKOUT1` and `REFCLKOUT2`, primarily as
 debug-oriented outputs.
 
 ### Internal PLLs
@@ -215,14 +215,17 @@ UART is the primary host interface for:
 
 ### Practical UART assumptions
 
-The extracted materials and legacy software consistently use:
+- the link is **fixed 9-bit multidrop framing** - this is the single most
+  important host-side constraint; see the physical-layer section of the
+  [UART and TDM Reference](blockscale-uart-protocol-reference.md) for the
+  framing details and host bridge selection guidance
+- supported baud range is `2.5` to `10 Mbps` with a `50 MHz` reference clock;
+  the documented bring-up convention is `5 Mbps`
+- the internal `notch` controller block runs from the `50 MHz` clock during
+  bring-up
 
-- default ASIC baud: `5 Mbps`
-- host notch / slow clock during bring-up: `50 MHz`
-
-The pad tables describe the UART-related pads as `1.2 V` IO. Treat this as a
-real electrical requirement when selecting the host UART PHY or level-shifting
-scheme.
+The UART-related pads are `1.2 V` IO. Treat this as a real electrical
+requirement when selecting the host UART PHY or level-shifting scheme.
 
 ### Chain orientation and pin muxing
 
@@ -525,10 +528,10 @@ Before calling a hardware platform ready, verify:
 - sustained production pass rate at target operating point
 - protection response for overtemperature and stack-voltage faults
 
-## Relationship To The Mujina Rust Implementation
+## Relationship To The Mujina Reference Firmware
 
-This repository already includes a practical Rust implementation of the core
-ASIC behavior discussed above:
+The **Mujina** miner project carries a practical Rust implementation of the
+core ASIC behavior discussed above:
 
 - UART opcode support
 - TDM parsing
@@ -540,7 +543,8 @@ ASIC behavior discussed above:
 
 Relevant follow-on documents:
 
-- [UART and TDM Reference](blockscale-uart-protocol-reference.md)
-- [BZM2 Port Note](bzm2-port.md)
-- [BZM2 UART Debug Guide](bzm2-uart-debug.md)
-- [BZM2 Tuning Planner](bzm2-pnp.md)
+- [UART and TDM Reference](blockscale-uart-protocol-reference.md) - the
+  protocol companion to this guide
+- [BZM2 Port Note](bzm2-port.md), [BZM2 UART Debug Guide](bzm2-uart-debug.md),
+  [BZM2 Tuning Planner Note](bzm2-pnp.md) - Mujina port engineering notes
+  (firmware-side history, slated to move to the firmware repository)

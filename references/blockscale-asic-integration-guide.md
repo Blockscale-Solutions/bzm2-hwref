@@ -157,6 +157,33 @@ The internal voltage sensor reports three useful channels:
 For a custom design, treat those as first-class runtime safety inputs, not
 debug-only data.
 
+## Electrical Quick Reference (Per ASIC)
+
+Design-point numbers a board designer needs up front. These are integration
+targets synthesized from the vendor collateral and measured reference systems;
+characterize on your own design before committing limits.
+
+| Parameter | Value | Notes |
+| --- | --- | --- |
+| `VDD_HASH` (stack rail) | `0.71 V` nominal | tunable window roughly `0.6` to `0.81 V` |
+| Internal stack split | `0 - 0.355 V` / `0.355 - 0.71 V` | bottom / top engine stacks |
+| Control / GPIO IO rail | `1.2 V` | UART, reset, trip signaling |
+| Stack current, stock operating point | `~14 A` at `~330 GH/s` | roughly `10 W` core power |
+| Stack current, maximum tuned point | `~27 A` at `~577 GH/s` | roughly `22 W`; plan copper for `~30 A` headroom |
+| Efficiency class | up to `~27 J/TH` | product-brief figure |
+| Reference clock | up to `50 MHz` on `REFCLKIN` | `50 MHz` is the standard choice |
+| UART baud range | `2.5` to `10 Mbps` (50 MHz refclk) | bring-up convention is `5 Mbps` |
+| Junction temperature | `50 - 85 C` operating, `115 C` abs max | plan top-side thermal extraction |
+
+PDN guidance that follows directly from those numbers:
+
+- the `VDD_HASH` path is a plane-and-via-farm problem, not a trace problem -
+  budget wide pours and dozens of vias between layers, sized per IPC-2152
+- decoupling must live close to the package; if a heatsink owns the top side,
+  put the capacitor bank on the bottom side under the FCLGA land field
+- at `0.71 V`, tens of millivolts of IR drop are several percent of the rail -
+  measure remote-sense placement against your layout, not a reference design
+
 ## Clocking
 
 ### External reference clock

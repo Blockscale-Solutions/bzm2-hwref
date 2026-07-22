@@ -4,7 +4,8 @@
 
 Close the remaining gap between:
 
-- a strong ASIC-facing Rust port with solid debug tooling
+- the mujina BZM2 driver (the `bzm2/pr1`-`pr4` branch series): a strong
+  ASIC-facing Rust port with solid debug tooling
 
 and
 
@@ -32,7 +33,7 @@ Out of scope for this plan:
 
 ## Current Gap Summary
 
-The current repo already has:
+The mujina BZM2 driver already has:
 
 - UART opcode support
 - TDM parsing
@@ -40,7 +41,7 @@ The current repo already has:
 - PLL and DLL diagnostics
 - DTS/VS telemetry and query tooling
 - startup tuning planning and saved operating-point replay
-- a strong silicon-validation CLI
+- diagnostic coverage exposed through the board API endpoints
 
 The biggest missing pieces are:
 
@@ -60,16 +61,18 @@ Deliverables:
    - writing `ASIC_ID`
    - enumerating a chain starting from default `0xFA`
    - verifying assigned IDs with `NOOP`
-2. Add debug CLI support for:
-   - chain enumeration
-   - ID assignment validation
+2. Expose chain enumeration and ID-assignment validation through supported
+   surfaces: env-gated startup auto-enumeration and the
+   `GET /api/v0/boards/{name}/bzm2/chain-summary` endpoint
 3. Add optional board startup enumeration mode so `Bzm2Board` can populate bus
    layout from hardware rather than only from `MUJINA_BZM2_ASICS_PER_BUS`
 
 Status:
 
 - completed: low-level default-`ASIC_ID` enumeration helpers
-- completed: `enumerate-chain` CLI support
+- completed: chain enumeration exposed through env-gated startup
+  auto-enumeration and the `GET /api/v0/boards/{name}/bzm2/chain-summary`
+  endpoint
 - completed: opt-in `Bzm2Board` startup enumeration with fallback to
   configured topology when no default-id ASICs are present
 - next: Phase 2, applied rail and reset control
@@ -101,7 +104,7 @@ Status:
 
 - completed: `VoltageStackBringupPlan` is now wired into `Bzm2Board` startup and
   shutdown through generic file-backed rail and reset adapters
-- completed: optional file-backed rail telemetry now flows into `BoardState`
+- completed: optional file-backed rail telemetry now flows into `BoardTelemetry`
 - next: map planned domain voltages onto those startup/shutdown hooks
 
 Exit criteria:
@@ -163,11 +166,11 @@ Status:
 
 - completed: TDM-sync engine probe helpers now detect physical engine presence
   by reading `ENGINE_REG_END_NONCE`, matching the historical C detection path
-- completed: the debug CLI now supports:
-  - `engine-probe`
-  - `discover-engine-map`
+- completed: engine probing is exposed through
+  `Bzm2UartController::discover_engine_map` and
+  `POST /api/v0/boards/{name}/bzm2/discover-engines`
 - completed: discovered per-ASIC engine maps can now be pushed into live
-  `BoardState.asics` through:
+  `BoardTelemetry.asics` through:
   - `Bzm2Board` command handling
   - the live BZM2 thread actor
   - `POST /api/v0/boards/{name}/bzm2/discover-engines`
@@ -276,7 +279,7 @@ Status:
   UART ownership by routing through the live BZM2 thread actor
 - completed: the board/API surface now exposes `clock-report` parity through
   the same live thread actor, so operators can inspect PLL/DLL lock state and
-  clock-control registers without dropping to the standalone CLI
+  clock-control registers without raw serial tooling
 - completed: the board/API surface now exposes a chain-summary view with:
   - current per-bus serial path
   - global ASIC ranges
@@ -310,22 +313,13 @@ Exit criteria:
 
 - no guessed JTAG semantics enter the codebase
 
-## Immediate Execution Order
-
-The next concrete work items should be:
-
-1. implement generic chain enumeration and `ASIC_ID` assignment helpers
-2. add a debug CLI command that enumerates a live chain
-3. add optional board startup auto-enumeration using that helper
-4. then wire generic rail/reset sequencing into `Bzm2Board`
-
 ## Current Execution Status
 
-Started:
+- Phases 1-6 are complete; the per-phase status blocks above record the
+  delivered work, and the Phase 6 board/API diagnostics exit criteria are met
+- Phase 7 (JTAG) is pending its protocol-evidence review
 
-- Phase 1 step 1 and step 2
-
-Reason:
+Reason the original execution order led with enumeration:
 
 - enumeration removes a major assumption from the current board runtime
 - it is ASIC-generic

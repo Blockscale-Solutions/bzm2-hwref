@@ -47,7 +47,7 @@ The biggest missing pieces are:
 
 1. runtime engine/topology discovery instead of fixed assumptions
 2. closed-loop calibration and retune
-3. board/API diagnostics parity with the CLI
+3. board/API diagnostics parity with the legacy validation tooling
 
 ## Phase 1: Discoverable Bring-Up
 
@@ -252,8 +252,8 @@ Status:
 
 Objective:
 
-- expose the most useful silicon-validation operations without requiring the
-  standalone CLI
+- expose the most useful silicon-validation operations through the board API,
+  without requiring raw serial tooling
 
 Deliverables:
 

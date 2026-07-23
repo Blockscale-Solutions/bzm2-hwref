@@ -19,6 +19,9 @@ Hardware Reference Documentation for the Bonanza Mine 2 ASIC (Intel® Blockscale
   and common pitfalls for building a working BZM2 board (level translation, clocking,
   VCORE control, power/protection, sequencing, 9-bit UART, bring-up checklist), synthesized
   from the open BZM2 ecosystem and general practice
+- [Hardware Implementations Survey](references/bzm2-hardware-implementations.md) — the known
+  open-source BZM2 boards and firmware (Satoshi Starter, bitaxeBIRDS, bitaxeBonanza, HashBed,
+  bonanza-bridge-fw, Mujina), their topologies, controller/bridge choices, and maturity
 
 **Product collateral:**
 - [Product Brief](Product%20Brief%20v012623.pdf)

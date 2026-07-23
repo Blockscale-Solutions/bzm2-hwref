@@ -56,7 +56,7 @@ a pad (DC-loads the source, rounds edges, and can breach the ≈1.5 V ceiling). 
 (TXB/TXS class) also dislike the 50 MHz clock — prefer a strap you can verify in review over edge-rate
 artifacts you can't.
 
-*Open-board corroboration:* bitaxeBonanza and HashBed ship the `SN74AXC4T774` (0.65 V floor); Satoshi
+*Open-board corroboration:* bitaxeBonanza ships the `SN74AXC4T774` (0.65 V floor); Satoshi
 Starter uses the `SN74AVCH1T45` (1.2 V floor, bus-hold), one per signal. *(EmberOne00/01 use the AVC4T774
 in TSSOP but translate the **BM1362** sibling's IO, not the BZM2's — a package data point only.)*
 
@@ -68,7 +68,7 @@ bridge with a native 9-bit mode, or a reprogrammable controller whose UART/PIO c
 | An effective approach leverages… | …with these example parts | …in this manner | When to pick it |
 |---|---|---|---|
 | A **hardware USB-UART bridge with a native 9-bit mode** | MaxLinear **XR21V1410** (1-ch) / **XR21V1414** (4-ch) [ds](https://www.maxlinear.com/ds/xr21v1410.pdf) | Its "Multidrop (9-bit) Mode" with auto half-duplex does 9-bit up to 12 Mbps — clears 5 Mbps bring-up and the 10 Mbps ceiling; appears to a host PC as a COM port with no MCU firmware | A USB-attached bench/bring-up host that must talk to the chip directly. **Satoshi Starter takes this path (XR21V1414).** |
-| A **reprogrammable MCU doing 9-bit in PIO** | Raspberry Pi **RP2040 / RP2350** [ds](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf) | PIO builds arbitrary framing — `9N1` at 5 Mbps is proven in the open bridge firmware; the same MCU can also run fan/board control and the VCORE ramp | The community's proven, cheap, reprogrammable path. **HashBed runs an RP2040 in PIO; bitaxeBIRDS uses a Raspberry Pi Pico 2W (RP2350); and because bitaxeBonanza's ESP32-S3 can't do 9-bit, a separate [bonanza-bridge-fw](https://github.com/bitaxeorg/bonanza-bridge-fw) runs the 9-bit UART on an RP2040.** |
+| A **reprogrammable MCU doing 9-bit in PIO** | Raspberry Pi **RP2040 / RP2350** [ds](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf) | PIO builds arbitrary framing — `9N1` at 5 Mbps is proven in the open bridge firmware; the same MCU can also run fan/board control and the VCORE ramp | The community's proven, cheap, reprogrammable path. **bitaxeBIRDS uses a Raspberry Pi Pico 2W (RP2350) in PIO; and because bitaxeBonanza's ESP32-S3 can't do 9-bit, the separate [bonanza-bridge-fw](https://github.com/bitaxeorg/bonanza-bridge-fw) runs the 9-bit UART on an RP2040.** |
 | A **native hardware 9-bit USART** | STM32F4-class MCU (USART word-length M=1 → 9 data bits) [RM0090](https://www.st.com/resource/en/reference_manual/rm0090-stm32f405415-stm32f407417-stm32f427437-and-stm32f429439-advanced-armbased-32bit-mcus-stmicroelectronics.pdf) | True hardware 9-bit with multiprocessor/address-mark wakeup; write the 9th bit in the data register (not as parity) | A board that already has an STM32 for control and wants the UART in silicon, not PIO. |
 
 **Do NOT** try to emulate the 9th bit with a general MCU's **parity bit** — it's asynchronous to the data
@@ -92,7 +92,7 @@ RP2040 bridge (`bonanza-bridge-fw`) supplies the 9-bit UART. Also out on speed/m
 honesty:** native 1.2 V MHz oscillators are a niche — the Western majors (SiTime, Epson, Kyocera) floor
 above 1.2 V, so if second-sourcing a 1.2 V XO matters, plan the translator branch as the fallback.
 *Designer to verify current stock at order time.* **Multi-ASIC:** daisy-chain `REFCLKOUT → REFCLKIN`
-AC-coupled down the stack. *Open-board corroboration: bitaxeBIRDS and HashBed ship the native 1.2 V
+AC-coupled down the stack. *Open-board corroboration: bitaxeBIRDS ships the native 1.2 V
 `SX3M50`; EmberOne runs a 25 MHz part because BM1362 clocks at 25 MHz, not the BZM2's 50 MHz.*
 
 ---
@@ -117,7 +117,7 @@ same chip** — folding three functions into one part.
 |---|---|---|---|
 | A **stackable integrated PMBus buck** | TI **TPS546D24A** (40 A/phase, up to 4× stack → 160 A, on-chip differential remote sense) [ds](https://www.ti.com/lit/ds/symlink/tps546d24a.pdf) | One chip = buck + digital set/ramp + Kelvin sense + IOUT/VOUT/temp readback; stack phases to cover 14→30 A and multi-ASIC on one address | **Default for a serious core rail.** **bitaxeBIRDS (single) and bitaxeBonanza (multi) use exactly this.** |
 | A **smaller integrated PMBus buck** | TI **TPS546B24A** (20 A) [ds](https://www.ti.com/lit/ds/symlink/tps546b24a.pdf) · ADI **MAX20730** (25 A integrated-FET) [ds](https://www.analog.com/media/en/technical-documentation/data-sheets/max20730.pdf) | Same digital-set + telemetry in a cheaper/smaller part; 20–25 A covers the stock point with modest headroom | Cost-down single-ASIC board that won't be pushed to the top of the tuning window. |
-| A **PMBus controller + external FETs** | ADI **LTC3886** (dual, 16-bit ADC/12-bit DAC, diff remote sense, fault logging) [ds](https://www.analog.com/en/products/ltc3886.html) driving discrete N-FETs (e.g. onsemi **NTMFS3D6N10MCL**) | Size current by choosing FETs; full PMBus telemetry + EEPROM fault logging | When you want to set current with discrete FETs and want rich telemetry. **HashBed uses the LTC3886 + discrete FETs.** |
+| A **PMBus controller + external FETs** | ADI **LTC3886** (dual, 16-bit ADC/12-bit DAC, diff remote sense, fault logging) [ds](https://www.analog.com/en/products/ltc3886.html) driving discrete N-FETs (e.g. onsemi **NTMFS3D6N10MCL**) | Size current by choosing FETs; full PMBus telemetry + EEPROM fault logging | When you want to set current with discrete FETs and want rich telemetry. **A BZM2 hashboard uses this approach (LTC3886 + discrete FETs).** |
 
 For very large aggregated multi-ASIC domains, data-center VR controllers (TI **TPS53681**, MPS **MP2891**,
 Renesas **RAA228228**) scale further via DrMOS smart-stages — noted for completeness; overkill for one ASIC.
@@ -190,7 +190,7 @@ inputs can genuinely coexist.
 
 | An effective approach leverages… | …with these example parts | …in this manner | When to pick it |
 |---|---|---|---|
-| A **series Schottky reverse-block** | Diodes **B560C** (60 V/5 A) [ds](https://datasheet.octopart.com/B560C-13-F-Diodes-Inc.-datasheet-530186.pdf) | Blocks reverse instantly; one part, no gate logic; big hand-solderable tab | Low-current input where ~1 W of `Vf·I` loss is acceptable and you want zero logic risk. **HashBed does this (B560C).** |
+| A **series Schottky reverse-block** | Diodes **B560C** (60 V/5 A) [ds](https://datasheet.octopart.com/B560C-13-F-Diodes-Inc.-datasheet-530186.pdf) | Blocks reverse instantly; one part, no gate logic; big hand-solderable tab | Low-current input where ~1 W of `Vf·I` loss is acceptable and you want zero logic risk. **A BZM2 hashboard does exactly this (B560C).** |
 | A **P-FET reverse-block** (lower loss) | AOS **AO3401A** (−30 V/−4 A) [ds](https://www.aosmd.com/res/datasheets/AO3401A.pdf) | Drop is `I·RDS` (tens of mV, ~10× less than Schottky); trivial to solder; up-size the FET above 4 A | Cost/efficiency-sensitive single input without an ORing controller. |
 | An **ideal-diode controller + N-FET** | TI **LM74700-Q1** (20 mV drop, 3.2–65 V) [ds](https://www.ti.com/lit/ds/symlink/lm74700-q1.pdf) · Diodes **AP74701Q** (adds −33 V VDS clamp) [ds](https://www.diodes.com/datasheet/download/AP74701Q.pdf) | Near-zero loss, scales to any current via the FET; one controller per input leg also ORs two rails | High-current input where a Schottky's watts are unacceptable, or a true barrel-**and**-USB-PD OR. |
 
@@ -204,7 +204,7 @@ Protect **power nodes and data lines** — hot-plug/cable-fault transients hit V
 (leaving power nodes bare is the documented `emberone00-pcb#28/#31` miss). Pick a TVS whose reverse
 standoff sits *above* the node's normal max and whose clamp stays under the downstream part's abs-max.
 
-- **5 V VBUS / positive rail:** Littelfuse **SMAJ5.0A** (5 V standoff, ~9.2 V clamp, 400 W) [ds](https://www.littelfuse.com/assetdocs/tvs-diodes-smaj-datasheet?assetguid=13c2a823-03b8-4d1f-9ddc-9b44670aed9d) — scale the `SMAJxxA` number to the rail (SMAJ12A for a 12 V barrel). *HashBed uses an SMAJ6.0A on VBUS.*
+- **5 V VBUS / positive rail:** Littelfuse **SMAJ5.0A** (5 V standoff, ~9.2 V clamp, 400 W) [ds](https://www.littelfuse.com/assetdocs/tvs-diodes-smaj-datasheet?assetguid=13c2a823-03b8-4d1f-9ddc-9b44670aed9d) — scale the `SMAJxxA` number to the rail (SMAJ12A for a 12 V barrel). *A BZM2 hashboard uses an SMAJ6.0A on VBUS.*
 - **USB-C CC1/CC2:** Nexperia **PESD5V0X1BT** (ultra-low cap, 9 kV) [ds](https://www.nexperia.com/product/PESD5V0X1BT) — one per CC pin.
 - **USB 2.0 D± + VBUS in one part:** ST **USBLC6-2SC6** (3.5 pF, IEC 61000-4-2 L4) [ds](https://www.st.com/resource/en/datasheet/usblc6-2.pdf).
 
@@ -230,8 +230,7 @@ cut** so a fault contains the core rail even if firmware is hung.
 **Temperature sense & fan control** — a proven approach leverages an SMBus fan controller with tach:
 Microchip **EMC2101** (PWM + tach + internal/external temp in one QFN-10) [ds](https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/EMC2101-Data-Sheet-DS20006703.pdf),
 or **EMC2302/2305** (RPM-based, explicit **stall alert**, 2/5 fans — *bitaxeBonanza uses the EMC2302,
-libreboard the EMC2305*) paired with a TI **TMP1075** temp sensor (±0.25 °C, ALERT pin — *EmberOne and
-HashBed use the TMP1075*) [ds](https://www.ti.com/lit/ds/symlink/tmp1075.pdf). The minimal path is a
+libreboard the EMC2305*) paired with a TI **TMP1075** temp sensor (±0.25 °C, ALERT pin — *EmberOne uses the TMP1075*) [ds](https://www.ti.com/lit/ds/symlink/tmp1075.pdf). The minimal path is a
 discrete tach level-shift (BSS138 + Zener) into a host counter — *what bitaxeBIRDS does*. Either way,
 **the tach must be wired**; prefer a hardware alert-on-stall over pure host polling.
 
@@ -285,7 +284,7 @@ per-phase sensing for current.
 ---
 
 *Clean-room provenance: this guidance is assembled from public component datasheets (linked inline), the
-public open-source BZM2 board ecosystem (bitaxeBIRDS, bitaxeBonanza, HashBed, EmberOne, libreboard,
+public open-source BZM2 board ecosystem (bitaxeBIRDS, bitaxeBonanza, EmberOne, libreboard,
 bonanza-bridge-fw), and general mixed-signal design practice. It reproduces no proprietary or
 vendor-confidential design, part selection, net name, or value. Every choice is a designer's starting
 point to adapt and verify against the ASIC's own datasheet, not a schematic to copy.*

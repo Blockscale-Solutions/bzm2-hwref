@@ -68,13 +68,13 @@ bridge with a native 9-bit mode, or a reprogrammable controller whose UART/PIO c
 | An effective approach leverages… | …with these example parts | …in this manner | When to pick it |
 |---|---|---|---|
 | A **hardware USB-UART bridge with a native 9-bit mode** | MaxLinear **XR21V1410** (1-ch) / **XR21V1414** (4-ch) [ds](https://www.maxlinear.com/ds/xr21v1410.pdf) | Its "Multidrop (9-bit) Mode" with auto half-duplex does 9-bit up to 12 Mbps — clears 5 Mbps bring-up and the 10 Mbps ceiling; appears to a host PC as a COM port with no MCU firmware | A USB-attached bench/bring-up host that must talk to the chip directly. **Satoshi Starter takes this path (XR21V1414).** |
-| A **reprogrammable MCU doing 9-bit in PIO** | Raspberry Pi **RP2040 / RP2350** [ds](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf) | PIO builds arbitrary framing — `9N1` at 5 Mbps is proven in the open bridge firmware; the same MCU can also run fan/board control and the VCORE ramp | The community's proven, cheap, reprogrammable path. **bitaxeBIRDS and HashBed use RP2040 PIO; bitaxeBonanza pairs its ESP32-S3 with an RP2040 for exactly this.** |
+| A **reprogrammable MCU doing 9-bit in PIO** | Raspberry Pi **RP2040 / RP2350** [ds](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf) | PIO builds arbitrary framing — `9N1` at 5 Mbps is proven in the open bridge firmware; the same MCU can also run fan/board control and the VCORE ramp | The community's proven, cheap, reprogrammable path. **HashBed runs an RP2040 in PIO; bitaxeBIRDS uses a Raspberry Pi Pico 2W (RP2350); and because bitaxeBonanza's ESP32-S3 can't do 9-bit, a separate [bonanza-bridge-fw](https://github.com/bitaxeorg/bonanza-bridge-fw) runs the 9-bit UART on an RP2040.** |
 | A **native hardware 9-bit USART** | STM32F4-class MCU (USART word-length M=1 → 9 data bits) [RM0090](https://www.st.com/resource/en/reference_manual/rm0090-stm32f405415-stm32f407417-stm32f427437-and-stm32f429439-advanced-armbased-32bit-mcus-stmicroelectronics.pdf) | True hardware 9-bit with multiprocessor/address-mark wakeup; write the 9th bit in the data register (not as parity) | A board that already has an STM32 for control and wants the UART in silicon, not PIO. |
 
 **Do NOT** try to emulate the 9th bit with a general MCU's **parity bit** — it's asynchronous to the data
 register and fails at ≥5 Mbps. This is publicly demonstrated: the ESP32 cannot do it
-([bitaxeorg/bitaxeBonanza#4](https://github.com/bitaxeorg/bitaxeBonanza/issues/4)), which is why the
-Bonanza design adds an RP2040. Also out on speed/mode: **CH340** (~2 Mbps), **FTDI FT231X** (3 Mbps) /
+([bitaxeorg/bitaxeBonanza#4](https://github.com/bitaxeorg/bitaxeBonanza/issues/4)), which is why a separate
+RP2040 bridge (`bonanza-bridge-fw`) supplies the 9-bit UART. Also out on speed/mode: **CH340** (~2 Mbps), **FTDI FT231X** (3 Mbps) /
 **FT232** (no per-byte 9-bit), **CP2102** (8-bit only).
 
 ## 1.3 50 MHz reference clock

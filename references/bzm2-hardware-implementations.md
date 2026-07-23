@@ -16,8 +16,8 @@ boards still in private development are marked as such. This survey is a compani
 ## Maturity & availability tiers
 
 - **Public OSHW** — fully open and navigable today; usable as a working reference now.
-- **Private, A0 hardware dev (by request)** — a real board in active bring-up whose repository is still
-  private ahead of a planned full OSHW release; details available by request.
+- **Private — A0 hardware dev** — a real board in active bring-up whose repository is still private
+  during development (see each entry for its release/availability status).
 - **Maturity 0 (infancy)** — a repository exists but the BZM2 design has not yet been started/adapted;
   a candidate for a *future* reference, not usable as one today.
 
@@ -25,11 +25,11 @@ boards still in private development are marked as such. This survey is a compani
 
 | Board | ASICs / topology | Host / UART bridge | Maturity & availability | Notes |
 |---|---|---|---|---|
-| **[bitaxeBIRDS](https://github.com/bitaxeorg/bitaxeBIRDS)** (bitaxe community) | **4**, series-stacked | **RP2040** (PIO 9-bit UART) | **Public OSHW** · working — the most mature open BZM2 hashboard | RP2040 "pico" bridge; series voltage-stack ladder; native 1.2 V oscillator |
-| **[bitaxeBonanza](https://github.com/bitaxeorg/bitaxeBonanza)** (bitaxe community) | multi-ASIC, series-stacked | **ESP32-S3 + RP2040** | **Public OSHW** · work-in-progress (design issues documented) | Publicly documented the two classic BZM2 traps: a reversed UART level-shifter ([#3](https://github.com/bitaxeorg/bitaxeBonanza/issues/3)) and the ESP32's inability to do 9-bit UART natively ([#4](https://github.com/bitaxeorg/bitaxeBonanza/issues/4), which is why it adds an RP2040) — invaluable lessons even where the board itself is a work in progress |
+| **[bitaxeBIRDS](https://github.com/bitaxeorg/bitaxeBIRDS)** (bitaxe community) | **4**, series-stacked | **Raspberry Pi Pico 2W** (RP2350, PIO 9-bit UART) | **Public OSHW** · working — the most mature open BZM2 hashboard | Pico 2W (RP2350) bridge module; series voltage-stack ladder; native 1.2 V oscillator |
+| **[bitaxeBonanza](https://github.com/bitaxeorg/bitaxeBonanza)** (bitaxe community) | multi-ASIC, series-stacked | **ESP32-S3** | **Public OSHW** · work-in-progress (design issues documented) | Publicly documented the two classic BZM2 traps: a reversed UART level-shifter ([#3](https://github.com/bitaxeorg/bitaxeBonanza/issues/3)) and the ESP32's inability to do 9-bit UART natively ([#4](https://github.com/bitaxeorg/bitaxeBonanza/issues/4)). The board itself is a documented work-in-progress; the 9-bit UART is supplied by a **separate RP2040 bridge** ([bonanza-bridge-fw](https://github.com/bitaxeorg/bonanza-bridge-fw)), not a chip on this board — invaluable lessons either way |
 | **Satoshi Starter** (Reckless Systems) | **1** | **XR21V1414** — hardware native-9-bit USB-UART bridge | **Private — A0 hardware dev** (rev1 bring-up); full OSHW release planned, available by request | Single-ASIC student/STEM kit; USB-C PD + barrel input; hardware-bridge path (no MCU firmware for the UART). Repository private during development. |
-| **HashBed** | **16**, series-stacked "heatbed tile" | dual **RP2040** (PIO) | **Private — A0 hardware dev** (in progress); full OSHW release planned, available by request | Novel 3D-printer-heatbed form factor; `SN74AXC4T774` translators, `LTC3886` PMBus core control, native 1.2 V oscillator. Repository private during development. |
-| **[EmberOne01](https://github.com/256foundation/emberone01-pcb)** (256 Foundation) | 12 (planned), series-stacked | *(not yet BZM2-adapted)* | **Maturity 0 (infancy)** — public repo, BZM2 design not yet started | The intended BZM2 variant of the EmberOne. Its schematic today is still the BM1362 EmberOne design with **no BZM2-specific changes yet**, so it's a candidate for a *future* reference — not usable as one now. |
+| **HashBed** | **16**, series-stacked "heatbed tile" | **RP2040** (PIO) | **Private during development** — A0 hardware dev (in progress) | Novel 3D-printer-heatbed form factor; `SN74AXC4T774` translators, `LTC3886` PMBus core control, native 1.2 V oscillator |
+| **[EmberOne01](https://github.com/256foundation/emberone01-pcb)** (256 Foundation) | multi-ASIC, series-stacked (inherited BM1362 layout) | *(not yet BZM2-adapted)* | **Maturity 0 (infancy)** — public repo, BZM2 design not yet started | The intended BZM2 variant of the EmberOne. Its schematic today is still the BM1362 EmberOne design with **no BZM2-specific changes yet**, so it's a candidate for a *future* reference — not usable as one now. |
 
 ## ASIC family notes
 

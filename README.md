@@ -25,8 +25,9 @@ Hardware Reference Documentation for the Bonanza Mine 2 ASIC (Intel® Blockscale
   protection, supervision, thermal/TRIP interlock), with trade-offs and a "when to pick it" — the
   parts companion to the Board Design Guide
 - [Hardware Implementations Survey](references/bzm2-hardware-implementations.md) — the known
-  open-source BZM2 boards and firmware (Satoshi Starter, bitaxeBIRDS, bitaxeBonanza, HashBed,
-  bonanza-bridge-fw, Mujina), their topologies, controller/bridge choices, and maturity
+  BZM2 boards and firmware (bitaxeBIRDS, bitaxeBonanza, Satoshi Starter, HashBed, EmberOne01,
+  bonanza-bridge-fw, Mujina) across a maturity/availability spectrum — from fully public OSHW to
+  boards still in private hardware development — with topologies, controller/bridge choices, and status
 
 **Product collateral:**
 - [Product Brief](Product%20Brief%20v012623.pdf)

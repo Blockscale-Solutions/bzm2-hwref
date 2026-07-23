@@ -167,7 +167,7 @@ characterize on your own design before committing limits.
 | --- | --- | --- |
 | `VDD_HASH` (stack rail) | `0.71 V` nominal | tunable window roughly `0.6` to `0.81 V` |
 | Internal stack split | `0 - 0.355 V` / `0.355 - 0.71 V` | bottom / top engine stacks |
-| Control / GPIO IO rail | `1.2 V` | UART, reset, trip signaling |
+| Control / GPIO IO rail (`VDDIO`) | `1.2 V` nominal (`1.0 - 1.3 V` range), `1.3 V` abs max | UART, reset, trip signaling; per-pin input/output levels below |
 | Stack current, stock operating point | `~14 A` at `~330 GH/s` | roughly `10 W` core power |
 | Stack current, maximum tuned point | `~27 A` at `~577 GH/s` | roughly `22 W`; plan copper for `~30 A` headroom |
 | Efficiency class | up to `~27 J/TH` | product-brief figure |
@@ -183,6 +183,39 @@ PDN guidance that follows directly from those numbers:
   put the capacitor bank on the bottom side under the FCLGA land field
 - at `0.71 V`, tens of millivolts of IR drop are several percent of the rail -
   measure remote-sense placement against your layout, not a reference design
+
+### IO DC thresholds (the 1.2 V domain)
+
+The control, UART, reset, trip, and reference-clock pads sit on the `VDDIO`
+rail. Any signal driven into them must land inside the input window below;
+exceeding the input-high limit overstresses the pad. Levels are given against
+`VDDIO`, with the right column evaluated at the `1.2 V` nominal rail.
+Synthesized from the vendor collateral - characterize before committing limits.
+
+| Parameter | Spec | At `VDDIO = 1.2 V` |
+| --- | --- | --- |
+| `VDDIO` rail | `1.0` min / `1.2` nominal / `1.3 V` **abs max** | `1.2 V` |
+| Input high `VIH` | min `0.65 x VDDIO`, **max `VDDIO + 0.3 V`** | `0.78 V` min, `1.5 V` max |
+| Input low `VIL` | max `0.35 x VDDIO` | `0.42 V` max |
+| Input threshold | `~0.6 V` | `0.6 V` |
+| Output high `VOH` | min `0.75 x VDDIO` | `0.90 V` |
+| Output low `VOL` | max `0.25 x VDDIO` | `0.30 V` |
+| Peak overshoot (transient) | `VDDIO + 0.3 V` | `1.5 V` |
+| Peak undershoot (transient) | `~0.3 V` below ground | `~ -0.3 V` |
+| Pull-up / pull-down | `~20k` / `~24k` typical | strong pull-up `~3.4k` |
+
+The absolute ceiling on any IO pin - static input-high or transient overshoot -
+is **`VDDIO + 0.3 V`, i.e. `1.5 V`** at a `1.2 V` rail. Two direct consequences
+for a board:
+
+- **A `3.3 V` source cannot drive these pads through a simple resistive
+  divider.** A `3.3 V` clock halved to `~1.65 V`, or a `3.3 V` UART through a
+  `5.1k/3.3k` divider to `~1.3 V`, both sit at or above the input-high limit -
+  overstress, not merely marginal. Use a real level translator, an
+  AC-couple-and-bias network, or a `1.2 V`-domain source instead.
+- **`REFCLKIN` specifically** wants a clean `1.2 V`-referenced swing (roughly
+  ground to `VDDIO`), not a divided-down `3.3 V` oscillator - and watch source
+  loading if you ever do use passive networks.
 
 ## Clocking
 

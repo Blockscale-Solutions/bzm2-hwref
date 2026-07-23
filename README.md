@@ -15,6 +15,10 @@ Hardware Reference Documentation for the Bonanza Mine 2 ASIC (Intel® Blockscale
   ([machine-readable CSV](references/bzm2-ballmap.csv))
 - [Reference Implementation Roadmap](references/blockscale-reference-roadmap.md) — the
   reference software/firmware landscape for the BZM2 and how the pieces relate
+- [Board Design Guide](references/bzm2-board-design-guide.md) — effective design patterns
+  and common pitfalls for building a working BZM2 board (level translation, clocking,
+  VCORE control, power/protection, sequencing, 9-bit UART, bring-up checklist), synthesized
+  from the open BZM2 ecosystem and general practice
 
 **Product collateral:**
 - [Product Brief](Product%20Brief%20v012623.pdf)

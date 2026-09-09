@@ -17,7 +17,7 @@ pad,name,function,io_type,voltage_domain,default_state,pinsel0_function,pinsel1_
 16,TX_RESET_OUT,UART/reset output,Output,VDDIO 1.2 V,output,TX_OUT,RESET_OUT,N,host-side UART RX connects here in PINSEL=0 systems
 17,RESET_TX_IN,Reset/UART input,Input,VDDIO 1.2 V,input pull-up,RESET_IN,TX_IN,N,reset is active low
 18,RX_TRIP_IN,UART/trip input,Input,VDDIO 1.2 V,input pull-up,RX_IN,TRIP_IN,N,host-side UART TX connects here in PINSEL=0 systems
-19,VDDIO,IO voltage rail,Input,VDDIO 1.2 V,-,-,-,N,second VDDIO pad - tie to the 1.2 V rail (do not leave on decoupling only; see pinout reference)
+19,VDDIO,IO voltage rail,,VDDIO 1.2 V,-,-,-,N,one of two VDDIO pads; we connect both - on-die connectivity between them is not documented
 20,REFCLKOUT2,Reference clock to next ASIC,Input (no pull),VDDIO 1.2 V,no pull-up/down,-,-,N,pin muxed in debug mode; < 50 MHz
 21,VSS,Ground,Input,VSS,-,-,-,W,
 22,VSS,Ground,Input,VSS,-,-,-,W,
@@ -28,7 +28,7 @@ pad,name,function,io_type,voltage_domain,default_state,pinsel0_function,pinsel1_
 27,VSS,Ground,Input,VSS,-,-,-,W,
 28,VSS,Ground,Input,VSS,-,-,-,W,
 29,REFCLKIN,Reference clock input,Input,VDDIO 1.2 V,no pull-up/down,-,-,S,<= 50 MHz; 50 MHz standard
-30,VDDIO,IO voltage rail,Input-Output,VDDIO 1.2 V,-,-,-,S,primary VDDIO connection
+30,VDDIO,IO voltage rail,,VDDIO 1.2 V,-,-,-,S,one of two VDDIO pads; we connect both - on-die connectivity between them is not documented
 31,RX_TRIP_OUT,Chain UART output,Output,VDDIO 1.2 V,high-Z pull-down,RX_OUT,TRIP_OUT,S,chain-forwarding; unused single-ASIC
 32,RESET_TX_OUT,Chain reset output,Output,VDDIO 1.2 V,output,RESET_OUT,TX_OUT,S,chain-forwarding; unused single-ASIC
 33,TX_RESET_IN,Chain UART input,Input,VDDIO 1.2 V,input pull-up,TX_IN,RESET_IN,S,chain-forwarding; unused single-ASIC

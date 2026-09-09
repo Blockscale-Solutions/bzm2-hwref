@@ -53,12 +53,37 @@ it exceeds the 1.5 V input ceiling and degrades the edge. Series-terminate the c
 **Multi-ASIC:** daisy-chain `REFCLKOUT → REFCLKIN` down the chain, **AC-coupled** so the series-stack
 ground offsets between ASICs don't fight the DC level.
 
-## 3. VDDIO (1.2 V IO rail) — tie *both* pads
+## 3. VDDIO (1.2 V IO rail) — we connect both pads
 
-The ASIC has **two VDDIO pads**. Tie **both** to the 1.2 V IO rail — do not leave the second pad on
-local decoupling alone (see the [Pinout Reference](bzm2-pinout-reference.md)). The current is small, so
-a thin trace / single via suffices; the value is a solid IO reference and no risk of an under-supplied
-IO bank. Label the rail net so a later schematic edit cannot silently orphan one pad.
+The BZM2 exposes two VDDIO pads, `19` and `30`, on opposite edges of the package, both in the
+1.2 V IO domain.
+
+**What we don't know.** No source available to us states whether the two pads are joined on-die.
+They may be a redundant pair, or they may each feed their own IO bank. We have not measured it, and
+we have not found it written down anywhere we can cite. Earlier revisions of this guide presented
+"tie both" as a requirement; it is not one, and that framing was wrong.
+
+**What we do, and why.** We connect both pads to the 1.2 V rail and tie them together at the
+package. This is also the ideal configuration suggested by the vendor reference platform. That costs a via and a short trace, and it is correct under either assumption — whereas
+leaving a pad unfed is correct under only one of them. The margin argument: IO thresholds in this
+domain are specified as fractions of VDDIO rather than as fixed voltages, so droop moves every
+input and output threshold together. If the pads are separate bank feeds, an unfed pad leaves that
+bank supplied only through on-die rail metal; if they are joined, tying both simply halves the path
+resistance.
+
+**Do not hang a capacitor on a pad you are not feeding.** A VDDIO pad terminated in a decoupling
+capacitor with no supply source is the worst of the three options: if the pads are joined on-die
+that capacitor's return current is routed through the die, and if they are not it is a floating
+stub with a capacitor on it. If you are not going to feed a pad, leave it genuinely unconnected.
+
+**Decoupling.** At least one 100 nF ceramic on the VDDIO node, as close to the package as the
+layout allows, plus bulk at whatever generates the local 1.2 V.
+
+**Other boards differ.** Several third-party BZM2 boards leave pad `19` unconnected and appear to
+work, which is reasonable evidence that the pads are joined on-die. We connect both anyway, rather
+than depend on an assumption none of us can check.
+
+Label the rail net either way, so a later schematic edit cannot silently orphan a pad.
 
 ## 4. VCORE / VDD_HASH — make it *controllable*, not just adjustable
 

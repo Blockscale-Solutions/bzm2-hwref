@@ -64,7 +64,7 @@ we have not found it written down anywhere we can cite. Earlier revisions of thi
 "tie both" as a requirement; it is not one, and that framing was wrong.
 
 **What we do, and why.** We connect both pads to the 1.2 V rail and tie them together at the
-package. That costs a via and a short trace, and it is correct under either assumption — whereas
+package. This is also the ideal configuration suggested by the vendor reference platform. That costs a via and a short trace, and it is correct under either assumption — whereas
 leaving a pad unfed is correct under only one of them. The margin argument: IO thresholds in this
 domain are specified as fractions of VDDIO rather than as fixed voltages, so droop moves every
 input and output threshold together. If the pads are separate bank feeds, an unfed pad leaves that

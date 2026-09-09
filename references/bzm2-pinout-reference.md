@@ -14,7 +14,7 @@ column, south row in top view) then the inner field (`41-60`).
 | --- | --- | --- | --- |
 | `VDD` (`VDD_HASH`) | `2-8`, `41-42`, `49-52`, `59-60` | `15` | `0.71 V` nominal; size for `~14 A` stock, `~27 A` maxed - roughly `1-2 A` per pad at the extremes |
 | `VSS` | `14`, `21-28`, `35`, `43-48`, `53-58` | `22` | ground return for everything |
-| `VDDIO` | `19`, `30` | `2` | `1.2 V` IO rail; **tie both pads to the rail** - do not leave pad `19` on decoupling alone |
+| `VDDIO` | `19`, `30` | `2` | `1.2 V` IO rail. We connect **both** pads; whether they are joined on-die is not documented anywhere we can cite, so this is our conservative default rather than a stated requirement - see the [Board Design Guide](bzm2-board-design-guide.md) |
 | `VDDINT_1` / `VDDINT_2` | `1`, `12` | `2` | internal stack midpoint (~`0.355 V`) brought out for reference/decoupling - **outputs**, not load rails |
 | `VDDPLL` (datasheet: `RSVD`) | `13` | `1` | PLL supply decoupling point in the reference designs |
 | `VDD_P75` (datasheet: `RSVD`) | `37` | `1` | `0.75 V` backup rail used if the on-chip LDO path is unavailable |

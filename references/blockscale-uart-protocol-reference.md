@@ -388,6 +388,36 @@ sensor retrieval is needed.
 This is the model exposed in the Mujina reference firmware's debug CLI and
 HTTP API.
 
+### TX control register: which packets the ASIC sends
+
+Whether the ASIC puts a given packet class on its TX side at all is
+controlled by the **UART TX control register, local offset `0x0A`**. Its low
+four bits are read-write enables, one per packet class; the upper bits are
+reserved and read as zero.
+
+| bit | packet class enabled when set |
+|---|---|
+| 3 | thermal and voltage sensor data (`DTS_VS` stream) |
+| 2 | read-result responses |
+| 1 | register-read responses |
+| 0 | no-op responses |
+
+**Reset value: `0x7`** — results, register reads and no-op responses enabled,
+the sensor stream off. Enabling streaming is therefore a write of `0xF`, and
+taking the stream back off the TDM path is a write of `0x7`, which is also the
+state a cold boot leaves the part in.
+
+Two consequences for firmware:
+
+- A synchronous request/response diagnostic (`NOOP`, `LOOPBACK`, register
+  reads) must run with bit 3 clear, or sensor frames interleave with the
+  response. Writing `0x7` before the diagnostic and `0xF` after it is the whole
+  suspend/resume; no capture of a "previous" value is needed, and capturing one
+  after streaming has been enabled would record `0xF` and make the suspend a
+  no-op.
+- On shutdown, writing `0x7` returns the part to its reset state, so the next
+  process to open the bus sees what a cold boot gives rather than a live stream.
+
 ## DTS / VS Payload Layout
 
 The vendor material describes an 8-byte sensor payload. At a practical level,

@@ -131,9 +131,34 @@ also uses it as the basis for some broadcast-style write patterns.
 | `0x2` | `WRITEREG` | Write engine or local registers | No immediate payload response |
 | `0x3` | `READREG` | Read engine or local registers | Register data |
 | `0x4` | `MULTICAST_WRITE` | Write a row-group of engines | No immediate payload response |
+| `0x5` | `BLOCK_HDR` | **Not characterised.** See below. | Unknown |
 | `0xD` | `DTS_VS` | Read thermal and voltage sensor data | Sensor payload |
 | `0xE` | `LOOPBACK` | Echo payload for transport validation | Echoed payload |
 | `0xF` | `NOOP` | Link and chain liveness test | ASCII `BZ2` |
+
+### Opcode `0x5`, and the gap above it
+
+`0x5` is attested in vendor material as `BLOCK_HDR`. **That is the whole of
+what this reference can currently say about it**, and the row above is written
+to make that obvious rather than to imply a placeholder that will fill itself
+in.
+
+Specifically unknown: the direction it travels, its payload length and layout,
+whether it draws a response, when a host is expected to issue it, and whether
+it is required for mining or is an optimisation. It does not appear at all in
+the boot traffic available to us.
+
+Recording it despite knowing so little, because an opcode you do not know is
+worse than one you know nothing about. A receiver that treats unrecognised
+opcodes as evidence of a desynchronised stream — a reasonable and common
+design — will discard the frames *around* a `BLOCK_HDR` as well as the frame
+itself. The absence of this row from an implementer's table is therefore a
+silent data-loss bug, not a documentation gap.
+
+**Opcodes `0x6` through `0xC` are unmapped.** We have no evidence that they are
+unused; we have no evidence about them at all. An implementer should treat the
+known set as a lower bound on what the part may emit, and should choose
+deliberately what to do with an opcode outside it.
 
 ## Frame Structure
 

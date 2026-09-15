@@ -48,8 +48,8 @@ boards still in private development are marked as such. This survey is a compani
 
 | Project | Role | Notes |
 |---|---|---|
-| **[bonanza-bridge-fw](https://github.com/bitaxeorg/bonanza-bridge-fw)** (bitaxe) | RP2040 USB↔BZM2 bridge firmware | Rust; implements the 9-bit multidrop UART on the RP2040 PIO; the reference for the MCU-bridge approach |
-| **[Mujina](https://github.com/256foundation/mujina)** (256 Foundation) | Open miner firmware | Has a native BZM2 driver (protocol, board, calibration, diagnostics) — see [PR #71](https://github.com/256foundation/mujina/pull/71); talks to the boards above over the 9-bit UART |
+| **[bonanza-bridge-fw](https://github.com/bitaxeorg/bonanza-bridge-fw)** (bitaxe) | RP2040 passthrough firmware, driven by an ESP32-S3 | Rust; implements the 9-bit multidrop UART on the RP2040 PIO. **Not a USB bridge** — the RP2040 is a passthrough for an ESP32-S3 host, not for a PC, so it does not enumerate as a USB device you can drive from a workstation |
+| **[Mujina](https://github.com/256foundation/mujina)** (256 Foundation) | Open miner firmware | **No BZM2 support in the repository today** — the default branch contains no BZM2 driver, and cloning it gets you a bm13xx miner with no way to reach a BZM2 part. BZM2 work exists only as unmerged pull requests against it, which are being rebuilt; this row will name a merged commit when there is one to name |
 
 ## Adjacent / related (not BZM2 hashboards)
 

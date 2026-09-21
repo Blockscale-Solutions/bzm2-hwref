@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 620" role="img"
+     aria-label="BZM2 single-ASIC rail and voltage-stack topology from public Integration Guide">
+  <title>BZM2 single-ASIC rail / stack topology</title>
+  <desc>Original single-ASIC rail topology from Integration Guide Core Rails And Voltage Architecture and pinout rails table. Multi-ASIC series stacking is a labeled documentation gap (issue #4). No RDS millivolts.</desc>
+  <rect width="860" height="620" fill="#12171c"/>
+  <rect x="20" y="20" width="820" height="580" rx="10" fill="#1a2228" stroke="#3a4650" stroke-width="1.5"/>
+  <text x="430" y="50" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="11" font-weight="600" letter-spacing="0.12em">BZM2 · SINGLE-ASIC RAIL / STACK TOPOLOGY</text>
+  <text x="430" y="70" text-anchor="middle" fill="#2dd4bf" font-family="Ubuntu,sans-serif" font-size="11">Integration Guide · Core Rails And Voltage Architecture · pinout Rails table</text>
+
+  <!-- Host domain -->
+  <rect x="48" y="100" width="200" height="280" rx="8" fill="#151a1f" stroke="#60a5fa" stroke-width="1.4"/>
+  <text x="148" y="128" text-anchor="middle" fill="#60a5fa" font-family="Orbitron,sans-serif" font-size="10" letter-spacing="0.08em">HOST DOMAIN</text>
+  <text x="148" y="156" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Host logic / MCU</text>
+  <text x="148" y="178" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="11">(typically 3.3 V class)</text>
+  <rect x="72" y="200" width="152" height="48" rx="4" fill="#1e3a4a" stroke="#60a5fa" stroke-width="1.2"/>
+  <text x="148" y="220" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Level translation</text>
+  <text x="148" y="238" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Board guide §1</text>
+  <text x="148" y="280" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">UART / reset / trip / REFCLK</text>
+  <text x="148" y="302" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="11">→ VDDIO 1.2 V pads</text>
+
+  <!-- Arrow to ASIC IO -->
+  <line x1="248" y1="240" x2="300" y2="240" stroke="#2dd4bf" stroke-width="2"/>
+  <polygon points="300,234 312,240 300,246" fill="#2dd4bf"/>
+
+  <!-- ASIC package -->
+  <rect x="320" y="100" width="320" height="400" rx="8" fill="#151a1f" stroke="#2dd4bf" stroke-width="1.6"/>
+  <text x="480" y="128" text-anchor="middle" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="10" letter-spacing="0.08em">ASIC · SINGLE DEVICE</text>
+
+  <!-- VDDIO -->
+  <rect x="344" y="148" width="272" height="44" rx="4" fill="#1e3a4a" stroke="#60a5fa" stroke-width="1.2"/>
+  <text x="480" y="168" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="13" font-weight="600">VDDIO · 1.2 V nominal</text>
+  <text x="480" y="184" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">1.0–1.3 V range · 1.3 V abs max · pads 19, 30</text>
+
+  <!-- Stack visualization -->
+  <text x="480" y="220" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="9" letter-spacing="0.1em">INTERNAL VOLTAGE STACKING</text>
+
+  <!-- Top stack -->
+  <rect x="360" y="236" width="240" height="70" rx="4" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.3"/>
+  <text x="480" y="262" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="13">Top stack</text>
+  <text x="480" y="282" text-anchor="middle" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="12">≈ 0.355 V → 0.71 V</text>
+  <text x="480" y="298" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">VS ch1 · PLL1</text>
+
+  <!-- Midpoint -->
+  <rect x="360" y="312" width="240" height="36" rx="3" fill="#2a3a1e" stroke="#a3e635" stroke-width="1.2"/>
+  <text x="480" y="334" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="11">midpoint ≈ 0.355 V · VDDINT_1 / VDDINT_2</text>
+
+  <!-- Bottom stack -->
+  <rect x="360" y="354" width="240" height="70" rx="4" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.3"/>
+  <text x="480" y="380" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="13">Bottom stack</text>
+  <text x="480" y="400" text-anchor="middle" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="12">≈ 0.0 V → 0.355 V</text>
+  <text x="480" y="416" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">VS ch0 · PLL0</text>
+
+  <!-- VSS -->
+  <rect x="360" y="432" width="240" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+  <text x="480" y="450" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="12">VSS</text>
+
+  <!-- VDD_HASH rail annotation -->
+  <text x="480" y="480" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Board provides <tspan font-family="JetBrains Mono,monospace" fill="#2dd4bf">VDD_HASH</tspan> · 0.71 V nominal</text>
+  <text x="480" y="498" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">VS ch2 = differential between stacks</text>
+
+  <!-- Side rails panel -->
+  <rect x="660" y="100" width="160" height="280" rx="8" fill="#151a1f" stroke="#E86A2B" stroke-width="1.3"/>
+  <text x="740" y="128" text-anchor="middle" fill="#E86A2B" font-family="Orbitron,sans-serif" font-size="9" letter-spacing="0.08em">NAMED RAILS</text>
+  <text x="740" y="158" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="11">VDD_HASH</text>
+  <text x="740" y="174" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">0.71 V nom</text>
+  <text x="740" y="204" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="11">VDDIO</text>
+  <text x="740" y="220" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">1.2 V nom</text>
+  <text x="740" y="250" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="11">VDDINT_1/2</text>
+  <text x="740" y="266" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">mid-ref outputs</text>
+  <text x="740" y="296" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="11">VDDPLL</text>
+  <text x="740" y="312" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">RSVD pad 13</text>
+  <text x="740" y="342" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="11">VDD_P75</text>
+  <text x="740" y="358" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">RSVD pad 37 · LDO backup</text>
+
+  <!-- Multi-ASIC gap -->
+  <rect x="48" y="520" width="764" height="48" rx="6" fill="#252018" stroke="#E86A2B" stroke-width="1.3" stroke-dasharray="6 4"/>
+  <text x="430" y="540" text-anchor="middle" fill="#E86A2B" font-family="Orbitron,sans-serif" font-size="10" letter-spacing="0.08em">MULTI-ASIC SERIES STACKING</text>
+  <text x="430" y="558" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Documentation gap — see issue #4 · not asserted in this diagram</text>
+
+  <text x="430" y="586" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Caption: voltages and rail names from Integration Guide § Core Rails And Voltage Architecture + Electrical QR and pinout Rails table. Original diagram from public references. No Product Brief tracing.</text>
+</svg>

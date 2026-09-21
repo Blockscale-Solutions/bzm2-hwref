@@ -134,6 +134,12 @@ Additional named rails described in the vendor material:
 - `VDD_HASH`: nominal `0.71 V`
 - `VDD_P75`: backup rail if the on-chip LDO path is unavailable
 
+### Rail / stack topology (single ASIC)
+
+![BZM2 single-ASIC rail and stack topology](../drawings/rails/single-asic-rail-stack.svg)
+
+Original diagram from this section and the Electrical Quick Reference / pinout Rails table. Multi-ASIC series stacking is a **documentation gap** (see issue #4) and is labeled as such — not asserted here. No Product Brief tracing.
+
 ### Why voltage stacking matters
 
 Voltage stacking is central to efficiency, but it also creates the main
@@ -342,6 +348,11 @@ Reserve unicast for:
 
 The vendor documents describe a specific reference flow, but the reusable logic
 for any custom board is:
+
+
+![BZM2 power-up / bring-up flowchart](../drawings/bring-up/power-up-sequence.svg)
+
+Original flowchart derived from the Mermaid sequence below and Board Design Guide §7 / §9 fail-safes. Caption: derived from published reference sequence; not a lab measurement. **NOOP reply spelling:** labeled “NOOP reply (see #9)” — do not treat the historical `BZ2` string in the Mermaid node as authoritative (see issue #9).
 
 ```mermaid
 flowchart TD

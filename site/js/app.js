@@ -142,6 +142,15 @@
     $$("h1, h2, h3", root).forEach(function (h) {
       if (!h.id) h.id = slugify(h.textContent);
     });
+    // Fix relative drawings/ links (markdown uses ../drawings/... from references/)
+    $$("img[src], a[href]", root).forEach(function (el) {
+      var attr = el.tagName === "IMG" ? "src" : "href";
+      var href = el.getAttribute(attr) || "";
+      if (/^https?:\/\//i.test(href) || href.startsWith("#") || href.startsWith("data:")) return;
+      if (/(?:^|\/)\.\.\/drawings\//.test(href) || href.indexOf("../drawings/") === 0) {
+        el.setAttribute(attr, href.replace(/^(\.\.\/)+drawings\//, "drawings/"));
+      }
+    });
     // Fix relative .md links to viewer
     $$("a[href]", root).forEach(function (a) {
       var href = a.getAttribute("href") || "";

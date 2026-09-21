@@ -17,6 +17,11 @@ It is written as a practical reference for:
 
 ### Fixed 9-bit multidrop framing
 
+
+![BZM2 UART 9-bit character frame](../drawings/uart/uart-9bit-character-frame.svg)
+
+Original diagram of one character: start → D0–D7 → 9th address flag → stop. Source: this section. TDM slot SVG deferred pending verbatim slot-order labels in the public reference (see PR).
+
 This is the most important host-side fact about the link, and the one that
 disqualifies most off-the-shelf USB-UART bridges:
 

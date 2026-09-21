@@ -226,8 +226,94 @@ recorded as a closed route rather than an open task, so it is not retried.
 
 ## Frame Structure
 
-The legacy software and opcode notes use a leading length field followed by the
-actual command header and payload.
+### The 9-bit word on the wire
+
+Every character is a **9-bit word sent as two bytes**: the low eight bits first,
+then the ninth bit on its own.
+
+**Bit 8 is the address flag.** It is set on the first word of a frame and clear
+on every word after it. That is the whole multidrop mechanism - a part watches
+for a character with bit 8 set, compares the low byte against its own ASIC ID,
+and either claims the frame or ignores everything until the next address
+character.
+
+**A frame therefore opens with the address character, not with a length.** A
+transmitter that puts a length byte first lands the address flag on the wrong
+character, no part matches, and the command is discarded silently - which on the
+wire is indistinguishable from an absent chain.
+
+### Command frames
+
+Words below are 9-bit; each costs two bytes on the wire.
+
+```text
+NOOP                                  2 words
+  0x100 | asic_id                     address character
+  0x0F0                               opcode nibble 0xF
+
+WRITEREG                              5 words + data + 1
+  0x100 | asic_id                     address character
+  0x020 | ((engine_id >> 8) & 0x0F)   opcode nibble 0x2, engine_id[11:8]
+  engine_id & 0xFF                    engine_id[7:0]
+  offset                              register offset
+  data_len - 1                        length MINUS ONE
+  data[0..n]                          payload, one word per byte
+  0x000                               trailing word
+
+READREG                               6 words
+  0x100 | asic_id                     address character
+  0x030 | ((engine_id >> 8) & 0x0F)   opcode nibble 0x3, engine_id[11:8]
+  engine_id & 0xFF                    engine_id[7:0]
+  offset                              register offset
+  data_len - 1                        length MINUS ONE
+  0x000                               trailing word
+```
+
+Two details that are easy to get wrong: the length field carries **length minus
+one**, and `NOOP` is **two words**, not the five-word shape the register frames
+use. Deriving a `NOOP` from a `WRITEREG` produces a frame the part will not
+answer.
+
+### Reaching the ASIC's own registers
+
+The engine field addresses an engine position. To reach the **ASIC's own local
+registers** instead - the TX control register below, the sensor block, the TDM
+configuration - put **`0xFFF`** in the engine field. It is not an engine; it is
+the control path.
+
+Every instruction in this document that touches a local register goes through
+that value. Local register payloads are **32-bit little-endian**; reading one in
+the wrong byte order returns a plausible wrong number rather than an error.
+
+### Responses are not self-delimiting
+
+**This is the single most important thing about receiving from this part.** A
+response carries a two-byte header and a payload whose length is implied by the
+frame type. There is **no length field and no delimiter** anywhere in it.
+
+```text
+byte 0   ASIC ID
+byte 1   frame type
+byte 2.. payload, length implied by type
+
+  0x01  RESULT      8 bytes   (10 when TDM-wrapped)
+  0x03  REGISTER    length the host asked for - NOT on the wire
+  0x0D  TELEMETRY   8 bytes
+  0x0F  NOOP        3 bytes
+```
+
+A receiver's only synchronisation is a **static type-to-length table**. That has
+three consequences worth stating plainly:
+
+- **A register response carries no length.** The host must remember what it
+  asked for, which means one outstanding read per ASIC.
+- **An unrecognised type costs more than its own frame.** With no delimiter to
+  resynchronise on, a receiver can only discard a byte and retry, walking
+  forward through the frame body and into whatever follows. That is why an
+  unhandled opcode shows up as intermittent corruption elsewhere rather than as
+  an error at the offending frame.
+- **Guessing the payload generation mis-frames the stream.** A four-byte sensor
+  payload read as eight consumes the frames after it.
 
 ### `NOOP`
 
@@ -552,27 +638,61 @@ Two consequences for firmware:
 
 ## DTS / VS Payload Layout
 
-The vendor material describes an 8-byte sensor payload. At a practical level,
-the host needs to extract:
+The payload is **8 bytes**, and the three voltage codes are 14 bits each packed
+across byte boundaries - it cannot be guessed from a field list.
 
-- thermal tune code
-- thermal validity / enable bits
-- thermal-trip status
-- voltage enable bit
-- voltage shutdown / fault status
-- voltage raw codes for `ch0`, `ch1`, and `ch2`
-- PLL lock state bits when present in the response generation
+```text
+byte 0   bit7 thermal_enabled   bit6 thermal_valid   bit5 thermal_fault
+         bit4 thermal_trip      bits[3:0] temperature_code[11:8]
+byte 1   temperature_code[7:0]
+byte 2   bit7 voltage_enabled   bit6 voltage_trip    bits[5:0] ch0[13:8]
+byte 3   ch0[7:0]
+byte 4   ch1[13:6]
+byte 5   bits[7:6] ch2[1:0]     bits[5:0] ch1[5:0]
+byte 6   ch2[9:2]
+byte 7   bit7 pll_locked        bit4 voltage_fault   bits[3:0] ch2[13:10]
+```
+
+**A four-byte variant of this payload exists.** Because responses carry no
+length, a receiver that assumes the wrong generation mis-frames everything after
+it, not just the sensor packet. Fix the generation at bring-up rather than
+inferring it per frame.
+
+### Qualifying a reading
+
+Raw codes mean nothing until the status bits say they do:
+
+```text
+thermal_valid  = thermal_enabled AND thermal_validity AND NOT thermal_fault
+voltage_valid  = voltage_enabled AND NOT voltage_fault
+tripped        = thermal_trip OR voltage_trip
+```
+
+`thermal_enabled` and `voltage_enabled` are also how a host confirms the sensor
+block was armed - see the bring-up sequence in the
+[Integration Guide](blockscale-asic-integration-guide.md). They arrive
+unprompted in this stream, which makes them a witness rather than an echo of the
+register write that set them.
 
 ### Voltage channels
 
-The three channels represent:
+| channel | measures | healthy | trips the ASIC? |
+| --- | --- | --- | --- |
+| `ch0` | differential across the **bottom** stack | `~355 mV` | **yes** |
+| `ch1` | differential across the **top** stack | `~355 mV` | **yes** |
+| `ch2` | top-stack return against bottom-stack supply - the **midpoint error** | **`~0 mV`** | **no** |
 
-- `ch0`: bottom stack voltage
-- `ch1`: top stack voltage
-- `ch2`: differential between stacks
+Both stack channels read the differential across their **own** stack, not an
+absolute node voltage, so both sit near `355 mV` and are directly comparable.
+`ch2` is the same physical node measured from both sides, so a healthy part reads
+approximately zero - bound it by **absolute magnitude**, not by proximity to
+`355 mV`. Measured across 100 devices: `ch0` `0.3530 V`, `ch1` `0.3529 V`,
+`ch2` `0.0012 V`.
 
-These raw values should be converted into engineering units before being used
-for protection or calibration decisions.
+**Only `ch0` and `ch1` feed the ASIC's own shutdown.** The voltage-sensor control
+register carries a threshold field for each of those and none for `ch2`, so the
+part takes no action on a midpoint fault however large. `ch2` is the one channel
+where a host response is the whole protection rather than a backstop.
 
 ## Sensor Conversion Equations
 
@@ -585,8 +705,8 @@ T = K + Y * (N - 2^11 / 2^R) / 2^12
 Where:
 
 - `T` = Celsius
-- `N` = raw tune code
-- `R` = resolution
+- `N` = raw tune code, **12 bits** - mask with `0x0FFF` before converting
+- `R` = resolution, `12` for this conversion
 - `Y = 631.8`
 - `K = -293.8`
 
@@ -599,8 +719,9 @@ V = 1000 * (2 / 5) * VREF * (6 * N / 2^14 - 3 / 2^R - 1)
 Where:
 
 - `V` = mV
-- `N` = raw voltage code
-- `R` = resolution
+- `N` = raw voltage code, **14 bits** - mask with `0x3FFF` before converting
+- `R` = resolution, **`14`** for this conversion - it is not the `12` used by the
+  temperature equation above, and the two codes are genuinely different widths
 - `VREF = 0.7067`
 
 ## `NOOP` Timing Caution

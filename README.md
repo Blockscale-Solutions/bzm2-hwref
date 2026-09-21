@@ -42,3 +42,11 @@ is the canonical home for hardware reference material; firmware trees link here.
 ## License
 This documentation is licensed under [CC-BY-SA-4.0](LICENSE)
 (Creative Commons Attribution-ShareAlike 4.0 International).
+
+## Claims and provenance
+
+Factual claims carry an opaque id such as `[BZM2-ENG-002]`, listed in
+[`CLAIMS.md`](CLAIMS.md). Each id resolves to real source material in an internal
+ledger. Some of that material is under NDA and is not published, so the public
+half records the claim and the kind of evidence behind it rather than the source
+itself. A claim with no id is a claim nobody has stood behind yet — challenge it.

@@ -84,6 +84,27 @@ The documented system addressing model allocates:
 Do not assume engine IDs are contiguous or fully populated. The vendor material
 explicitly allows holes due to disabled or missing engines.
 
+### Engine identifier layout
+
+The engine identifier is a 12-bit row/column pair. The row occupies the low six
+bits and the column sits above it: `engine_id = (col << 6) | row`. `[BZM2-ENG-001]`
+
+A device carries **236 addressable engine tiles**, each containing **4 engines**,
+for **944 engines per ASIC**. `[BZM2-ENG-003]` See
+`blockscale-asic-integration-guide.md` for the throughput estimate that uses the
+same figures.
+
+The distinction matters whenever a number is used as a denominator:
+
+| you are dividing by | use | because |
+| --- | --- | --- |
+| addressable positions (nonce windows, register writes, dispatch entries) | **236** | a register write addresses a tile |
+| hashing capacity (hash rate, J/TH, pass rate) | **944** | each tile contains four engines |
+
+Using one figure for both is a silent factor-of-four error. Nothing in the
+protocol reports it, and both numbers appear in vendor material without the unit
+being named.
+
 ## ASIC Identification
 
 Relevant ID values used during system bring-up:
@@ -299,6 +320,13 @@ Required setup before job submission:
 - program `EndNonce` at `0x40`
 - program `Target` at `0x44`
 - load the four midstates beginning at `0x10`
+
+`StartNonce` and `EndNonce` are **per addressable engine tile**, not per engine.
+The four engines at a tile share one nonce window. `[BZM2-ENG-002]` A partition
+therefore divides the nonce space by the number of tiles (236), while a hash-rate
+denominator counts engines (944).
+
+Both endpoints must be even. `[BZM2-ENG-004]`
 
 ### Four-write sequence
 

@@ -18,7 +18,7 @@ pad,name,function,io_type,voltage_domain,default_state,pinsel0_function,pinsel1_
 17,RESET_TX_IN,Reset/UART input,Input,VDDIO 1.2 V,input pull-up,RESET_IN,TX_IN,N,reset is active low
 18,RX_TRIP_IN,UART/trip input,Input,VDDIO 1.2 V,input pull-up,RX_IN,TRIP_IN,N,host-side UART TX connects here in PINSEL=0 systems
 19,VDDIO,IO voltage rail,,VDDIO 1.2 V,-,-,-,N,one of two VDDIO pads; we connect both - on-die connectivity between them is not documented
-20,REFCLKOUT2,Reference clock to next ASIC,Input (no pull),VDDIO 1.2 V,no pull-up/down,-,-,N,pin muxed in debug mode; < 50 MHz
+20,REFCLKOUT2,Reference clock to next ASIC,UNRESOLVED,VDDIO 1.2 V,no pull-up/down,-,-,N,"pin muxed in debug mode; < 50 MHz. CONTRADICTION: name and function both say output, and pad 38 REFCLKOUT1 carries the identical function as Output, but this row was published as Input. No public or measured source settles it - do not assume either direction."
 21,VSS,Ground,Input,VSS,-,-,-,W,
 22,VSS,Ground,Input,VSS,-,-,-,W,
 23,VSS,Ground,Input,VSS,-,-,-,W,

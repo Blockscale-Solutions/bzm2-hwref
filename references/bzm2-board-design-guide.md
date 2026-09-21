@@ -39,8 +39,11 @@ the single most common way to end up with a dead-on-arrival board.
   not.
 - **Don't get RX/TX direction backwards.** A transposed UART translator is fatal and invisible to a
   level check — it just doesn't communicate. Verify TX-in vs RX-out against the pinout/ball map before
-  fab. *(A community single-ASIC board shipped exactly this and was non-functional until re-spun:
-  [bitaxeorg/bitaxeBonanza#3](https://github.com/bitaxeorg/bitaxeBonanza/issues/3).)*
+  fab. *(A community **eight-ASIC** board shipped exactly this and does not work:
+  [bitaxeorg/bitaxeBonanza](https://github.com/bitaxeorg/bitaxeBonanza). Its own README
+  names [#3](https://github.com/bitaxeorg/bitaxeBonanza/issues/3) and says the design
+  "might never work" because [#4](https://github.com/bitaxeorg/bitaxeBonanza/issues/4).
+  It has **not** been re-spun - this is a live failure, not a corrected one.)*
 
 ## 2. Reference clock — deliver 50 MHz *in the 1.2 V domain*
 

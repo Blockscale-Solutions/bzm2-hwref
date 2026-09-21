@@ -33,12 +33,14 @@ clock, load, and protect it correctly.
 
 ## ASIC At A Glance
 
-The vendor collateral and legacy host software consistently describe the
-following ASIC-level properties:
+ASIC-level properties, with their bases separated because they differ:
 
-- `236` hashing engine tiles per ASIC
-- `4` engines per tile
-- `944` total engines per ASIC
+- `236` addressable engine positions per ASIC `[BZM2-ENG-003]` - demonstrated by
+  public open-source firmware and independently corroborated by our own capture
+- `4` engines per position `[BZM2-ENG-005]` - **vendor material only**, no public
+  or measured basis
+- `944` total engines per ASIC - follows from the two above, so it inherits the
+  weaker basis
 - `2` primary PLL domains, corresponding to the bottom and top engine stacks
 - on-die digital temperature sensing
 - on-die three-channel voltage sensing

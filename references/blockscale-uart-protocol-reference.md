@@ -89,8 +89,12 @@ explicitly allows holes due to disabled or missing engines.
 The engine identifier is a 12-bit row/column pair. The row occupies the low six
 bits and the column sits above it: `engine_id = (col << 6) | row`. `[BZM2-ENG-001]`
 
-A device carries **236 addressable engine tiles**, each containing **4 engines**,
-for **944 engines per ASIC**. `[BZM2-ENG-003]` See
+A device carries **236 addressable engine positions**. `[BZM2-ENG-003]` Each
+position contains **4 engines**, for **944 engines per ASIC**. `[BZM2-ENG-005]`
+
+The two rest on different evidence and should not be carried as one figure:
+**236** is demonstrated by public open-source firmware and independently
+corroborated by our own capture; the **x4** rests on vendor material alone. See
 `blockscale-asic-integration-guide.md` for the throughput estimate that uses the
 same figures.
 
@@ -387,10 +391,16 @@ Required setup before job submission:
 - program `Target` at `0x44`
 - load the four midstates beginning at `0x10`
 
-`StartNonce` and `EndNonce` are **per addressable engine tile**, not per engine.
-The four engines at a tile share one nonce window. `[BZM2-ENG-002]` A partition
-therefore divides the nonce space by the number of tiles (236), while a hash-rate
-denominator counts engines (944).
+`StartNonce` and `EndNonce` are written against the **addressable engine id** -
+the same 12-bit id as every other work register - and no finer unit appears
+anywhere in the write path. `[BZM2-ENG-002]` A partition therefore divides the
+nonce space by **236**, while a hash-rate denominator counts engines (944).
+Getting that backwards is a silent 4x error.
+
+Stated precisely, because the distinction matters: the register map **exposes**
+one window per position. That is not the same as proving the four engines at a
+position cannot be windowed by some undocumented means, and this reference does
+not claim the stronger thing.
 
 Both endpoints must be even. `[BZM2-ENG-004]`
 

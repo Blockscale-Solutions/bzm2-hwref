@@ -356,7 +356,7 @@ for any custom board is:
 
 ![BZM2 power-up / bring-up flowchart](../drawings/bring-up/power-up-sequence.svg)
 
-Original flowchart derived from the Mermaid sequence below and Board Design Guide §7 / §9 fail-safes. Caption: derived from published reference sequence; not a lab measurement. **NOOP reply spelling:** labeled “NOOP reply (see #9)” — do not treat the historical `BZ2` string in the Mermaid node as authoritative (see issue #9).
+Original flowchart derived from the Mermaid sequence below and Board Design Guide §7 / §9 fail-safes. Caption: derived from published reference sequence; not a lab measurement. **NOOP reply:** `2ZB`, settled in #9 and now correct throughout this document.
 
 ```mermaid
 flowchart TD

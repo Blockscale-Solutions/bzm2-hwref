@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title id="doc-title">Document · BZM2 hardware reference</title>
+  <meta name="description" content="BZM2 hardware reference document viewer." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <nav class="site-nav" aria-label="Section navigation">
+    <div class="inner">
+      <a class="nav-brand" href="./">BZM2 · <span class="accent">hardware ref</span></a>
+      <div class="nav-links">
+        <a href="doc.html?doc=integration#power-up-and-bring-up-sequence" data-task="bring-up">Bring-up</a>
+        <a href="doc.html?doc=board" data-task="board">Board design</a>
+        <a href="doc.html?doc=uart" data-task="uart">UART/TDM</a>
+        <a href="doc.html?doc=pinout" data-task="pinout">Pinout &amp; rails</a>
+        <a href="doc.html?doc=integration#asic-at-a-glance" data-task="architecture">Architecture</a>
+        <a href="doc.html?doc=implementations" data-task="implementations">Implementations</a>
+        <a href="doc.html?doc=roadmap" data-task="roadmap">Roadmap</a>
+        <a href="https://github.com/Blockscale-Solutions/bzm2-hwref" rel="noopener noreferrer">GitHub</a>
+      </div>
+      <div class="theme-toggle" data-theme-toggle role="group" aria-label="Color theme">
+        <button type="button" data-theme-value="light">Light</button>
+        <button type="button" data-theme-value="dark">Dark</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap" style="padding-top:1rem">
+    <div class="search-bar" role="search">
+      <label class="visually-hidden" for="site-search" style="position:absolute;left:-9999px">Search documentation</label>
+      <input id="site-search" type="search" placeholder="Search docs…" autocomplete="off" />
+    </div>
+    <div id="search-results" class="search-results" role="listbox" aria-label="Search results"></div>
+  </div>
+
+  <div class="wrap doc-layout">
+    <aside id="doc-toc" class="doc-toc" aria-label="Table of contents"></aside>
+    <article>
+      <div id="doc-meta" class="doc-meta"></div>
+      <div id="doc-body" class="prose">Loading…</div>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p><a href="./">← Hardware reference hub</a> · source under <code>references/</code> · <a href="https://github.com/Blockscale-Solutions/bzm2-hwref">GitHub</a></p>
+    </div>
+  </footer>
+
+  <script src="js/marked.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

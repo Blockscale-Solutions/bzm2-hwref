@@ -41,8 +41,17 @@ dead-on-arrival risk, and the UART adds a second constraint: it is **fixed 9-bit
 
 A proven approach crosses the boundary with a **real IC level translator whose low-side supply (VCCA)
 sits on the ASIC's own 1.2 V IO rail** — this is both what the mature open BZM2 boards do and the
-reference-grade practice (a passive diode-clamp or divider is a shortcut, not the robust answer). The only
-translator families that qualify are those whose VCC floor is *at or below* 1.2 V.
+reference-grade practice. The only translator families that qualify are those whose VCC floor is
+*at or below* 1.2 V.
+
+**A passive diode-clamp is not merely a shortcut, and this document previously said it was.**
+[bitaxeorg/bitaxeBIRDS](https://github.com/bitaxeorg/bitaxeBIRDS) ships one — `DLLFSD01LPH4`
+clamp diodes in `shifter.kicad_sch` — and it is one of the open boards this guide cites
+approvingly elsewhere. Dismissing the approach while recommending the board that uses it was
+incoherent. The honest statement is narrower: **a translator IC gives defined levels and defined
+drive in both directions, and a clamp does not**, so a clamp needs its series resistance and edge
+rates checked against the actual baud rather than assumed. Shipping boards exist on both sides of
+that choice.
 
 | An effective approach leverages… | …with these example parts | …in this manner | When to pick it |
 |---|---|---|---|

@@ -402,27 +402,7 @@ for any custom board is:
 
 ![BZM2 power-up / bring-up flowchart](../drawings/bring-up/power-up-sequence.svg)
 
-Original flowchart derived from the Mermaid sequence below and Board Design Guide §7 / §9 fail-safes. Caption: derived from published reference sequence; not a lab measurement. **NOOP reply:** `2ZB`, settled in #9 and now correct throughout this document.
-
-```mermaid
-flowchart TD
-    A["Apply control rails and reference clock"] --> B["Apply safe initial stack voltage"]
-    B --> C["Hold ASICs in reset"]
-    C --> D["Bring UART online at 5 Mbps"]
-    D --> E["Enumerate ASICs from default ID 0xFA"]
-    E --> F["Confirm NOOP = 2ZB"]
-    F --> G["Initialize LDO-related state and ASIC IDs"]
-    G --> H["Program safe initial PLL frequency"]
-    H --> I["Wait for PLL lock"]
-    I --> J["Enable TDM if streaming is needed"]
-    J --> K["Submit dummy work to keep engines loaded"]
-    K --> P["Arm on-die thermal and voltage protection"]
-    P --> Q{"Device reports thermal_enabled and voltage_enabled?"}
-    Q -->|no| STOP["STOP - do not raise the stack"]
-    Q -->|yes| L["Raise stack voltage gradually while monitoring VS"]
-    L --> M["Run tuning and calibration sweep"]
-    M --> N["Transition to production job dispatch"]
-```
+Original flowchart (published source of truth): [power-up-sequence.svg](../drawings/bring-up/power-up-sequence.svg). Captures the Integration Guide bring-up sequence and Board Design Guide §7 / §9 fail-safes, including the post-#27 arm-protection gate with a **terminal STOP** if `thermal_enabled` / `voltage_enabled` are not confirmed before raising the stack. Caption: derived from published reference sequence; not a lab measurement. **NOOP reply:** `2ZB`, settled in #9. Editable Mermaid for redraws only: [power-up-sequence.mmd](../drawings/bring-up/power-up-sequence.mmd) — do not re-inline a second SoT here.
 
 ### Practical bring-up rules
 

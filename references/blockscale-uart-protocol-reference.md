@@ -157,9 +157,68 @@ also uses it as the basis for some broadcast-style write patterns.
 | `0x2` | `WRITEREG` | Write engine or local registers | No immediate payload response |
 | `0x3` | `READREG` | Read engine or local registers | Register data |
 | `0x4` | `MULTICAST_WRITE` | Write a row-group of engines | No immediate payload response |
+| `0x5` | `BLOCK_HDR` | Named in vendor material. **Not emitted or recognised by any public implementation** - see below. | Unknown |
 | `0xD` | `DTS_VS` | Read thermal and voltage sensor data | Sensor payload |
 | `0xE` | `LOOPBACK` | Echo payload for transport validation | Echoed payload |
 | `0xF` | `NOOP` | Link and chain liveness test | ASCII `2ZB` |
+
+### Opcode `0x5`, and the gap above it
+
+`0x5` is attested in vendor material as `BLOCK_HDR`. **Its direction, payload
+length and layout, response behaviour, host-side trigger and broadcast
+addressability are all unknown to this reference**, and no public source
+carries any of them.
+
+What *can* be said, and is worth saying, is the negative - because it bounds
+what an implementer actually needs.
+
+#### `0x5` is not needed to mine this part
+
+[`johnny9/ESP-Miner-Bonanza`](https://github.com/johnny9/ESP-Miner-Bonanza)
+(GPL-3.0) is an independent open-source implementation that drives this ASIC.
+Its **entire** command surface is three transmit encoders and four receive
+frame types:
+
+| | |
+| --- | --- |
+| transmit | `bzm_transport_encode_write` (`0x2`), `bzm_transport_encode_read` (`0x3`), `bzm_transport_encode_noop` (`0xF`) - declared at `components/asic/include/bzm_transport.h:98-102`, opcode nibbles visible as `0x020` / `0x030` / `0x0f0` at `components/asic/bzm_transport.c:164`, `:187`, `:202` |
+| receive | `RESULT 0x01`, `REGISTER 0x03`, `TELEMETRY 0x0d`, `NOOP 0x0f` - `components/asic/include/bzm_frame_parser.h:20-23` |
+
+There is no `0x5` encoder and no job-submission opcode at all: **work is
+programmed through register writes.** That firmware is hardware-qualified -
+`components/asic/include/bzm.h:18-20` records seven independent results
+reproduced on a Bitaxe 1002. So mining is demonstrably possible without ever
+issuing or handling `0x5`.
+
+#### But an unhandled `0x5` is still a data-loss bug
+
+This is the concrete reason the row exists, and it is citable rather than
+asserted. That same parser treats an unrecognised opcode as a desynchronised
+stream: `components/asic/bzm_frame_parser.c:97` returns `0` from the `default:`
+arm, leaving the header invalid, and the caller then discards **one byte** and
+resynchronises (`:111-113`, again at `:152-154`).
+
+One byte at a time means the parser walks *into* the frame body and through
+whatever follows it. A `0x5` frame arriving at a receiver that does not know
+its length therefore costs the frames **around** it, not just itself. The
+failure presents as intermittent corruption with no pointer back to the cause.
+
+**An implementer should decide deliberately what to do with an opcode outside
+the known set** - resynchronise, hard-error, or log - rather than inherit
+byte-at-a-time discard by default.
+
+#### Opcodes `0x6` through `0xC` are unmapped
+
+Not "unused". We have no evidence about them at all. Treat the known set as a
+**lower bound** on what the part may emit.
+
+#### What would close this
+
+Nothing available. The positive semantics exist only in vendor material, and a
+capture cannot substitute: no public implementation emits `0x5`, so a trace of
+any public host will never contain one. Only a trace of a legacy vendor stack
+would, and a fact recovered that way cannot enter this reference. This is
+recorded as a closed route rather than an open task, so it is not retried.
 
 ## Frame Structure
 
@@ -196,6 +255,13 @@ earlier revision of this document repeated the mistake.
 > each other — the third-party port may well have read the same headers — so
 > treat this as well-attested, not as confirmed. It will be upgraded when we
 > measure it, and corrected if the measurement disagrees.
+>
+> One of those sources is public and can be named:
+> [`johnny9/ESP-Miner-Bonanza`](https://github.com/johnny9/ESP-Miner-Bonanza)
+> (GPL-3.0) compares the NOOP payload against the literal `"2ZB"` at
+> `components/asic/bzm_transport.c:66` and counts a mismatch as an invalid
+> frame. That is a working implementation rejecting `BZ2`, not a document
+> repeating it.
 
 Practical use:
 

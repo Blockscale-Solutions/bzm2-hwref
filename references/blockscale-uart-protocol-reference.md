@@ -133,7 +133,7 @@ also uses it as the basis for some broadcast-style write patterns.
 | `0x4` | `MULTICAST_WRITE` | Write a row-group of engines | No immediate payload response |
 | `0xD` | `DTS_VS` | Read thermal and voltage sensor data | Sensor payload |
 | `0xE` | `LOOPBACK` | Echo payload for transport validation | Echoed payload |
-| `0xF` | `NOOP` | Link and chain liveness test | ASCII `BZ2` |
+| `0xF` | `NOOP` | Link and chain liveness test | ASCII `2ZB` |
 
 ## Frame Structure
 
@@ -150,7 +150,26 @@ Purpose:
 Behavior:
 
 - transmit a short command to a specific ASIC
-- receive three ASCII bytes: `BZ2`
+- receive three ASCII bytes: `2ZB`
+
+The bytes are the part name **reversed**, and that is worth stating plainly
+because the obvious spelling is the wrong one. An implementer who compares the
+reply against `BZ2` gets no match, concludes there is no device at that
+address, and stops the chain walk at zero — which is indistinguishable from an
+empty bus. Nothing about the failure points at the comparison.
+
+The trap has teeth because both spellings appear as named constants in
+reference software, two lines apart, for different purposes: one is the part
+identifier, the other is this reply. We reached for the wrong one, and an
+earlier revision of this document repeated the mistake.
+
+> **Provenance.** `2ZB` is what three independent implementations compare
+> against: two reference implementations and one third-party firmware port.
+> **We have not yet observed it on our own wire**, so this is agreement among
+> sources rather than a measurement. Those sources are not fully independent of
+> each other — the third-party port may well have read the same headers — so
+> treat this as well-attested, not as confirmed. It will be upgraded when we
+> measure it, and corrected if the measurement disagrees.
 
 Practical use:
 
@@ -482,7 +501,7 @@ A specific transport rule applies to `NOOP`:
 Byte-count note to avoid off-by-a-layer confusion: at the wire-packet level a
 `NOOP` request is `2` bytes with a `5`-byte response; at the host framing
 level the transmitted frame is `4` bytes (length prefix + header) and the
-`BZ2` payload is the `3` data bytes inside that response.
+`2ZB` payload is the `3` data bytes inside that response.
 
 Treat this as a real transport rule during low-level validation.
 

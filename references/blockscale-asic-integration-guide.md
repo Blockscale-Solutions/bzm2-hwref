@@ -314,7 +314,11 @@ The documented enumeration flow is:
 6. the next ASIC becomes reachable
 7. repeat until the chain is assigned
 
-`NOOP` returning `BZ2` is the simplest chain-liveness check.
+`NOOP` returning `2ZB` is the simplest chain-liveness check. The bytes are the
+part name reversed; comparing against `BZ2` matches nothing and reads as an
+empty bus. See the protocol reference for the provenance of those three bytes —
+they are attested by agreement among implementations, not yet by our own
+measurement.
 
 ### Broadcast and multicast
 
@@ -349,7 +353,7 @@ flowchart TD
     B --> C["Hold ASICs in reset"]
     C --> D["Bring UART online at 5 Mbps"]
     D --> E["Enumerate ASICs from default ID 0xFA"]
-    E --> F["Confirm NOOP = BZ2"]
+    E --> F["Confirm NOOP = 2ZB"]
     F --> G["Initialize LDO-related state and ASIC IDs"]
     G --> H["Program safe initial PLL frequency"]
     H --> I["Wait for PLL lock"]

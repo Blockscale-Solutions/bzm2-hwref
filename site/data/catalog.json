@@ -1,0 +1,120 @@
+{
+  "docs": [
+    {
+      "id": "integration",
+      "title": "ASIC Integration Guide",
+      "file": "blockscale-asic-integration-guide.md",
+      "summary": "Architecture, rails and voltage stacking, clocking, bring-up, telemetry, calibration, validation.",
+      "tasks": ["bring-up", "architecture", "pinout"]
+    },
+    {
+      "id": "board",
+      "title": "Board Design Guide",
+      "file": "bzm2-board-design-guide.md",
+      "summary": "Effective patterns and pitfalls: level translation, clocking, VCORE, sequencing, 9-bit UART, checklist.",
+      "tasks": ["board", "bring-up"]
+    },
+    {
+      "id": "parts",
+      "title": "Reference Design Guidance",
+      "file": "bzm2-reference-design-guidance.md",
+      "summary": "Parts-and-approaches catalog for translators, UART bridges, clock, VCORE control, protection, thermal.",
+      "tasks": ["board"]
+    },
+    {
+      "id": "uart",
+      "title": "UART and TDM Protocol Reference",
+      "file": "blockscale-uart-protocol-reference.md",
+      "summary": "9-bit multidrop framing, opcodes, job programming, TDM, sensors.",
+      "tasks": ["uart"]
+    },
+    {
+      "id": "pinout",
+      "title": "Pinout and Ball Map",
+      "file": "bzm2-pinout-reference.md",
+      "summary": "All 60 pads: rails, clocks, PINSEL-muxed UART/reset/trip, straps, JTAG.",
+      "tasks": ["pinout"]
+    },
+    {
+      "id": "ballmap",
+      "title": "Ball map (CSV)",
+      "file": "bzm2-ballmap.csv",
+      "summary": "Machine-readable pad map for the 7.5×7 mm FCLGA package.",
+      "tasks": ["pinout"],
+      "kind": "csv"
+    },
+    {
+      "id": "architecture",
+      "title": "ASIC Integration Guide — architecture",
+      "file": "blockscale-asic-integration-guide.md",
+      "summary": "System partitioning, package constraints, core rails / voltage architecture, chain topology.",
+      "tasks": ["architecture"],
+      "hash": "asic-at-a-glance"
+    },
+    {
+      "id": "implementations",
+      "title": "Hardware Implementations Survey",
+      "file": "bzm2-hardware-implementations.md",
+      "summary": "Known BZM2 boards and firmware across maturity / availability tiers.",
+      "tasks": ["implementations"]
+    },
+    {
+      "id": "roadmap",
+      "title": "Reference Implementation Roadmap",
+      "file": "blockscale-reference-roadmap.md",
+      "summary": "Reference software/firmware landscape and phased bring-up plan.",
+      "tasks": ["roadmap"]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "bring-up",
+      "label": "Bring-up",
+      "tone": "cool",
+      "blurb": "Power sequence, reset, first-article checklist, validation gates.",
+      "href": "doc.html?doc=integration#power-up-and-bring-up-sequence"
+    },
+    {
+      "id": "board",
+      "label": "Board design",
+      "tone": "warm",
+      "blurb": "Patterns, pitfalls, and a parts menu for a working BZM2 board.",
+      "href": "doc.html?doc=board"
+    },
+    {
+      "id": "uart",
+      "label": "UART / TDM",
+      "tone": "cool",
+      "blurb": "9-bit framing, opcodes, job programming, TDM slots, sensors.",
+      "href": "doc.html?doc=uart"
+    },
+    {
+      "id": "pinout",
+      "label": "Pinout & rails",
+      "tone": "warm",
+      "blurb": "60-pad map, rail counts, PINSEL group, straps — plus CSV.",
+      "href": "doc.html?doc=pinout"
+    },
+    {
+      "id": "architecture",
+      "label": "Architecture",
+      "tone": "cool",
+      "blurb": "Partitioning, voltage stacking, clocking, chain topology.",
+      "href": "doc.html?doc=integration#asic-at-a-glance"
+    },
+    {
+      "id": "implementations",
+      "label": "Implementations",
+      "tone": "warm",
+      "blurb": "Ecosystem survey: boards and firmware by maturity tier.",
+      "href": "doc.html?doc=implementations"
+    },
+    {
+      "id": "roadmap",
+      "label": "Roadmap",
+      "tone": "cool",
+      "blurb": "Phased reference bring-up from discovery through calibration.",
+      "href": "doc.html?doc=roadmap"
+    }
+  ]
+}

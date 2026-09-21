@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BZM2 Hardware Reference</title>
+  <meta name="description" content="Task-oriented hardware reference for the Intel Blockscale BZM2 (Bonanza Mine 2) ASIC: bring-up, board design, UART/TDM, pinout, architecture." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <nav class="site-nav" aria-label="Section navigation">
+    <div class="inner">
+      <a class="nav-brand" href="./">BZM2 · <span class="accent">hardware ref</span></a>
+      <div class="nav-links">
+        <a href="doc.html?doc=integration#power-up-and-bring-up-sequence" data-task="bring-up">Bring-up</a>
+        <a href="doc.html?doc=board" data-task="board">Board design</a>
+        <a href="doc.html?doc=uart" data-task="uart">UART/TDM</a>
+        <a href="doc.html?doc=pinout" data-task="pinout">Pinout &amp; rails</a>
+        <a href="doc.html?doc=integration#asic-at-a-glance" data-task="architecture">Architecture</a>
+        <a href="doc.html?doc=implementations" data-task="implementations">Implementations</a>
+        <a href="doc.html?doc=roadmap" data-task="roadmap">Roadmap</a>
+        <a href="https://github.com/Blockscale-Solutions/bzm2-hwref" rel="noopener noreferrer">GitHub</a>
+      </div>
+      <div class="theme-toggle" data-theme-toggle role="group" aria-label="Color theme">
+        <button type="button" data-theme-value="light">Light</button>
+        <button type="button" data-theme-value="dark">Dark</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span> Intel Blockscale · Bonanza Mine 2</p>
+      <h1>BZM2 hardware reference<br /><span class="t-muted">for board and firmware bring-up</span></h1>
+      <p class="hero-sub">
+        Canonical docs for the BZM2 ASIC: rails and voltage stacking, 9-bit UART/TDM,
+        pinout, board patterns, and the reference roadmap. No invented hashrates, temps,
+        or efficiencies — lab charts belong with measured RDS data.
+      </p>
+      <div class="search-bar" role="search">
+        <label class="visually-hidden" for="site-search" style="position:absolute;left:-9999px">Search documentation</label>
+        <input id="site-search" type="search" placeholder="Search docs (rails, opcode, PINSEL, VCORE…)" autocomplete="off" />
+      </div>
+      <p class="search-hint">Client-side search over the published markdown. Results stay on this site.</p>
+      <div id="search-results" class="search-results" role="listbox" aria-label="Search results"></div>
+    </div>
+  </header>
+
+  <main class="wrap hub">
+    <p class="section-label">Start from the task</p>
+    <div id="task-grid" class="task-grid" aria-label="Task-oriented navigation"></div>
+
+    <p class="section-label">All documents</p>
+    <div id="doc-list" class="doc-list" aria-label="Document list"></div>
+
+    <div class="callout">
+      <strong>Source of truth:</strong> markdown under
+      <code>references/</code> in the
+      <a href="https://github.com/Blockscale-Solutions/bzm2-hwref">GitHub repository</a>.
+      This Pages site renders those files; edit the markdown, not HTML copies.
+      Related firmware bring-up notes live on
+      <a href="https://blockscale-solutions.github.io/mujina-bzm2-integration/">Mujina BZM2 integration</a>.
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p class="section-label">License</p>
+      <p>Documentation licensed under <a href="https://github.com/Blockscale-Solutions/bzm2-hwref/blob/main/LICENSE">CC-BY-SA-4.0</a>. Product Brief PDF is vendor collateral in the repo root.</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

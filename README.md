@@ -1,6 +1,8 @@
 # bzm2-hwref
 Hardware Reference Documentation for the Bonanza Mine 2 ASIC (Intel® Blockscale™ 1000 series, "BZM2").
 
+**Site:** [https://blockscale-solutions.github.io/bzm2-hwref/](https://blockscale-solutions.github.io/bzm2-hwref/) — task-oriented hub (Bring-up · Board design · UART/TDM · Pinout & rails · Architecture · Implementations · Roadmap). Renders the markdown below; edit `references/`, not HTML copies.
+
 ## Documentation
 
 **Hardware reference (start here):**

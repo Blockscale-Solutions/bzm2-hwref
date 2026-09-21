@@ -255,6 +255,13 @@ earlier revision of this document repeated the mistake.
 > each other — the third-party port may well have read the same headers — so
 > treat this as well-attested, not as confirmed. It will be upgraded when we
 > measure it, and corrected if the measurement disagrees.
+>
+> One of those sources is public and can be named:
+> [`johnny9/ESP-Miner-Bonanza`](https://github.com/johnny9/ESP-Miner-Bonanza)
+> (GPL-3.0) compares the NOOP payload against the literal `"2ZB"` at
+> `components/asic/bzm_transport.c:66` and counts a mismatch as an invalid
+> frame. That is a working implementation rejecting `BZ2`, not a document
+> repeating it.
 
 Practical use:
 

@@ -36,7 +36,17 @@ respectively. Follow the reference-design treatment (local decoupling; supply
 | --- | --- | --- | --- |
 | `29` | `REFCLKIN` | Input, no pull | `<= 50 MHz`; `50 MHz` standard |
 | `38` | `REFCLKOUT1` | Output | `< 50 MHz`; ASIC-to-ASIC, muxed in debug mode |
-| `20` | `REFCLKOUT2` | Input (no pull) | `< 50 MHz`; ASIC-to-ASIC, muxed in debug mode |
+| `20` | `REFCLKOUT2` | **UNRESOLVED** - see below | `< 50 MHz`; ASIC-to-ASIC, muxed in debug mode |
+
+**Pad 20's direction is unresolved, and the contradiction is in our own
+published data.** Its name (`REFCLKOUT2`) and its function ("reference clock to
+next ASIC") both say output, and pad `38` carries the identical function as
+`Output` - yet the row was published as `Input`. Those cannot all be true.
+
+Nothing settles it: no public source states the direction, the public
+open-source symbols type every pin `unspecified`, and we have not measured it.
+It is marked rather than quietly corrected, because guessing a clock direction
+is how a chain gets built backwards. **Do not assume either direction.**
 
 Internal PLLs (one per stack) run `16 MHz` to `3200 MHz`, programmable.
 

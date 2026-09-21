@@ -36,17 +36,35 @@ respectively. Follow the reference-design treatment (local decoupling; supply
 | --- | --- | --- | --- |
 | `29` | `REFCLKIN` | Input, no pull | `<= 50 MHz`; `50 MHz` standard |
 | `38` | `REFCLKOUT1` | Output | `< 50 MHz`; ASIC-to-ASIC, muxed in debug mode |
-| `20` | `REFCLKOUT2` | **UNRESOLVED** - see below | `< 50 MHz`; ASIC-to-ASIC, muxed in debug mode |
+| `20` | `REFCLKOUT2` | Output, no pull | `< 50 MHz`; ASIC-to-ASIC, muxed in debug mode |
 
-**Pad 20's direction is unresolved, and the contradiction is in our own
-published data.** Its name (`REFCLKOUT2`) and its function ("reference clock to
-next ASIC") both say output, and pad `38` carries the identical function as
-`Output` - yet the row was published as `Input`. Those cannot all be true.
+### Clock forwarding: one input, two outputs
 
-Nothing settles it: no public source states the direction, the public
-open-source symbols type every pin `unspecified`, and we have not measured it.
-It is marked rather than quietly corrected, because guessing a clock direction
-is how a chain gets built backwards. **Do not assume either direction.**
+Each ASIC takes the reference clock **in** on pad `29` and can pass it **on**
+from **two** pads, `20` and `38`. That is what lets a multi-ASIC chain be wide
+rather than deep, and it is the most useful thing to know about clocking one.
+
+[`bitaxeorg/bitaxeBonanza`](https://github.com/bitaxeorg/bitaxeBonanza) (public,
+eight ASICs) uses both paths from a **single** oscillator:
+
+```
+oscillator -> A1 pad 29
+  A1 pad 20 -> A2 pad 29      A3 pad 20 -> A4 pad 29
+  A5 pad 20 -> A6 pad 29      A7 pad 20 -> A8 pad 29
+  A1 pad 38 -> A3 pad 29      A3 pad 38 -> A5 pad 29      A5 pad 38 -> A7 pad 29
+```
+
+Each pad-`20` hop is a bare two-node net - no series part, no second driver.
+With one clock source on that board, its even-numbered ASICs could not run
+unless pad `20` sourced their clock. The pad-`38` hops are AC-coupled through
+a capacitor and a termination network.
+
+Using both outputs makes that chain **four levels deep instead of eight**,
+which halves accumulated jitter and halves the length of any failure.
+
+Neither forwarding pad has a pull-up or pull-down. An unused `REFCLKOUT1` or
+`REFCLKOUT2` needs no external part and may be left open - `A7` pad `38` on
+that board is simply unconnected.
 
 Internal PLLs (one per stack) run `16 MHz` to `3200 MHz`, programmable.
 

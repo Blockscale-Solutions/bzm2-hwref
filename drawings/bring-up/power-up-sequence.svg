@@ -50,7 +50,7 @@
     <!-- Decision: NOOP -->
     <path d="M380 490 L520 520 L380 550 L240 520 Z" fill="#252018" stroke="#E86A2B" stroke-width="1.4"/>
     <text x="380" y="516" text-anchor="middle" fill="#d6dde3" font-size="12">6 · Confirm NOOP reply</text>
-    <text x="380" y="534" text-anchor="middle" fill="#E86A2B" font-size="11" font-family="JetBrains Mono,monospace">NOOP reply (see #9)</text>
+    <text x="380" y="534" text-anchor="middle" fill="#E86A2B" font-size="11" font-family="JetBrains Mono,monospace">NOOP reply = 2ZB</text>
 
     <!-- fail branch -->
     <line x1="520" y1="520" x2="620" y2="520" stroke="#E86A2B" stroke-width="1.4" marker-end="url(#arrow)"/>

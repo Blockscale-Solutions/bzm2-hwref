@@ -1,335 +1,209 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 780" role="img"
-     aria-label="BZM2 60-pad schematic pad map from public ballmap CSV">
-  <title>BZM2 package pad map (schematic from public ballmap)</title>
-  <desc>Original schematic pad map generated from references/bzm2-ballmap.csv. Not a fab drawing; no invented pitch or land size. Caption cites pinout reference.</desc>
-  <rect width="920" height="780" fill="#12171c"/>
-  <rect x="24" y="24" width="872" height="732" rx="10" fill="#1a2228" stroke="#3a4650" stroke-width="1.5"/>
-  <text x="460.0" y="52" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="11" font-weight="600" letter-spacing="0.12em">BZM2 · 7.5 × 7 mm FCLGA · 60 LANDS (SCHEMATIC)</text>
-  <text x="460.0" y="70" text-anchor="middle" fill="#2dd4bf" font-family="Ubuntu,sans-serif" font-size="11">Top view · numbering E→N→W→S then inner field (CSV side column)</text>
-  <rect x="34" y="76" width="852" height="546" rx="8" fill="none" stroke="#3a4650" stroke-width="1.2" stroke-dasharray="6 4"/>
-  <text x="898" y="349.0" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="10" font-weight="600">E</text>
-  <text x="460.0" y="62" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="10" font-weight="600">N</text>
-  <text x="22" y="349.0" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="10" font-weight="600">W</text>
-  <text x="460.0" y="640" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="10" font-weight="600">S</text>
-  <g id="pad-1">
-    <rect x="824.0" y="554.6" width="52" height="28" rx="3" fill="#2a3a1e" stroke="#a3e635" stroke-width="1.2"/>
-    <text x="850.0" y="565.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">1</text>
-    <text x="850.0" y="578.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDDINT_1</text>
-  </g>
-  <g id="pad-2">
-    <rect x="824.0" y="491.9" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="850.0" y="502.9" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">2</text>
-    <text x="850.0" y="515.9" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-3">
-    <rect x="824.0" y="429.1" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="850.0" y="440.1" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">3</text>
-    <text x="850.0" y="453.1" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-4">
-    <rect x="824.0" y="366.4" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="850.0" y="377.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">4</text>
-    <text x="850.0" y="390.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-5">
-    <rect x="824.0" y="303.6" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="850.0" y="314.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">5</text>
-    <text x="850.0" y="327.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-6">
-    <rect x="824.0" y="240.9" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="850.0" y="251.9" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">6</text>
-    <text x="850.0" y="264.9" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-7">
-    <rect x="824.0" y="178.1" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="850.0" y="189.1" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">7</text>
-    <text x="850.0" y="202.1" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-8">
-    <rect x="824.0" y="115.4" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="850.0" y="126.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">8</text>
-    <text x="850.0" y="139.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-9">
-    <rect x="791.5" y="84.0" width="52" height="28" rx="3" fill="#3a1e2a" stroke="#f472b6" stroke-width="1.2"/>
-    <text x="817.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">9</text>
-    <text x="817.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TDO</text>
-  </g>
-  <g id="pad-10">
-    <rect x="726.5" y="84.0" width="52" height="28" rx="3" fill="#3a1e2a" stroke="#f472b6" stroke-width="1.2"/>
-    <text x="752.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">10</text>
-    <text x="752.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TDI</text>
-  </g>
-  <g id="pad-11">
-    <rect x="661.5" y="84.0" width="52" height="28" rx="3" fill="#3a1e2a" stroke="#f472b6" stroke-width="1.2"/>
-    <text x="687.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">11</text>
-    <text x="687.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TCK</text>
-  </g>
-  <g id="pad-12">
-    <rect x="596.5" y="84.0" width="52" height="28" rx="3" fill="#2a3a1e" stroke="#a3e635" stroke-width="1.2"/>
-    <text x="622.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">12</text>
-    <text x="622.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDDINT_2</text>
-  </g>
-  <g id="pad-13">
-    <rect x="531.5" y="84.0" width="52" height="28" rx="3" fill="#3a2a1e" stroke="#E86A2B" stroke-width="1.2"/>
-    <text x="557.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">13</text>
-    <text x="557.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RSVD</text>
-  </g>
-  <g id="pad-14">
-    <rect x="466.5" y="84.0" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="492.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">14</text>
-    <text x="492.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-15">
-    <rect x="401.5" y="84.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
-    <text x="427.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">15</text>
-    <text x="427.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TRX_O</text>
-  </g>
-  <g id="pad-16">
-    <rect x="336.5" y="84.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
-    <text x="362.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">16</text>
-    <text x="362.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TXRO</text>
-  </g>
-  <g id="pad-17">
-    <rect x="271.5" y="84.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
-    <text x="297.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">17</text>
-    <text x="297.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RTXI</text>
-  </g>
-  <g id="pad-18">
-    <rect x="206.5" y="84.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
-    <text x="232.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">18</text>
-    <text x="232.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RXTI</text>
-  </g>
-  <g id="pad-19">
-    <rect x="141.5" y="84.0" width="52" height="28" rx="3" fill="#1e3a4a" stroke="#60a5fa" stroke-width="1.2"/>
-    <text x="167.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">19</text>
-    <text x="167.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDDIO</text>
-  </g>
-  <g id="pad-20">
-    <rect x="76.5" y="84.0" width="52" height="28" rx="3" fill="#2a1e3a" stroke="#c084fc" stroke-width="1.2"/>
-    <text x="102.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">20</text>
-    <text x="102.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">CLKO2</text>
-  </g>
-  <g id="pad-21">
-    <rect x="44.0" y="115.4" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="70.0" y="126.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">21</text>
-    <text x="70.0" y="139.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-22">
-    <rect x="44.0" y="178.1" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="70.0" y="189.1" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">22</text>
-    <text x="70.0" y="202.1" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-23">
-    <rect x="44.0" y="240.9" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="70.0" y="251.9" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">23</text>
-    <text x="70.0" y="264.9" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-24">
-    <rect x="44.0" y="303.6" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="70.0" y="314.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">24</text>
-    <text x="70.0" y="327.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-25">
-    <rect x="44.0" y="366.4" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="70.0" y="377.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">25</text>
-    <text x="70.0" y="390.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-26">
-    <rect x="44.0" y="429.1" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="70.0" y="440.1" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">26</text>
-    <text x="70.0" y="453.1" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-27">
-    <rect x="44.0" y="491.9" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="70.0" y="502.9" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">27</text>
-    <text x="70.0" y="515.9" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-28">
-    <rect x="44.0" y="554.6" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="70.0" y="565.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">28</text>
-    <text x="70.0" y="578.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-29">
-    <rect x="76.5" y="586.0" width="52" height="28" rx="3" fill="#2a1e3a" stroke="#c084fc" stroke-width="1.2"/>
-    <text x="102.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">29</text>
-    <text x="102.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">REFCLKIN</text>
-  </g>
-  <g id="pad-30">
-    <rect x="141.5" y="586.0" width="52" height="28" rx="3" fill="#1e3a4a" stroke="#60a5fa" stroke-width="1.2"/>
-    <text x="167.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">30</text>
-    <text x="167.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDDIO</text>
-  </g>
-  <g id="pad-31">
-    <rect x="206.5" y="586.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
-    <text x="232.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">31</text>
-    <text x="232.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RXTO</text>
-  </g>
-  <g id="pad-32">
-    <rect x="271.5" y="586.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
-    <text x="297.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">32</text>
-    <text x="297.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RTXO</text>
-  </g>
-  <g id="pad-33">
-    <rect x="336.5" y="586.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
-    <text x="362.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">33</text>
-    <text x="362.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TXRI</text>
-  </g>
-  <g id="pad-34">
-    <rect x="401.5" y="586.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
-    <text x="427.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">34</text>
-    <text x="427.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TRXI</text>
-  </g>
-  <g id="pad-35">
-    <rect x="466.5" y="586.0" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="492.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">35</text>
-    <text x="492.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-36">
-    <rect x="531.5" y="586.0" width="52" height="28" rx="3" fill="#2a2a1e" stroke="#fbbf24" stroke-width="1.2"/>
-    <text x="557.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">36</text>
-    <text x="557.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">PINSEL</text>
-  </g>
-  <g id="pad-37">
-    <rect x="596.5" y="586.0" width="52" height="28" rx="3" fill="#3a2a1e" stroke="#E86A2B" stroke-width="1.2"/>
-    <text x="622.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">37</text>
-    <text x="622.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RSVD</text>
-  </g>
-  <g id="pad-38">
-    <rect x="661.5" y="586.0" width="52" height="28" rx="3" fill="#2a1e3a" stroke="#c084fc" stroke-width="1.2"/>
-    <text x="687.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">38</text>
-    <text x="687.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">CLKO1</text>
-  </g>
-  <g id="pad-39">
-    <rect x="726.5" y="586.0" width="52" height="28" rx="3" fill="#3a1e2a" stroke="#f472b6" stroke-width="1.2"/>
-    <text x="752.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">39</text>
-    <text x="752.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TMS</text>
-  </g>
-  <g id="pad-40">
-    <rect x="791.5" y="586.0" width="52" height="28" rx="3" fill="#3a1e2a" stroke="#f472b6" stroke-width="1.2"/>
-    <text x="817.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">40</text>
-    <text x="817.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TRST</text>
-  </g>
-  <g id="pad-41">
-    <rect x="273.2" y="224.6" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="296.2" y="233.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">41</text>
-    <text x="296.2" y="246.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-42">
-    <rect x="382.4" y="224.6" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="405.4" y="233.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">42</text>
-    <text x="405.4" y="246.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-43">
-    <rect x="491.6" y="224.6" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="514.6" y="233.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">43</text>
-    <text x="514.6" y="246.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-44">
-    <rect x="600.8" y="224.6" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="623.8" y="233.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">44</text>
-    <text x="623.8" y="246.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-45">
-    <rect x="273.2" y="280.8" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="296.2" y="289.8" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">45</text>
-    <text x="296.2" y="302.8" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-46">
-    <rect x="382.4" y="280.8" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="405.4" y="289.8" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">46</text>
-    <text x="405.4" y="302.8" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-47">
-    <rect x="491.6" y="280.8" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="514.6" y="289.8" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">47</text>
-    <text x="514.6" y="302.8" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-48">
-    <rect x="600.8" y="280.8" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="623.8" y="289.8" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">48</text>
-    <text x="623.8" y="302.8" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-49">
-    <rect x="273.2" y="337.0" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="296.2" y="346.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">49</text>
-    <text x="296.2" y="359.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-50">
-    <rect x="382.4" y="337.0" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="405.4" y="346.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">50</text>
-    <text x="405.4" y="359.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-51">
-    <rect x="491.6" y="337.0" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="514.6" y="346.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">51</text>
-    <text x="514.6" y="359.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-52">
-    <rect x="600.8" y="337.0" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="623.8" y="346.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">52</text>
-    <text x="623.8" y="359.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-53">
-    <rect x="273.2" y="393.2" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="296.2" y="402.2" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">53</text>
-    <text x="296.2" y="415.2" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-54">
-    <rect x="382.4" y="393.2" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="405.4" y="402.2" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">54</text>
-    <text x="405.4" y="415.2" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-55">
-    <rect x="491.6" y="393.2" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="514.6" y="402.2" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">55</text>
-    <text x="514.6" y="415.2" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-56">
-    <rect x="600.8" y="393.2" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="623.8" y="402.2" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">56</text>
-    <text x="623.8" y="415.2" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-57">
-    <rect x="273.2" y="449.4" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="296.2" y="458.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">57</text>
-    <text x="296.2" y="471.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-58">
-    <rect x="382.4" y="449.4" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
-    <text x="405.4" y="458.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">58</text>
-    <text x="405.4" y="471.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
-  </g>
-  <g id="pad-59">
-    <rect x="491.6" y="449.4" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="514.6" y="458.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">59</text>
-    <text x="514.6" y="471.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <g id="pad-60">
-    <rect x="600.8" y="449.4" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
-    <text x="623.8" y="458.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">60</text>
-    <text x="623.8" y="471.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
-  </g>
-  <text x="48" y="684" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="9" letter-spacing="0.1em">LEGEND</text>
-  <rect x="48" y="692" width="14" height="14" rx="2" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1"/>
-  <text x="68" y="703" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">VDD / VDD_HASH</text>
-  <rect x="216" y="692" width="14" height="14" rx="2" fill="#2a2f35" stroke="#556069" stroke-width="1"/>
-  <text x="236" y="703" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">VSS</text>
-  <rect x="384" y="692" width="14" height="14" rx="2" fill="#1e3a4a" stroke="#60a5fa" stroke-width="1"/>
-  <text x="404" y="703" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">VDDIO 1.2 V</text>
-  <rect x="552" y="692" width="14" height="14" rx="2" fill="#2a3a1e" stroke="#a3e635" stroke-width="1"/>
-  <text x="572" y="703" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">VDDINT mid-ref</text>
-  <rect x="720" y="692" width="14" height="14" rx="2" fill="#3a2a1e" stroke="#E86A2B" stroke-width="1"/>
-  <text x="740" y="703" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">RSVD (VDDPLL / VDD_P75)</text>
-  <rect x="48" y="714" width="14" height="14" rx="2" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1"/>
-  <text x="68" y="725" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">PINSEL-mux UART/reset/trip</text>
-  <rect x="268" y="714" width="14" height="14" rx="2" fill="#2a1e3a" stroke="#c084fc" stroke-width="1"/>
-  <text x="288" y="725" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">Clocks</text>
-  <rect x="436" y="714" width="14" height="14" rx="2" fill="#3a1e2a" stroke="#f472b6" stroke-width="1"/>
-  <text x="456" y="725" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">JTAG</text>
-  <rect x="604" y="714" width="14" height="14" rx="2" fill="#2a2a1e" stroke="#fbbf24" stroke-width="1"/>
-  <text x="624" y="725" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">PINSEL strap</text>
-  <text x="460.0" y="752" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Caption: schematic pad map from public references/bzm2-ballmap.csv + bzm2-pinout-reference.md — not a fab drawing; original diagram from public references.</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 1530" width="1180" height="1530" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" role="img" aria-label="BZM2 package pad map, 60 lands, generated from the public ballmap CSV">
+<rect width="1180" height="1530" fill="#171a1f"/>
+<text x="40" y="52" font-family="Orbitron, Ubuntu, 'DejaVu Sans', Helvetica, Arial, sans-serif" font-size="23" font-weight="700" fill="#e7ecf2" letter-spacing="1.2">BZM2 PACKAGE PAD MAP</text>
+<text x="40.0" y="76.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#98a2b0" text-anchor="start">60 lands - 40 peripheral + 20 inner field - top view</text>
+<text x="40.0" y="96.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#98a2b0" text-anchor="start">Generated from references/bzm2-ballmap.csv</text>
+<rect x="290.0" y="280.0" width="600.0" height="560.0" rx="8" fill="#1e232a" stroke="#39414d" stroke-width="2"/>
+<text x="590.0" y="268.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#98a2b0" text-anchor="middle">package body 7.5 x 7.0 mm</text>
+<rect x="857.6" y="720.0" width="56.4" height="24.4" rx="2" fill="#9a7bd0" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="885.8" y="735.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">1</text>
+<text x="924.0" y="736.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">VDDINT_1</text>
+<rect x="857.6" y="670.8" width="56.4" height="24.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="885.8" y="686.6" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">2</text>
+<text x="924.0" y="687.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">VDD</text>
+<rect x="857.6" y="621.6" width="56.4" height="24.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="885.8" y="637.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">3</text>
+<text x="924.0" y="637.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">VDD</text>
+<rect x="857.6" y="572.4" width="56.4" height="24.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="885.8" y="588.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">4</text>
+<text x="924.0" y="588.6" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">VDD</text>
+<rect x="857.6" y="523.2" width="56.4" height="24.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="885.8" y="539.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">5</text>
+<text x="924.0" y="539.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">VDD</text>
+<rect x="857.6" y="474.0" width="56.4" height="24.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="885.8" y="489.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">6</text>
+<text x="924.0" y="490.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">VDD</text>
+<rect x="857.6" y="424.8" width="56.4" height="24.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="885.8" y="440.6" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">7</text>
+<text x="924.0" y="441.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">VDD</text>
+<rect x="857.6" y="375.6" width="56.4" height="24.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="885.8" y="391.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">8</text>
+<text x="924.0" y="391.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">VDD</text>
+<rect x="848.4" y="256.0" width="24.4" height="74.8" rx="2" fill="#d46fa8" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="860.6" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">9</text>
+<text x="864.6" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 864.6 246.0)">TDO</text>
+<rect x="799.2" y="256.0" width="24.4" height="74.8" rx="2" fill="#d46fa8" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="811.4" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">10</text>
+<text x="815.4" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 815.4 246.0)">TDI</text>
+<rect x="750.0" y="256.0" width="24.4" height="74.8" rx="2" fill="#d46fa8" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="762.2" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">11</text>
+<text x="766.2" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 766.2 246.0)">TCK</text>
+<rect x="700.8" y="256.0" width="24.4" height="74.8" rx="2" fill="#9a7bd0" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="713.0" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">12</text>
+<text x="717.0" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 717.0 246.0)">VDDINT_2</text>
+<rect x="651.6" y="256.0" width="24.4" height="74.8" rx="2" fill="#8a8069" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="663.8" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">13</text>
+<text x="667.8" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 667.8 246.0)">RSVD</text>
+<rect x="602.4" y="256.0" width="24.4" height="74.8" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="614.6" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">14</text>
+<text x="618.6" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 618.6 246.0)">VSS</text>
+<rect x="553.2" y="256.0" width="24.4" height="74.8" rx="2" fill="#3d8bd4" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="565.4" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">15</text>
+<text x="569.4" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 569.4 246.0)">TRIP_OUT / RX_OUT</text>
+<rect x="504.0" y="256.0" width="24.4" height="74.8" rx="2" fill="#3d8bd4" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="516.2" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">16</text>
+<text x="520.2" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 520.2 246.0)">TX_OUT / RESET_OUT</text>
+<rect x="454.8" y="256.0" width="24.4" height="74.8" rx="2" fill="#3d8bd4" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="467.0" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">17</text>
+<text x="471.0" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 471.0 246.0)">RESET_IN / TX_IN</text>
+<rect x="405.6" y="256.0" width="24.4" height="74.8" rx="2" fill="#3d8bd4" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="417.8" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">18</text>
+<text x="421.8" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 421.8 246.0)">RX_IN / TRIP_IN</text>
+<rect x="356.4" y="256.0" width="24.4" height="74.8" rx="2" fill="#2fb3a8" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="368.6" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">19</text>
+<text x="372.6" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 372.6 246.0)">VDDIO</text>
+<rect x="307.2" y="256.0" width="24.4" height="74.8" rx="2" fill="#5fbf6a" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="319.4" y="297.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">20</text>
+<text x="323.4" y="246.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="start" transform="rotate(-62 323.4 246.0)">REFCLKOUT2</text>
+<rect x="266.0" y="375.6" width="56.4" height="24.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="294.2" y="391.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">21</text>
+<text x="256.0" y="391.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="end">VSS</text>
+<rect x="266.0" y="424.8" width="56.4" height="24.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="294.2" y="440.6" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">22</text>
+<text x="256.0" y="441.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="end">VSS</text>
+<rect x="266.0" y="474.0" width="56.4" height="24.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="294.2" y="489.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">23</text>
+<text x="256.0" y="490.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="end">VSS</text>
+<rect x="266.0" y="523.2" width="56.4" height="24.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="294.2" y="539.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">24</text>
+<text x="256.0" y="539.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="end">VSS</text>
+<rect x="266.0" y="572.4" width="56.4" height="24.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="294.2" y="588.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">25</text>
+<text x="256.0" y="588.6" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="end">VSS</text>
+<rect x="266.0" y="621.6" width="56.4" height="24.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="294.2" y="637.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">26</text>
+<text x="256.0" y="637.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="end">VSS</text>
+<rect x="266.0" y="670.8" width="56.4" height="24.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="294.2" y="686.6" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">27</text>
+<text x="256.0" y="687.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="end">VSS</text>
+<rect x="266.0" y="720.0" width="56.4" height="24.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="294.2" y="735.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">28</text>
+<text x="256.0" y="736.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="end">VSS</text>
+<rect x="307.2" y="789.2" width="24.4" height="74.8" rx="2" fill="#5fbf6a" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="319.4" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">29</text>
+<text x="315.4" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 315.4 878.0)">REFCLKIN</text>
+<rect x="356.4" y="789.2" width="24.4" height="74.8" rx="2" fill="#2fb3a8" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="368.6" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">30</text>
+<text x="364.6" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 364.6 878.0)">VDDIO</text>
+<rect x="405.6" y="789.2" width="24.4" height="74.8" rx="2" fill="#3d8bd4" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="417.8" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">31</text>
+<text x="413.8" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 413.8 878.0)">RX_OUT / TRIP_OUT</text>
+<rect x="454.8" y="789.2" width="24.4" height="74.8" rx="2" fill="#3d8bd4" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="467.0" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">32</text>
+<text x="463.0" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 463.0 878.0)">RESET_OUT / TX_OUT</text>
+<rect x="504.0" y="789.2" width="24.4" height="74.8" rx="2" fill="#3d8bd4" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="516.2" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">33</text>
+<text x="512.2" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 512.2 878.0)">TX_IN / RESET_IN</text>
+<rect x="553.2" y="789.2" width="24.4" height="74.8" rx="2" fill="#3d8bd4" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="565.4" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">34</text>
+<text x="561.4" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 561.4 878.0)">TRIP_IN / RX_IN</text>
+<rect x="602.4" y="789.2" width="24.4" height="74.8" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="614.6" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">35</text>
+<text x="610.6" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 610.6 878.0)">VSS</text>
+<rect x="651.6" y="789.2" width="24.4" height="74.8" rx="2" fill="#e3b341" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="663.8" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">36</text>
+<text x="659.8" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 659.8 878.0)">PINSEL</text>
+<rect x="700.8" y="789.2" width="24.4" height="74.8" rx="2" fill="#8a8069" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="713.0" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">37</text>
+<text x="709.0" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 709.0 878.0)">RSVD</text>
+<rect x="750.0" y="789.2" width="24.4" height="74.8" rx="2" fill="#5fbf6a" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="762.2" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">38</text>
+<text x="758.2" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 758.2 878.0)">REFCLKOUT1</text>
+<rect x="799.2" y="789.2" width="24.4" height="74.8" rx="2" fill="#d46fa8" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="811.4" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">39</text>
+<text x="807.4" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 807.4 878.0)">TMS</text>
+<rect x="848.4" y="789.2" width="24.4" height="74.8" rx="2" fill="#d46fa8" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="860.6" y="830.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">40</text>
+<text x="856.6" y="878.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#e7ecf2" text-anchor="end" transform="rotate(-62 856.6 878.0)">TRST</text>
+<rect x="364.5" y="370.6" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="396.7" y="406.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">56</text>
+<rect x="461.2" y="370.6" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="493.4" y="406.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">57</text>
+<rect x="557.8" y="370.6" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="590.0" y="406.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">58</text>
+<rect x="654.4" y="370.6" width="64.4" height="64.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="686.6" y="406.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">59</text>
+<rect x="751.1" y="370.6" width="64.4" height="64.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="783.3" y="406.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">60</text>
+<rect x="364.5" y="475.4" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="396.7" y="511.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">55</text>
+<rect x="461.2" y="475.4" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="493.4" y="511.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">54</text>
+<rect x="557.8" y="475.4" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="590.0" y="511.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">53</text>
+<rect x="654.4" y="475.4" width="64.4" height="64.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="686.6" y="511.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">52</text>
+<rect x="751.1" y="475.4" width="64.4" height="64.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="783.3" y="511.2" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">51</text>
+<rect x="364.5" y="580.2" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="396.7" y="616.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">46</text>
+<rect x="461.2" y="580.2" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="493.4" y="616.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">47</text>
+<rect x="557.8" y="580.2" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="590.0" y="616.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">48</text>
+<rect x="654.4" y="580.2" width="64.4" height="64.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="686.6" y="616.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">49</text>
+<rect x="751.1" y="580.2" width="64.4" height="64.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="783.3" y="616.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">50</text>
+<rect x="364.5" y="685.0" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="396.7" y="720.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">45</text>
+<rect x="461.2" y="685.0" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="493.4" y="720.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">44</text>
+<rect x="557.8" y="685.0" width="64.4" height="64.4" rx="2" fill="#6b7785" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="590.0" y="720.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">43</text>
+<rect x="654.4" y="685.0" width="64.4" height="64.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="686.6" y="720.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">42</text>
+<rect x="751.1" y="685.0" width="64.4" height="64.4" rx="2" fill="#e8623c" fill-opacity="0.88" stroke="#171a1f" stroke-width="1"/>
+<text x="783.3" y="720.8" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#12151a" text-anchor="middle">41</text>
+<text x="590.0" y="767.4" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#98a2b0" text-anchor="middle">inner land field (41-60)</text>
+<circle cx="919.8" cy="732.2" r="5" fill="none" stroke="#98a2b0" stroke-width="1.5"/>
+<text x="40.0" y="1030.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#e7ecf2" text-anchor="start">LEGEND</text>
+<rect x="40" y="1042" width="13" height="13" rx="2.5" fill="#e8623c" fill-opacity="0.85"/>
+<text x="61.0" y="1053.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">Core hash supply (VDD)  (15)</text>
+<rect x="40" y="1063" width="13" height="13" rx="2.5" fill="#6b7785" fill-opacity="0.85"/>
+<text x="61.0" y="1074.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">Ground (VSS)  (22)</text>
+<rect x="40" y="1084" width="13" height="13" rx="2.5" fill="#2fb3a8" fill-opacity="0.85"/>
+<text x="61.0" y="1095.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">IO rail, 1.2 V  (2)</text>
+<rect x="40" y="1105" width="13" height="13" rx="2.5" fill="#9a7bd0" fill-opacity="0.85"/>
+<text x="61.0" y="1116.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">Stack midpoint reference - not a load rail  (2)</text>
+<rect x="40" y="1126" width="13" height="13" rx="2.5" fill="#3d8bd4" fill-opacity="0.85"/>
+<text x="61.0" y="1137.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">PINSEL-muxed UART / reset / trip  (8)</text>
+<rect x="40" y="1147" width="13" height="13" rx="2.5" fill="#5fbf6a" fill-opacity="0.85"/>
+<text x="61.0" y="1158.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">Reference clocks  (3)</text>
+<rect x="40" y="1168" width="13" height="13" rx="2.5" fill="#d46fa8" fill-opacity="0.85"/>
+<text x="61.0" y="1179.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">JTAG  (5)</text>
+<rect x="40" y="1189" width="13" height="13" rx="2.5" fill="#e3b341" fill-opacity="0.85"/>
+<text x="61.0" y="1200.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">Orientation strap  (1)</text>
+<rect x="40" y="1210" width="13" height="13" rx="2.5" fill="#8a8069" fill-opacity="0.85"/>
+<text x="61.0" y="1221.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#e7ecf2" text-anchor="start">Reserved - see notes  (2)</text>
+<text x="600.0" y="1030.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#e7ecf2" text-anchor="start">NOTES AND OPEN GAPS</text>
+<text x="600.0" y="1052.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#e7ecf2" text-anchor="start">Drawn to scale from the public open-source land pattern.</text>
+<text x="600.0" y="1069.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">Peripheral pitch 0.615 mm, uniform on both axes. Lands: E/W</text>
+<text x="600.0" y="1086.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">0.705 x 0.305, N/S 0.305 x 0.935, inner 0.805 x 0.805 mm.</text>
+<text x="600.0" y="1103.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">Inner field pitch 1.208 mm (X) x 1.310 mm (Y).</text>
+<text x="600.0" y="1137.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">This is the PCB LAND PATTERN, not the package body. Land extent is</text>
+<text x="600.0" y="1154.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">8.100 x 7.600 mm including land widths, around a 7.5 x 7 mm body.</text>
+<text x="600.0" y="1188.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">Package envelope 7.5 x 7 mm FCLGA, exposed die, per the pinout reference.</text>
+<text x="600.0" y="1222.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">Numbering walks counterclockwise: E(8) -&gt; N(12) -&gt; W(8) -&gt; S(12),</text>
+<text x="600.0" y="1239.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">then the inner field (41-60). Verified contiguous against the CSV.</text>
+<text x="600.0" y="1273.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">The 40 peripheral lands share no corner: the 12-land N and S rows span</text>
+<text x="600.0" y="1290.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">the full width and the 8-land E and W columns sit between them.</text>
+<text x="600.0" y="1324.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">PINSEL-muxed pads show both functions as PINSEL=0 / PINSEL=1.</text>
+<text x="600.0" y="1341.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">Pad 36 straps the orientation: float or high = 1, tie to VSS = 0.</text>
+<text x="600.0" y="1375.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">VDDIO appears on pads 19 and 30. On-die connectivity between them</text>
+<text x="600.0" y="1392.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">is not documented; reference designs connect both.</text>
+<text x="600.0" y="1426.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">Pads 13 and 37 are RSVD in the vendor table. Reference designs use</text>
+<text x="600.0" y="1443.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#98a2b0" text-anchor="start">them as the PLL decoupling point and a 0.75 V backup rail.</text>
+<text x="40.0" y="1496.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#98a2b0" text-anchor="start">Original diagram generated from public references. Pad assignments: references/bzm2-ballmap.csv. Land geometry corroborated against</text>
+<text x="40.0" y="1512.0" font-family="Ubuntu, 'DejaVu Sans', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="500" fill="#98a2b0" text-anchor="start">the public open-source footprint in bitaxeorg/bitaxeBonanza and bitaxeorg/bitaxeBIRDS. No vendor package art was traced.</text>
 </svg>

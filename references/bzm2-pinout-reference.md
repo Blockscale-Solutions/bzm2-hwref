@@ -8,11 +8,11 @@ Pad-for-pad cross-validated against a working single-ASIC board design.
 Numbering runs around the periphery (`1-40`: east column, north row, west
 column, south row in top view) then the inner field (`41-60`).
 
-## Package pad map (schematic)
+## Package pad map
 
 ![BZM2 60-pad schematic pad map](../drawings/pinout/bzm2-padmap.svg)
 
-Original schematic generated from [`bzm2-ballmap.csv`](bzm2-ballmap.csv) (source of truth for pad IDs/names). Regenerable via [`scripts/generate_padmap_svg.py`](../scripts/generate_padmap_svg.py). **Not a fab drawing** — no invented pitch or land size. Caption: original diagram from public ballmap + this pinout reference.
+Original schematic generated from [`bzm2-ballmap.csv`](bzm2-ballmap.csv) (source of truth for pad IDs/names). Drawn **to scale** from the land pattern below. Regenerable via [`scripts/generate_padmap_svg.py`](../scripts/generate_padmap_svg.py), which also emits the reference footprint. This is the **PCB land pattern**, not a package drawing — see *Assumptions And Tolerances* before using the figures.
 
 ## Rails
 
@@ -76,6 +76,71 @@ with an internal pull-up.
 Full JTAG TAP on the periphery: `TDO` (`9`), `TDI` (`10`), `TCK` (`11`),
 `TMS` (`39`), `TRST` (`40`). Bring these to a header for validation and
 debug; the vendor JTAG collateral covers usage.
+
+## Land Pattern Geometry
+
+The 60 lands sit on a **uniform 0.615 mm pitch**, the same on both axes. There is
+no stagger and no irregular spacing: the twelve N and S lands step eleven equal
+0.615 mm intervals, and the eight E and W lands step seven.
+
+| | lands | size (w x h) | placement |
+| --- | --- | --- | --- |
+| E / W columns | 8 each | `0.705 x 0.305 mm` | `x = +/-3.6975`, `y` spans `+/-2.1525` |
+| N / S rows | 12 each | `0.305 x 0.935 mm` | `y = +/-3.3325`, `x` spans `+/-3.3825` |
+| Inner field | 20 | `0.805 x 0.805 mm` | `x` pitch `1.208`, `y` pitch `1.310 mm` |
+
+All coordinates are relative to the land-field centre, top view, `y` up. Peripheral
+lands are elongated **perpendicular to the edge they sit on**.
+
+**The 40 peripheral lands share no corner.** The 12-land rows span the full width
+and the 8-land columns sit between them: `12 + 12 + 8 + 8 = 40` distinct
+positions. A ring on a 12 x 8 perimeter would have only 36, so treating this as a
+ring double-books four lands.
+
+**This is the PCB land pattern, not the package body.** Land extent works out to
+`8.100 x 7.600 mm` including land widths, around a `7.5 x 7 mm` package body -- a
+land pattern is normally larger than the part that seats on it. Nothing here is a
+package drawing, and the vendor's own land dimensions are not stated.
+
+### Provenance
+
+Corroborated against the **public open-source footprint** shipped by
+[`bitaxeorg/bitaxeBonanza`](https://github.com/bitaxeorg/bitaxeBonanza) and
+[`bitaxeorg/bitaxeBIRDS`](https://github.com/bitaxeorg/bitaxeBIRDS) as
+`bitaxe.pretty/bzm2.kicad_mod`. The two are geometrically identical to each other,
+and agree with this table to **0.5 um** -- that residue is their rounding to three
+decimal places, where the values above are exact (`11 x 0.615 = 6.765`, so the row
+half-span is `3.3825` rather than a rounded `3.382` / `3.383`).
+
+A generated reference footprint is at
+[`footprints/BZM2.pretty/BZM2-FCLGA60.kicad_mod`](../footprints/BZM2.pretty/BZM2-FCLGA60.kicad_mod),
+emitted by [`drawings/gen_padmap.py`](../drawings/gen_padmap.py) from
+[`bzm2-ballmap.csv`](bzm2-ballmap.csv) plus the table above. It carries each land's
+name and function from the CSV, which neither open-source footprint does. It is
+oriented to this document's top-view convention (E to the right), which is 180
+degrees from the bitaxeorg parts -- a placement rotation, not a geometry
+difference.
+
+### Assumptions And Tolerances
+
+State these before using the figures. They are **nominal centres and sizes with
+no tolerance band**, because no tolerance is published anywhere we can cite.
+
+| | |
+| --- | --- |
+| **Nominal only** | No min/max, no tolerance class. Treat as target geometry, not as limits. |
+| **Land pattern, not package** | These are PCB lands. The vendor's own package land dimensions are **not stated in any public source**, and are not these numbers. |
+| **Agreement with source** | Max deviation from the public bitaxeorg footprints is **0.5 um**, which is their rounding to 3 dp. |
+| **Exact vs rounded** | Where the rounding is recoverable the exact value is used: row half-span `3.3825`, since `11 x 0.615 = 6.765`. The public parts store `-3.382 / +3.383`. |
+| **Orientation** | Top view, `+x` east, `+y` north, `y` up. The generated footprint is **180 degrees** from the bitaxeorg parts. A placement rotation, not a geometry difference. |
+| **Package body `7.5 x 7 mm`** | Taken from the header of this document. **Not measured**, and not derived from the land pattern. |
+| **Courtyard `body + 0.25 mm`** | **Our choice**, not from any source. Change it to suit your own DFM rules. |
+| **Paste and mask** | The generated footprint applies KiCad defaults. **No stencil design is implied** - aperture reduction on the inner field in particular is a stencil-house decision. |
+| **Corroboration is not independence** | `bitaxeBonanza` and `bitaxeBIRDS` are geometrically identical, so they are **one source, not two**. Confidence rests on one open-source lineage plus our own board, which agrees with it by pure translation. |
+
+**Not verified by us:** that this land pattern reflows correctly, that the inner
+field's paste coverage is right, or that any of it matches the vendor's
+recommended land pattern. It is what working open-source boards use.
 
 ## Everything Else
 

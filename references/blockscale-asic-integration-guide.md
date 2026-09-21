@@ -81,6 +81,27 @@ overall system provide the following functions:
 - telemetry collection and protection logic
 - work generation and result collection
 
+**Arm the on-die protection before raising the stack, and confirm it took.**
+Out of reset both sensors are powered down, so the trip output cannot assert at
+any temperature or voltage. A stack ramp before arming runs with no on-die
+protection at exactly the point where voltage and frequency are being raised.
+
+The step does not need the stack: **VDDIO is a separate rail**, so an ASIC is
+reachable over UART and its sensors are armable while the core stack does not
+yet exist. This holds on any topology that follows the rail ordering above.
+
+**Confirm from the device's own sensor stream, not by reading the registers
+back.** A readback travels the same synchronous path that wrote them, so it
+proves the path works rather than that the arming took. The part reports
+`thermal_enabled` and `voltage_enabled` asynchronously and unprompted; that is a
+witness. On a chain, record **which** device confirmed - a broadcast write is
+acknowledged by the bus, not by every part on it.
+
+**Anything that reads die temperature before this point gets no reading.** A
+calibration or tuning pass that silently falls back to an ambient or board-level
+proxy will choose operating points against the wrong temperature, and will do so
+without erroring.
+
 ```mermaid
 flowchart LR
     Host["Host SoC / MCU / FPGA"] --> UART["UART Master"]
@@ -395,7 +416,10 @@ flowchart TD
     H --> I["Wait for PLL lock"]
     I --> J["Enable TDM if streaming is needed"]
     J --> K["Submit dummy work to keep engines loaded"]
-    K --> L["Raise stack voltage gradually while monitoring VS"]
+    K --> P["Arm on-die thermal and voltage protection"]
+    P --> Q{"Device reports thermal_enabled and voltage_enabled?"}
+    Q -->|no| STOP["STOP - do not raise the stack"]
+    Q -->|yes| L["Raise stack voltage gradually while monitoring VS"]
     L --> M["Run tuning and calibration sweep"]
     M --> N["Transition to production job dispatch"]
 ```

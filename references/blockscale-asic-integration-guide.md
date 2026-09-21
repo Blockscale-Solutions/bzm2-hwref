@@ -167,18 +167,19 @@ debug-only data.
 
 ## Electrical Quick Reference (Per ASIC)
 
-Design-point numbers a board designer needs up front. These are integration
-targets synthesized from the vendor collateral and measured reference systems;
-characterize on your own design before committing limits.
+Design-point numbers a board designer needs up front. The two operating points below are **publicly corroborated**: they match rows in
+[bitaxeorg/bitaxeBIRDS `doc/specs.md`](https://github.com/bitaxeorg/bitaxeBIRDS/blob/main/doc/specs.md),
+a published 25-point sweep on real hardware. Characterize on your own design
+before committing limits.
 
 | Parameter | Value | Notes |
 | --- | --- | --- |
 | `VDD_HASH` (stack rail) | `0.71 V` nominal | tunable window roughly `0.6` to `0.81 V` |
 | Internal stack split | `0 - 0.355 V` / `0.355 - 0.71 V` | bottom / top engine stacks |
 | Control / GPIO IO rail (`VDDIO`) | `1.2 V` nominal (`1.0 - 1.3 V` range), `1.3 V` abs max | UART, reset, trip signaling; per-pin input/output levels below |
-| Stack current, stock operating point | `~14 A` at `~330 GH/s` | roughly `10 W` core power |
-| Stack current, maximum tuned point | `~27 A` at `~577 GH/s` | roughly `22 W`; plan copper for `~30 A` headroom |
-| Efficiency class | up to `~27 J/TH` | product-brief figure |
+| Stack current, stock operating point | `~14 A` at `~330 GH/s` | roughly `10 W` core power; public sweep gives `13.6 A / 0.326 TH/s / 9.4 W` at `1.05 GHz` and `14.2 A / 0.344 TH/s / 9.9 W` at `1.10 GHz` |
+| Stack current, maximum tuned point | `~27 A` at `~577 GH/s` | roughly `22 W`; plan copper for `~30 A` headroom. Public sweep's top row is `27.1 A / 0.577 TH/s / 21.95 W` at `0.810 V, 1.85 GHz` |
+| Efficiency | **from** `~26 J/TH`, rising with clock | `~26.3` best (near `0.60-0.75 GHz`), `~28.9` at the stock point, `~38.0` at the maximum tuned point. **`~27 J/TH` is a floor, not a ceiling** - an earlier revision of this table said "up to `~27 J/TH`", which inverts it. Chasing best efficiency costs hashrate; a single efficiency number is meaningless without its clock |
 | Reference clock | up to `50 MHz` on `REFCLKIN` | `50 MHz` is the standard choice |
 | UART baud range | `2.5` to `10 Mbps` (50 MHz refclk) | bring-up convention is `5 Mbps` |
 | Junction temperature | `50 - 85 C` operating, `115 C` abs max | plan top-side thermal extraction |

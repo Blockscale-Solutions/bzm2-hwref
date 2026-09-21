@@ -44,12 +44,11 @@ sits on the ASIC's own 1.2 V IO rail** — this is both what the mature open BZM
 reference-grade practice. The only translator families that qualify are those whose VCC floor is
 *at or below* 1.2 V.
 
-**A passive diode-clamp is not merely a shortcut, and this document previously said it was.**
+**A passive diode-clamp is a working option, not a shortcut.**
 [bitaxeorg/bitaxeBIRDS](https://github.com/bitaxeorg/bitaxeBIRDS) ships one — `DLLFSD01LPH4`
-clamp diodes in `shifter.kicad_sch` — and it is one of the open boards this guide cites
-approvingly elsewhere. Dismissing the approach while recommending the board that uses it was
-incoherent. The honest statement is narrower: **a translator IC gives defined levels and defined
-drive in both directions, and a clamp does not**, so a clamp needs its series resistance and edge
+clamp diodes in `shifter.kicad_sch`. The difference that matters is narrower than "robust versus
+not": **a translator IC gives defined levels and defined drive in both directions, and a clamp
+does not**, so a clamp needs its series resistance and edge
 rates checked against the actual baud rather than assumed. Shipping boards exist on both sides of
 that choice.
 

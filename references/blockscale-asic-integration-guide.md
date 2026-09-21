@@ -156,14 +156,36 @@ monitor and react to stack imbalance.
 
 ### Voltage sensor channels
 
-The internal voltage sensor reports three useful channels:
+The internal voltage sensor reports three channels. Getting their scales wrong
+produces bounds that cannot fire, so read the healthy-reading column before
+setting any limit:
 
-- `ch0`: bottom stack voltage
-- `ch1`: top stack voltage
-- `ch2`: differential between the stacks
+| channel | what it measures | healthy reading | can it trip the ASIC? |
+| --- | --- | --- | --- |
+| `ch0` | differential across the **bottom** stack | `~355 mV` | **yes** |
+| `ch1` | differential across the **top** stack | `~355 mV` | **yes** |
+| `ch2` | top-stack return against bottom-stack supply - the **midpoint error** | **`~0 mV`** | **no** |
 
-For a custom design, treat those as first-class runtime safety inputs, not
-debug-only data.
+Both stack channels read the differential across their **own** stack, not an
+absolute node voltage, so both sit near `355 mV` and are directly comparable
+to each other. Public reference firmware programs the
+**same** shutdown code into both channels and bounds their difference with a
+single spread limit - neither would be coherent if the two were on different
+scales.
+
+`ch2` is **not** a third rail and is **not** the `~355 mV` step between the
+stacks. It is the same physical node measured from both sides, so a healthy
+part reads approximately zero. Bound it by **absolute magnitude**, not by
+proximity to `355 mV`. It is the channel that detects midpoint collapse.
+
+**Only `ch0` and `ch1` feed the ASIC's own voltage shutdown.** The
+voltage-sensor control register carries a threshold field for each of those
+two and none for `ch2`, so the part takes no action on a midpoint fault. If
+your design needs to survive one, the response has to be on the board or in
+the host - nothing in the ASIC is watching.
+
+Treat all three as first-class runtime safety inputs, not debug-only data -
+but do not assume the part acts on all three.
 
 ## Electrical Quick Reference (Per ASIC)
 
@@ -179,7 +201,7 @@ before committing limits.
 | Control / GPIO IO rail (`VDDIO`) | `1.2 V` nominal (`1.0 - 1.3 V` range), `1.3 V` abs max | UART, reset, trip signaling; per-pin input/output levels below |
 | Stack current, stock operating point | `~14 A` at `~330 GH/s` | roughly `10 W` core power; public sweep gives `13.6 A / 0.326 TH/s / 9.4 W` at `1.05 GHz` and `14.2 A / 0.344 TH/s / 9.9 W` at `1.10 GHz` |
 | Stack current, maximum tuned point | `~27 A` at `~577 GH/s` | roughly `22 W`; plan copper for `~30 A` headroom. Public sweep's top row is `27.1 A / 0.577 TH/s / 21.95 W` at `0.810 V, 1.85 GHz` |
-| Efficiency | **from** `~26 J/TH`, rising with clock | `~26.3` best (near `0.60-0.75 GHz`), `~28.9` at the stock point, `~38.0` at the maximum tuned point. **`~27 J/TH` is a floor, not a ceiling** - an earlier revision of this table said "up to `~27 J/TH`", which inverts it. Chasing best efficiency costs hashrate; a single efficiency number is meaningless without its clock |
+| Efficiency | **from** `~26 J/TH`, rising with clock | `~26.3` best (near `0.60-0.75 GHz`), `~28.9` at the stock point, `~38.0` at the maximum tuned point. The figure is a **floor**: chasing best efficiency costs hashrate, and a single efficiency number is meaningless without the clock it was measured at |
 | Reference clock | up to `50 MHz` on `REFCLKIN` | `50 MHz` is the standard choice |
 | UART baud range | `2.5` to `10 Mbps` (50 MHz refclk) | bring-up convention is `5 Mbps` |
 | Junction temperature | `50 - 85 C` operating, `115 C` abs max | plan top-side thermal extraction |
@@ -488,8 +510,22 @@ Where:
 
 ### Protection behavior
 
-The ASIC can assert a trip output when thermal or voltage thresholds are
-exceeded. A robust system should wire this into board-level protection.
+**Out of reset, the ASIC is not protecting itself.** Both sensors come up
+powered down, no thresholds exist, and **the trip output cannot assert at any
+temperature or voltage** until a host programs the sensor block. A board with
+the trip pin correctly wired to its core-rail enable has **no** overtemperature
+protection until that programming happens - while appearing, on the schematic,
+to have a hardware interlock.
+
+Arming is therefore a mandatory bring-up stage, not an optimisation. Public
+reference firmware treats it exactly that way: it writes the sensor enables,
+both trip thresholds and the confirmation counts, verifies them by readback,
+and **gates the clock stage on that verification** - refusing to proceed if the
+sensors were not confirmed.
+
+Once armed, the ASIC can assert a trip output when thermal or voltage
+thresholds are exceeded. A robust system should wire this into board-level
+protection.
 
 Recommended policy:
 

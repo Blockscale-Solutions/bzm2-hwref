@@ -126,6 +126,9 @@ maxed single ASIC), not a trace.
 
 ## 7. Power sequencing & reset — fail safe
 
+
+See also the Integration Guide bring-up flowchart: [power-up-sequence.svg](../drawings/bring-up/power-up-sequence.svg) (fail-safes from this section are drawn as parallel gates).
+
 - **Hold the ASIC in reset and the core rail off until the host is ready.** A pull-down on `NRST` (reset
   asserted) and on the core-buck enable (off) at power-up is the correct default; firmware releases them
   deliberately. An open-source bridge firmware defaults reset low for exactly this reason

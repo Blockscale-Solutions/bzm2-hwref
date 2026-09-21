@@ -8,6 +8,12 @@ Pad-for-pad cross-validated against a working single-ASIC board design.
 Numbering runs around the periphery (`1-40`: east column, north row, west
 column, south row in top view) then the inner field (`41-60`).
 
+## Package pad map (schematic)
+
+![BZM2 60-pad schematic pad map](../drawings/pinout/bzm2-padmap.svg)
+
+Original schematic generated from [`bzm2-ballmap.csv`](bzm2-ballmap.csv) (source of truth for pad IDs/names). Regenerable via [`scripts/generate_padmap_svg.py`](../scripts/generate_padmap_svg.py). **Not a fab drawing** — no invented pitch or land size. Caption: original diagram from public ballmap + this pinout reference.
+
 ## Rails
 
 | Rail | Pads | Count | Notes |

@@ -28,6 +28,9 @@ jobs:
           # Do not publish local working notes even if present on a runner checkout
           rm -f site/references/bzm2-porting-conversation-log.md
           ls -la site/references
+          # Stage original SVGs so markdown ../drawings/ links resolve on Pages
+          rm -rf site/drawings
+          if [ -d drawings ]; then cp -a drawings site/drawings; ls -la site/drawings; fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

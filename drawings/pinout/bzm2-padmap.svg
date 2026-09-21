@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 780" role="img"
+     aria-label="BZM2 60-pad schematic pad map from public ballmap CSV">
+  <title>BZM2 package pad map (schematic from public ballmap)</title>
+  <desc>Original schematic pad map generated from references/bzm2-ballmap.csv. Not a fab drawing; no invented pitch or land size. Caption cites pinout reference.</desc>
+  <rect width="920" height="780" fill="#12171c"/>
+  <rect x="24" y="24" width="872" height="732" rx="10" fill="#1a2228" stroke="#3a4650" stroke-width="1.5"/>
+  <text x="460.0" y="52" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="11" font-weight="600" letter-spacing="0.12em">BZM2 · 7.5 × 7 mm FCLGA · 60 LANDS (SCHEMATIC)</text>
+  <text x="460.0" y="70" text-anchor="middle" fill="#2dd4bf" font-family="Ubuntu,sans-serif" font-size="11">Top view · numbering E→N→W→S then inner field (CSV side column)</text>
+  <rect x="34" y="76" width="852" height="546" rx="8" fill="none" stroke="#3a4650" stroke-width="1.2" stroke-dasharray="6 4"/>
+  <text x="898" y="349.0" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="10" font-weight="600">E</text>
+  <text x="460.0" y="62" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="10" font-weight="600">N</text>
+  <text x="22" y="349.0" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="10" font-weight="600">W</text>
+  <text x="460.0" y="640" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="10" font-weight="600">S</text>
+  <g id="pad-1">
+    <rect x="824.0" y="554.6" width="52" height="28" rx="3" fill="#2a3a1e" stroke="#a3e635" stroke-width="1.2"/>
+    <text x="850.0" y="565.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">1</text>
+    <text x="850.0" y="578.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDDINT_1</text>
+  </g>
+  <g id="pad-2">
+    <rect x="824.0" y="491.9" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="850.0" y="502.9" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">2</text>
+    <text x="850.0" y="515.9" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-3">
+    <rect x="824.0" y="429.1" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="850.0" y="440.1" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">3</text>
+    <text x="850.0" y="453.1" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-4">
+    <rect x="824.0" y="366.4" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="850.0" y="377.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">4</text>
+    <text x="850.0" y="390.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-5">
+    <rect x="824.0" y="303.6" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="850.0" y="314.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">5</text>
+    <text x="850.0" y="327.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-6">
+    <rect x="824.0" y="240.9" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="850.0" y="251.9" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">6</text>
+    <text x="850.0" y="264.9" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-7">
+    <rect x="824.0" y="178.1" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="850.0" y="189.1" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">7</text>
+    <text x="850.0" y="202.1" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-8">
+    <rect x="824.0" y="115.4" width="52" height="28" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="850.0" y="126.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">8</text>
+    <text x="850.0" y="139.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-9">
+    <rect x="791.5" y="84.0" width="52" height="28" rx="3" fill="#3a1e2a" stroke="#f472b6" stroke-width="1.2"/>
+    <text x="817.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">9</text>
+    <text x="817.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TDO</text>
+  </g>
+  <g id="pad-10">
+    <rect x="726.5" y="84.0" width="52" height="28" rx="3" fill="#3a1e2a" stroke="#f472b6" stroke-width="1.2"/>
+    <text x="752.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">10</text>
+    <text x="752.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TDI</text>
+  </g>
+  <g id="pad-11">
+    <rect x="661.5" y="84.0" width="52" height="28" rx="3" fill="#3a1e2a" stroke="#f472b6" stroke-width="1.2"/>
+    <text x="687.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">11</text>
+    <text x="687.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TCK</text>
+  </g>
+  <g id="pad-12">
+    <rect x="596.5" y="84.0" width="52" height="28" rx="3" fill="#2a3a1e" stroke="#a3e635" stroke-width="1.2"/>
+    <text x="622.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">12</text>
+    <text x="622.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDDINT_2</text>
+  </g>
+  <g id="pad-13">
+    <rect x="531.5" y="84.0" width="52" height="28" rx="3" fill="#3a2a1e" stroke="#E86A2B" stroke-width="1.2"/>
+    <text x="557.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">13</text>
+    <text x="557.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RSVD</text>
+  </g>
+  <g id="pad-14">
+    <rect x="466.5" y="84.0" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="492.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">14</text>
+    <text x="492.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-15">
+    <rect x="401.5" y="84.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
+    <text x="427.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">15</text>
+    <text x="427.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TRX_O</text>
+  </g>
+  <g id="pad-16">
+    <rect x="336.5" y="84.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
+    <text x="362.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">16</text>
+    <text x="362.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TXRO</text>
+  </g>
+  <g id="pad-17">
+    <rect x="271.5" y="84.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
+    <text x="297.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">17</text>
+    <text x="297.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RTXI</text>
+  </g>
+  <g id="pad-18">
+    <rect x="206.5" y="84.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
+    <text x="232.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">18</text>
+    <text x="232.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RXTI</text>
+  </g>
+  <g id="pad-19">
+    <rect x="141.5" y="84.0" width="52" height="28" rx="3" fill="#1e3a4a" stroke="#60a5fa" stroke-width="1.2"/>
+    <text x="167.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">19</text>
+    <text x="167.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDDIO</text>
+  </g>
+  <g id="pad-20">
+    <rect x="76.5" y="84.0" width="52" height="28" rx="3" fill="#2a1e3a" stroke="#c084fc" stroke-width="1.2"/>
+    <text x="102.5" y="95.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">20</text>
+    <text x="102.5" y="108.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">CLKO2</text>
+  </g>
+  <g id="pad-21">
+    <rect x="44.0" y="115.4" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="70.0" y="126.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">21</text>
+    <text x="70.0" y="139.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-22">
+    <rect x="44.0" y="178.1" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="70.0" y="189.1" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">22</text>
+    <text x="70.0" y="202.1" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-23">
+    <rect x="44.0" y="240.9" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="70.0" y="251.9" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">23</text>
+    <text x="70.0" y="264.9" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-24">
+    <rect x="44.0" y="303.6" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="70.0" y="314.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">24</text>
+    <text x="70.0" y="327.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-25">
+    <rect x="44.0" y="366.4" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="70.0" y="377.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">25</text>
+    <text x="70.0" y="390.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-26">
+    <rect x="44.0" y="429.1" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="70.0" y="440.1" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">26</text>
+    <text x="70.0" y="453.1" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-27">
+    <rect x="44.0" y="491.9" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="70.0" y="502.9" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">27</text>
+    <text x="70.0" y="515.9" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-28">
+    <rect x="44.0" y="554.6" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="70.0" y="565.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">28</text>
+    <text x="70.0" y="578.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-29">
+    <rect x="76.5" y="586.0" width="52" height="28" rx="3" fill="#2a1e3a" stroke="#c084fc" stroke-width="1.2"/>
+    <text x="102.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">29</text>
+    <text x="102.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">REFCLKIN</text>
+  </g>
+  <g id="pad-30">
+    <rect x="141.5" y="586.0" width="52" height="28" rx="3" fill="#1e3a4a" stroke="#60a5fa" stroke-width="1.2"/>
+    <text x="167.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">30</text>
+    <text x="167.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDDIO</text>
+  </g>
+  <g id="pad-31">
+    <rect x="206.5" y="586.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
+    <text x="232.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">31</text>
+    <text x="232.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RXTO</text>
+  </g>
+  <g id="pad-32">
+    <rect x="271.5" y="586.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
+    <text x="297.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">32</text>
+    <text x="297.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RTXO</text>
+  </g>
+  <g id="pad-33">
+    <rect x="336.5" y="586.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
+    <text x="362.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">33</text>
+    <text x="362.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TXRI</text>
+  </g>
+  <g id="pad-34">
+    <rect x="401.5" y="586.0" width="52" height="28" rx="3" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1.2"/>
+    <text x="427.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">34</text>
+    <text x="427.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TRXI</text>
+  </g>
+  <g id="pad-35">
+    <rect x="466.5" y="586.0" width="52" height="28" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="492.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">35</text>
+    <text x="492.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-36">
+    <rect x="531.5" y="586.0" width="52" height="28" rx="3" fill="#2a2a1e" stroke="#fbbf24" stroke-width="1.2"/>
+    <text x="557.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">36</text>
+    <text x="557.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">PINSEL</text>
+  </g>
+  <g id="pad-37">
+    <rect x="596.5" y="586.0" width="52" height="28" rx="3" fill="#3a2a1e" stroke="#E86A2B" stroke-width="1.2"/>
+    <text x="622.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">37</text>
+    <text x="622.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">RSVD</text>
+  </g>
+  <g id="pad-38">
+    <rect x="661.5" y="586.0" width="52" height="28" rx="3" fill="#2a1e3a" stroke="#c084fc" stroke-width="1.2"/>
+    <text x="687.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">38</text>
+    <text x="687.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">CLKO1</text>
+  </g>
+  <g id="pad-39">
+    <rect x="726.5" y="586.0" width="52" height="28" rx="3" fill="#3a1e2a" stroke="#f472b6" stroke-width="1.2"/>
+    <text x="752.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">39</text>
+    <text x="752.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TMS</text>
+  </g>
+  <g id="pad-40">
+    <rect x="791.5" y="586.0" width="52" height="28" rx="3" fill="#3a1e2a" stroke="#f472b6" stroke-width="1.2"/>
+    <text x="817.5" y="597.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">40</text>
+    <text x="817.5" y="610.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">TRST</text>
+  </g>
+  <g id="pad-41">
+    <rect x="273.2" y="224.6" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="296.2" y="233.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">41</text>
+    <text x="296.2" y="246.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-42">
+    <rect x="382.4" y="224.6" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="405.4" y="233.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">42</text>
+    <text x="405.4" y="246.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-43">
+    <rect x="491.6" y="224.6" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="514.6" y="233.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">43</text>
+    <text x="514.6" y="246.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-44">
+    <rect x="600.8" y="224.6" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="623.8" y="233.6" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">44</text>
+    <text x="623.8" y="246.6" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-45">
+    <rect x="273.2" y="280.8" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="296.2" y="289.8" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">45</text>
+    <text x="296.2" y="302.8" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-46">
+    <rect x="382.4" y="280.8" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="405.4" y="289.8" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">46</text>
+    <text x="405.4" y="302.8" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-47">
+    <rect x="491.6" y="280.8" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="514.6" y="289.8" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">47</text>
+    <text x="514.6" y="302.8" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-48">
+    <rect x="600.8" y="280.8" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="623.8" y="289.8" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">48</text>
+    <text x="623.8" y="302.8" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-49">
+    <rect x="273.2" y="337.0" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="296.2" y="346.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">49</text>
+    <text x="296.2" y="359.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-50">
+    <rect x="382.4" y="337.0" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="405.4" y="346.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">50</text>
+    <text x="405.4" y="359.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-51">
+    <rect x="491.6" y="337.0" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="514.6" y="346.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">51</text>
+    <text x="514.6" y="359.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-52">
+    <rect x="600.8" y="337.0" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="623.8" y="346.0" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">52</text>
+    <text x="623.8" y="359.0" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-53">
+    <rect x="273.2" y="393.2" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="296.2" y="402.2" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">53</text>
+    <text x="296.2" y="415.2" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-54">
+    <rect x="382.4" y="393.2" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="405.4" y="402.2" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">54</text>
+    <text x="405.4" y="415.2" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-55">
+    <rect x="491.6" y="393.2" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="514.6" y="402.2" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">55</text>
+    <text x="514.6" y="415.2" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-56">
+    <rect x="600.8" y="393.2" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="623.8" y="402.2" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">56</text>
+    <text x="623.8" y="415.2" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-57">
+    <rect x="273.2" y="449.4" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="296.2" y="458.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">57</text>
+    <text x="296.2" y="471.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-58">
+    <rect x="382.4" y="449.4" width="46" height="24" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.2"/>
+    <text x="405.4" y="458.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">58</text>
+    <text x="405.4" y="471.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VSS</text>
+  </g>
+  <g id="pad-59">
+    <rect x="491.6" y="449.4" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="514.6" y="458.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">59</text>
+    <text x="514.6" y="471.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <g id="pad-60">
+    <rect x="600.8" y="449.4" width="46" height="24" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="623.8" y="458.4" text-anchor="middle" fill="#7a8792" font-family="JetBrains Mono,monospace" font-size="8">60</text>
+    <text x="623.8" y="471.4" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">VDD</text>
+  </g>
+  <text x="48" y="684" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="9" letter-spacing="0.1em">LEGEND</text>
+  <rect x="48" y="692" width="14" height="14" rx="2" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1"/>
+  <text x="68" y="703" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">VDD / VDD_HASH</text>
+  <rect x="216" y="692" width="14" height="14" rx="2" fill="#2a2f35" stroke="#556069" stroke-width="1"/>
+  <text x="236" y="703" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">VSS</text>
+  <rect x="384" y="692" width="14" height="14" rx="2" fill="#1e3a4a" stroke="#60a5fa" stroke-width="1"/>
+  <text x="404" y="703" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">VDDIO 1.2 V</text>
+  <rect x="552" y="692" width="14" height="14" rx="2" fill="#2a3a1e" stroke="#a3e635" stroke-width="1"/>
+  <text x="572" y="703" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">VDDINT mid-ref</text>
+  <rect x="720" y="692" width="14" height="14" rx="2" fill="#3a2a1e" stroke="#E86A2B" stroke-width="1"/>
+  <text x="740" y="703" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">RSVD (VDDPLL / VDD_P75)</text>
+  <rect x="48" y="714" width="14" height="14" rx="2" fill="#1e2a3a" stroke="#1FA6A0" stroke-width="1"/>
+  <text x="68" y="725" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">PINSEL-mux UART/reset/trip</text>
+  <rect x="268" y="714" width="14" height="14" rx="2" fill="#2a1e3a" stroke="#c084fc" stroke-width="1"/>
+  <text x="288" y="725" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">Clocks</text>
+  <rect x="436" y="714" width="14" height="14" rx="2" fill="#3a1e2a" stroke="#f472b6" stroke-width="1"/>
+  <text x="456" y="725" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">JTAG</text>
+  <rect x="604" y="714" width="14" height="14" rx="2" fill="#2a2a1e" stroke="#fbbf24" stroke-width="1"/>
+  <text x="624" y="725" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">PINSEL strap</text>
+  <text x="460.0" y="752" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Caption: schematic pad map from public references/bzm2-ballmap.csv + bzm2-pinout-reference.md — not a fab drawing; original diagram from public references.</text>
+</svg>

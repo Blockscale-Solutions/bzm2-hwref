@@ -20,7 +20,7 @@ It is written as a practical reference for:
 
 ![BZM2 UART 9-bit character frame](../drawings/uart/uart-9bit-character-frame.svg)
 
-Original diagram of one character: start → D0–D7 → 9th address flag → stop. Source: this section. TDM slot SVG deferred pending verbatim slot-order labels in the public reference (see PR).
+Original diagram of one character: start → D0–D7 → 9th address flag → stop. Source: this section. Companion TDM frame / result-path SVG (opaque slot interior; four labeled gaps) under § TDM Overview.
 
 This is the most important host-side fact about the link, and the one that
 disqualifies most off-the-shelf USB-UART bridges:
@@ -469,6 +469,11 @@ Do not treat UART framing problems as soft performance issues. They are
 functional correctness problems.
 
 ## TDM Overview
+
+![BZM2 TDM frame and result path — opaque slot](../drawings/uart/tdm-frame-and-result-path.svg)
+
+Original diagram: frame-level TDM transport + block-level result path. **Slot interior not exploded** (four labeled gaps: intra-slot order, NOOP by length only, delay-register timing picture, 0x0A×TDM interaction). Sources: this section, Result Aggregation, TX ctrl `0x0A`, plus public OSS control packing cited on the figure. Do not derive occupancy from `10 × 11 = 110` against the 100-bit-period constant. Issue #13.
+
 
 TDM lets ASICs stream data back to the host in time slots associated with ASIC
 IDs.

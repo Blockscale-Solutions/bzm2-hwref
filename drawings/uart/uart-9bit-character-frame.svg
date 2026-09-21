@@ -79,5 +79,5 @@
   <text x="490" y="310" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Fixed 9-bit mode — not configurable to 8-bit.</text>
   <text x="490" y="330" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="11">IO: 1.2 V · bring-up convention 5 Mbps (2.5–10 Mbps).</text>
 
-  <text x="460" y="380" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Caption: bit fields from UART protocol reference § Physical Layer And Link Characteristics (Fixed 9-bit multidrop framing). Original diagram from public references. TDM slot diagram deferred — see PR notes.</text>
+  <text x="460" y="380" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Caption: bit fields from UART protocol reference § Physical Layer And Link Characteristics (Fixed 9-bit multidrop framing). Original diagram from public references. Companion: tdm-frame-and-result-path.svg (opaque slot; #13).</text>
 </svg>

@@ -401,6 +401,11 @@ power balancing, not merely a debug trick. In practice, dummy jobs help:
 
 ## Mining Programming Model
 
+![BZM2 process walk — job → engines → result](../drawings/process/job-to-result-path.svg)
+
+Original process diagram: host job programming → engines (236 positions × 4; Integration Glance) → result aggregation → **TDM as one opaque stage** (inherits #13 slot-interior deferral). Labeled gap: devices per hashboard. No hashrate / nonce-rate. Issue #17.
+
+
 ### Enhanced mode
 
 Enhanced mode is the default engine programming mode. The documented sequence

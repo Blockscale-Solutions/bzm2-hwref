@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 860" role="img"
+     aria-label="BZM2 process walk: host job programming to engines to TDM result path">
+  <title>BZM2 job programming → engines → result path</title>
+  <desc>Original process diagram from Integration Guide Mining Programming Model / ASIC At A Glance and UART job/result/TDM sections. TDM drawn as one opaque stage. Engines: 236 positions × 4 (published). Devices/hashboard = labeled gap. No hashrate.</desc>
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#2dd4bf"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="860" fill="#12171c"/>
+  <rect x="20" y="20" width="960" height="820" rx="10" fill="#1a2228" stroke="#3a4650" stroke-width="1.5"/>
+  <text x="500" y="50" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="11" font-weight="600" letter-spacing="0.12em">BZM2 · PROCESS WALK — JOB → ENGINES → RESULT</text>
+  <text x="500" y="70" text-anchor="middle" fill="#2dd4bf" font-family="Ubuntu,sans-serif" font-size="11">Integration Glance + UART job/TDM · original diagram from public references · issue #17</text>
+
+  <!-- HOST column -->
+  <rect x="40" y="90" width="280" height="420" rx="8" fill="#151a1f" stroke="#3a4650" stroke-width="1.2"/>
+  <text x="180" y="116" text-anchor="middle" fill="#60a5fa" font-family="Orbitron,sans-serif" font-size="10" letter-spacing="0.1em">HOST</text>
+
+  <g font-family="Ubuntu,sans-serif" font-size="12">
+    <rect x="56" y="136" width="248" height="44" rx="6" fill="#1e2a3a" stroke="#60a5fa" stroke-width="1.2"/>
+    <text x="180" y="154" text-anchor="middle" fill="#d6dde3">setup regs (TCE / nonce / target)</text>
+    <text x="180" y="170" text-anchor="middle" fill="#7a8792" font-size="10">WRITEREG / enhanced-mode prep</text>
+
+    <line x1="180" y1="180" x2="180" y2="198" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr2)"/>
+
+    <rect x="56" y="198" width="248" height="88" rx="6" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.3"/>
+    <text x="180" y="220" text-anchor="middle" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="9">FOUR WRITEJOB</text>
+    <text x="180" y="240" text-anchor="middle" fill="#d6dde3">shared: merkle residue · timestamp</text>
+    <text x="180" y="258" text-anchor="middle" fill="#d6dde3">differ: midstate · sequence ID</text>
+    <text x="180" y="276" text-anchor="middle" fill="#7a8792" font-size="10">4th write enables execution</text>
+
+    <line x1="180" y1="286" x2="180" y2="304" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr2)"/>
+
+    <rect x="56" y="304" width="248" height="72" rx="6" fill="#1e2a3a" stroke="#60a5fa" stroke-width="1.2"/>
+    <text x="180" y="326" text-anchor="middle" fill="#60a5fa" font-family="Orbitron,sans-serif" font-size="9">JOBCONTROL</text>
+    <text x="180" y="346" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="11">0x1 ready · 0x2 cancel · 0x3 abort→launch</text>
+    <text x="180" y="364" text-anchor="middle" fill="#7a8792" font-size="10">UART § Job Control Semantics</text>
+
+    <line x1="180" y1="376" x2="180" y2="394" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr2)"/>
+
+    <rect x="56" y="394" width="248" height="56" rx="6" fill="#1e2a3a" stroke="#60a5fa" stroke-width="1.2"/>
+    <text x="180" y="418" text-anchor="middle" fill="#d6dde3">opcodes on wire</text>
+    <text x="180" y="436" text-anchor="middle" fill="#7a8792" font-size="10" font-family="JetBrains Mono,monospace">WRITEJOB · READRESULT · DTS_VS · …</text>
+  </g>
+  <text x="180" y="480" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="10">header packing: (asic≪24)|(op≪20)|(engine≪8)|41</text>
+  <text x="180" y="496" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="10">UART § WRITEJOB / Enhanced-Mode</text>
+
+  <!-- Arrow host -> ASIC -->
+  <line x1="320" y1="280" x2="360" y2="280" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr2)"/>
+
+  <!-- ASIC column -->
+  <rect x="360" y="90" width="300" height="420" rx="8" fill="#151a1f" stroke="#3a4650" stroke-width="1.2"/>
+  <text x="510" y="116" text-anchor="middle" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="10" letter-spacing="0.1em">ASIC</text>
+
+  <g font-family="Ubuntu,sans-serif" font-size="12">
+    <rect x="376" y="136" width="268" height="100" rx="6" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.4"/>
+    <text x="510" y="160" text-anchor="middle" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="9">ENGINE POSITIONS</text>
+    <text x="510" y="182" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace">236 positions × 4 engines</text>
+    <text x="510" y="202" text-anchor="middle" fill="#7a8792" font-size="10">944 total (inherits weaker basis)</text>
+    <text x="510" y="220" text-anchor="middle" fill="#556069" font-size="10">IG At A Glance · ENG-003 / ENG-005</text>
+
+    <line x1="510" y1="236" x2="510" y2="254" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr2)"/>
+
+    <rect x="376" y="254" width="268" height="56" rx="6" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="510" y="278" text-anchor="middle" fill="#d6dde3">tile engines execute work</text>
+    <text x="510" y="296" text-anchor="middle" fill="#7a8792" font-size="10">nonce window per addressable position</text>
+
+    <line x1="510" y1="310" x2="510" y2="328" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr2)"/>
+
+    <rect x="376" y="328" width="268" height="56" rx="6" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="510" y="352" text-anchor="middle" fill="#d6dde3">tile result FIFO · 8-deep</text>
+    <text x="510" y="370" text-anchor="middle" fill="#7a8792" font-size="10">scan ~300 µs</text>
+
+    <line x1="510" y1="384" x2="510" y2="402" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr2)"/>
+
+    <rect x="376" y="402" width="268" height="56" rx="6" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/>
+    <text x="510" y="426" text-anchor="middle" fill="#d6dde3">ASIC / notch FIFO · 16-deep</text>
+    <text x="510" y="444" text-anchor="middle" fill="#7a8792" font-size="10">aggregate before TDM</text>
+  </g>
+  <text x="510" y="490" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="10">×4 engines/position = vendor-only (ENG-005)</text>
+  <text x="510" y="506" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="10">236 = third-party + measured (ENG-003)</text>
+
+  <!-- Arrow ASIC -> TDM/host return -->
+  <line x1="660" y1="360" x2="700" y2="360" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr2)"/>
+
+  <!-- RETURN column -->
+  <rect x="700" y="90" width="260" height="420" rx="8" fill="#151a1f" stroke="#3a4650" stroke-width="1.2"/>
+  <text x="830" y="116" text-anchor="middle" fill="#E86A2B" font-family="Orbitron,sans-serif" font-size="10" letter-spacing="0.1em">RETURN PATH</text>
+
+  <g font-family="Ubuntu,sans-serif" font-size="12">
+    <rect x="716" y="150" width="228" height="120" rx="6" fill="#252018" stroke="#E86A2B" stroke-width="1.5"/>
+    <text x="830" y="180" text-anchor="middle" fill="#E86A2B" font-family="Orbitron,sans-serif" font-size="9">TDM STAGE (OPAQUE)</text>
+    <text x="830" y="204" text-anchor="middle" fill="#d6dde3">slot matches ASIC_ID</text>
+    <text x="830" y="224" text-anchor="middle" fill="#d6dde3">TX after programmed delay</text>
+    <text x="830" y="244" text-anchor="middle" fill="#7a8792" font-size="10">class enables from reg 0x0A</text>
+    <text x="830" y="258" text-anchor="middle" fill="#556069" font-size="9">slot interior not exploded (#13)</text>
+
+    <line x1="830" y1="270" x2="830" y2="300" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr2)"/>
+
+    <rect x="716" y="300" width="228" height="72" rx="6" fill="#1e2a3a" stroke="#60a5fa" stroke-width="1.3"/>
+    <text x="830" y="330" text-anchor="middle" fill="#60a5fa">host decode</text>
+    <text x="830" y="350" text-anchor="middle" fill="#7a8792" font-size="10">results · register · NOOP · telemetry</text>
+
+    <rect x="716" y="400" width="228" height="56" rx="6" fill="#151a1f" stroke="#3a4650" stroke-width="1.1"/>
+    <text x="830" y="424" text-anchor="middle" fill="#7a8792" font-size="11">non-TDM alt: READRESULT poll</text>
+    <text x="830" y="442" text-anchor="middle" fill="#556069" font-size="10">UART § READRESULT</text>
+  </g>
+
+  <!-- Gaps and anti notes -->
+  <rect x="40" y="540" width="920" height="100" rx="6" fill="#2a1818" stroke="#E86A2B" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <text x="56" y="566" fill="#E86A2B" font-family="Orbitron,sans-serif" font-size="9" letter-spacing="0.08em">LABELED GAP · DEVICES PER HASHBOARD</text>
+  <text x="56" y="590" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Not published in this repo’s references. The 100-device measurement lives in #4 / private records.</text>
+  <text x="56" y="612" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="12">Series-string inference (17,500 / 350 = 50) stays off this diagram. Addressing unit: one nonce window per position [ENG-002].</text>
+
+  <rect x="40" y="656" width="920" height="88" rx="6" fill="#151a1f" stroke="#3a4650" stroke-width="1.2"/>
+  <text x="56" y="682" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="9" letter-spacing="0.08em">CORRECTION VS STALE PREMISE</text>
+  <text x="56" y="706" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Engines-per-device is published here: Integration Guide At A Glance lines for 236 × 4 — do not draw “unknown”.</text>
+  <text x="56" y="726" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="12">No hashrate, nonce-rate, or timing budget on this figure. TDM inherits #13 deferral (opaque stage only).</text>
+
+  <text x="500" y="780" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Caption: Integration Guide § Mining Programming Model / ASIC At A Glance; UART § Enhanced-Mode / Job Control / Result Aggregation / TDM. Issue #17.</text>
+  <text x="500" y="800" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="9">Original diagram from public references. Cite Integration Glance for tile/engine counts; ×4 basis = vendor-only.</text>
+</svg>

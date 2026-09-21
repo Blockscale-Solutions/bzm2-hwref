@@ -52,7 +52,7 @@
       "id": "ballmap",
       "title": "Ball map (CSV)",
       "file": "bzm2-ballmap.csv",
-      "summary": "Machine-readable pad map for the 7.5×7 mm FCLGA package.",
+      "summary": "Machine-readable pad map for the 7.5\u00d77 mm FCLGA package.",
       "tasks": [
         "pinout"
       ],
@@ -60,7 +60,7 @@
     },
     {
       "id": "architecture",
-      "title": "ASIC Integration Guide — architecture",
+      "title": "ASIC Integration Guide \u2014 architecture",
       "file": "blockscale-asic-integration-guide.md",
       "summary": "System partitioning, package constraints, core rails / voltage architecture, chain topology.",
       "tasks": [
@@ -85,6 +85,15 @@
       "tasks": [
         "roadmap"
       ]
+    },
+    {
+      "id": "lab",
+      "title": "Lab chart placeholders (RDS schemas)",
+      "file": "lab-chart-placeholders.md",
+      "summary": "Empty power / thermal / performance chart frames and capture schemas. Needs measured RDS data \u2014 no invented series.",
+      "tasks": [
+        "lab"
+      ]
     }
   ],
   "tasks": [
@@ -107,7 +116,7 @@
       "id": "uart",
       "label": "UART / TDM",
       "tone": "cool",
-      "blurb": "9-bit character frame, opcodes, job programming, TDM slots, sensors.",
+      "blurb": "9-bit character frame, TDM frame (opaque slot), opcodes, job programming, sensors.",
       "href": "doc.html?doc=uart",
       "diagram": "drawings/uart/uart-9bit-character-frame.svg"
     },
@@ -123,7 +132,7 @@
       "id": "architecture",
       "label": "Architecture",
       "tone": "cool",
-      "blurb": "Partitioning, single-ASIC rail/stack topology SVG, clocking, chain topology.",
+      "blurb": "Partitioning, rail stack, process walk (job\u2192engines\u2192result), clocking, chain topology.",
       "href": "doc.html?doc=integration#asic-at-a-glance",
       "diagram": "drawings/rails/single-asic-rail-stack.svg"
     },
@@ -140,6 +149,14 @@
       "tone": "cool",
       "blurb": "Phased reference bring-up from discovery through calibration.",
       "href": "doc.html?doc=roadmap"
+    },
+    {
+      "id": "lab",
+      "label": "Lab charts",
+      "tone": "warm",
+      "blurb": "Power / thermal / performance placeholders \u2014 needs measured RDS data. Schema CSVs only.",
+      "href": "doc.html?doc=lab",
+      "diagram": "drawings/lab/rds-min-chart-placeholder.svg"
     }
   ]
 }

@@ -249,8 +249,7 @@ empty bus. Nothing about the failure points at the comparison.
 
 The trap has teeth because both spellings appear as named constants in
 reference software, two lines apart, for different purposes: one is the part
-identifier, the other is this reply. We reached for the wrong one, and an
-earlier revision of this document repeated the mistake.
+identifier, the other is this reply. Check which one you are comparing against.
 
 > **Provenance.** `2ZB` is what three independent implementations compare
 > against: two reference implementations and one third-party firmware port.

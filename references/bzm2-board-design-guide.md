@@ -63,8 +63,8 @@ The BZM2 exposes two VDDIO pads, `19` and `30`, on opposite edges of the package
 
 **What we don't know.** No source available to us states whether the two pads are joined on-die.
 They may be a redundant pair, or they may each feed their own IO bank. We have not measured it, and
-we have not found it written down anywhere we can cite. Earlier revisions of this guide presented
-"tie both" as a requirement; it is not one, and that framing was wrong.
+we have not found it written down anywhere we can cite. **Tying both is not a requirement** - it is
+a choice that is safe under either assumption.
 
 **What we do, and why.** We connect both pads to the 1.2 V rail and tie them together at the
 package. This is also the ideal configuration suggested by the vendor reference platform. That costs a via and a short trace, and it is correct under either assumption — whereas

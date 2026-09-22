@@ -111,6 +111,27 @@ Use broadcast when you need:
 - coarse frequency ramps
 - fast deployment of common work or dummy work
 
+#### A broadcast READ is answered by every device, under its own ID
+
+`0xFF` addresses the request. **It does not appear in any reply.** A broadcast
+register read, and a broadcast wait for a frame, are each answered by every
+device on the chain, and every one of those answers carries that device's own
+`ASIC_ID` in the ID field — not `0xFF`.
+
+This is worth stating plainly because the opposite assumption is the natural
+one and it fails silently. An implementation that broadcasts a read and then
+waits for a reply whose ID equals `0xFF` will wait forever, receive nothing,
+and time out — while the chain is answering correctly the entire time. There is
+no error, no malformed frame, and nothing in the traffic to suggest the request
+was wrong.
+
+Two consequences for a host implementation:
+
+- match a broadcast reply on **any** responder ID, not on the broadcast ID
+- expect **N** replies to one broadcast read on an N-device chain, and drain
+  the siblings before issuing the next request, or they arrive as unsolicited
+  traffic inside the next transaction
+
 ### Multicast
 
 Use multicast when you need:
@@ -352,11 +373,34 @@ TDM behavior:
 - TDM can carry multiple response classes including register responses, results,
   `NOOP`, and thermal / voltage data
 
-The software guide gives a practical example:
+A worked example is often quoted as: `128` bit-time slots at `5 MHz`, giving a
+full pass over a 100-device chain of roughly `2.5 ms`. That arithmetic is
+right — `128 / 5e6 = 25.6 us` per slot, `x100 = 2.56 ms` — **but it is
+transmission time, and a real slot is not full.**
 
-- with `128` bit-time slots at `5 MHz`, a TDM frame is approximately `2.5 ms`
+Measured on a 100-device chain at `5 Mbaud`, with the sensor gap register at
+its fastest setting:
 
-That matters because it bounds result and telemetry latency across a long chain.
+| quantity | measured |
+|---|---|
+| frame on the wire | `10` bytes |
+| transmission time | `22.0 us` (10 bytes x 11 bit-times) |
+| **slot period** | **`51.17 us`** |
+| **full pass over 100 devices** | **`5.117 ms`** |
+| frame rate | `19,543` frames/s |
+
+So **about 43 % of a slot is transmission and 57 % is idle**, and the real
+latency bound over a chain is roughly **twice** the figure the transmission-only
+arithmetic gives. Design to the measured number.
+
+Two further cautions for anyone budgeting against this:
+
+- The gap register lengthens the idle portion, not the frame, and **its scaling
+  is not linear** — a hundredfold change in the register bought roughly
+  nineteenfold in rate in our sweep, and the relationship was not even
+  monotonic across the range tested.
+- `51.17 us` is the *fastest* observed slot. Any setting other than the
+  fastest is slower than this, not faster.
 
 ## Result Aggregation Model
 

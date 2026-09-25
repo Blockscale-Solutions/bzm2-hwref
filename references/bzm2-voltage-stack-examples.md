@@ -28,20 +28,20 @@ each, with the midpoint brought out on `VDDINT_1/2`
 
 The voltage sensor reports three channels ([voltage sensor channels](blockscale-asic-integration-guide.md#voltage-sensor-channels)):
 - `ch0` and `ch1`: the differential across the bottom and top domain (≈ `355 mV` each on a healthy part);
-- `ch2`: the midpoint error between the two, which is small on a healthy part.
+- `ch2`: the midpoint error, the gap between the bottom domain's top and the top domain's bottom. It is **not** `ch1 − ch0`. It is near zero on a healthy part at light load, but it grows with load current (it behaves like a resistive drop across the internal midpoint path). So a bound on `ch2` has to allow for the operating current.
 
 Two consequences for anyone reasoning about a stack:
 - **A single ~355 mV sense reading is half an ASIC, not a whole one.** Dividing a board rail by it doubles the
   apparent series depth.
-- **The ASIC's full span is `ch0 + ch1` plus the midpoint term, not `ch0 + ch1` alone.** A small per-ASIC `ch2`
-  is negligible for one part. Summed down a long string it is not: leaving it out undercounts the string by
-  N × `ch2`.
+- **The ASIC's full span is `ch0 + ch2 + ch1`, not `ch0 + ch1` alone.** The three terms telescope from `VSS` to
+  `VDD`. A small per-ASIC `ch2` is negligible for one part. Summed down a long string at full load it is not:
+  leaving it out undercounts the string by N × `ch2`.
 
 ## Vocabulary
 
 | term | meaning here |
 | --- | --- |
-| **voltage domain** | one internal half-stack of an ASIC (≈ 0.355 V); every ASIC is two domains in series |
+| **voltage domain** | one internal half-stack of an ASIC (≈ 0.355 V); every ASIC is two domains in series. Beware: some software and deployment configs call a whole ASIC level a "domain", a factor of two apart |
 | **ASIC level** (series level) | a group of ASICs sharing the same bottom (VSS) and top (VDD) node; levels stack on each other |
 | **parallel count (p)** | ASICs per level; they share the level's current |
 | **NsMp** | N ASIC levels of M ASICs in parallel: N × M ASICs and 2N voltage domains in series on one rail |
@@ -79,12 +79,21 @@ which puts **50 ASICs** in series per board.
   minimum operating voltage.
 - Read the other way, 2s2p at the nominal 0.71 V per ASIC would need a rail of about 50 × 0.71 ≈ 35.5 V: twice
   the setpoint discussed in [#4](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/4).
+- 2s2p would also halve the parallel count, so each ASIC would carry **twice** the current it carries under
+  25s4p. Against the published per-ASIC current figures that does not fit either.
 - The 2s2p reading comes from dividing the rail by one ~355 mV domain sense as if it were a whole ASIC.
+- **A rail-sum check alone does not settle it.** Under the mistaken premise, one ~355 mV channel summed over 50
+  devices also adds up to the rail. The discriminators are the per-ASIC window, the per-ASIC current against the
+  published figures, and the channel definitions above.
 
 **Physical confirmation (non-destructive).** With a board **unpowered**, check continuity between the
 ground-side (VSS) pads of the four ASICs in one stack:
 - under 25s4p they are **one node**;
-- under 2s2p they would be **two nodes**.
+- under 2s2p they would be **two nodes**;
+- adjacent stacks should be isolated from each other.
+
+The same unpowered session can record the resistance across one level and whether the four members'
+midpoint pads (`VDDINT`) are tied together.
 
 This is the decisive physical check. Telemetry from a running board supports 25s4p through the arithmetic
 above; the continuity check confirms it directly. No fault is induced and no setpoint is changed.
@@ -111,10 +120,11 @@ Circuit reasoning under 25s4p. The rows describe direction and rough size, not m
 
 | failure | the failed ASIC | its 3 parallel partners | the rest of its board's string (24 levels) | the shared rail and the other two boards |
 | --- | --- | --- | --- | --- |
-| **open ASIC** | carries no current, stops hashing | carry the level's current between three: **about +33 % each** if the string current holds (e.g. ~14 A → ~18.7 A at the reference stock point) | a small redistribution: the level with the open device takes slightly more voltage | essentially unchanged |
-| **shorted ASIC** | carries **nearly the whole string current** (≈ 4 × the per-ASIC current) through the fault: a local heating hazard | **bypassed**: ≈ 0 V and ≈ 0 current, stop hashing (4 ASICs lost in total) | the rail is shared by 24 levels instead of 25: **≈ +4.2 % on average**, more on the worst level | that board's current and power rise at the same setpoint. Other boards are unaffected if regulation holds |
-| **silent but conducting** (stopped hashing, still powered) | draws less current, so its level's voltage rises | see the higher level voltage and draw more current, partly buffering the fault inside the level | slightly less voltage for the other levels | unchanged. Keeping the silent ASIC loaded with dummy work, if it still accepts writes, is the balancing tool |
-| **failed level: open** | — | — | **string current stops**: that board stops hashing; nearly the full rail can appear across the gap unless the board has a per-level bypass element (not public) | the supply sees about a one-third load step; the other two boards keep the same setpoint if regulation holds |
+| **open ASIC** | carries no current, stops hashing | carry the level's current between three: **up to about +33 % each**. That is an upper bound: the level's voltage rises, so the string current falls somewhat (e.g. at most ~14 A → ~18.7 A at the reference stock point) | a small redistribution: the level with the open device takes slightly more voltage | essentially unchanged |
+| **shorted ASIC** | carries **nearly the whole string current** (≈ 4 × the per-ASIC current) through the fault: a local heating hazard. Whether the fault site survives that is **not established** | **bypassed**: ≈ 0 V and ≈ 0 current, stop hashing (4 ASICs lost in total) | the rail is shared by 24 levels instead of 25: **≈ +4.2 % on average**, more on the worst level | that board's current and power rise at the same setpoint. Other boards are unaffected if regulation holds |
+| **silent but conducting** (stopped hashing, still powered) | draws less current. It cannot sit at a different voltage from its partners, so the **whole level's** voltage rises | see the higher level voltage and draw more current, partly buffering the fault inside the level | slightly less voltage for the other levels | unchanged. Keeping the silent ASIC loaded with dummy work, if it still accepts writes, is the balancing tool |
+| **half-die** (one internal domain collapses) | its other domain carries about the whole level voltage, roughly twice its normal share, **unless** the four ASICs' midpoints are tied on the board (not public). This is the case a per-domain trip is designed to catch | unaffected in `VDD`-`VSS` (they share the level) | small shift | unchanged |
+| **failed level: open** | — | — | **string current stops**: that board stops hashing. The voltage across the gap depends on any bleed path across the level (not public). Without one, nearly the full rail can appear there. With one, it is the bleed current times its resistance, which can still be far above a single ASIC's limits (inferred) | the supply sees about a one-third load step; the other two boards keep the same setpoint if regulation holds |
 | **failed level: short** | as a shorted ASIC | as a shorted ASIC | as a shorted ASIC | as a shorted ASIC |
 
 **Several shorted levels.** With k levels shorted, the survivors share the rail 25 / (25 − k):
@@ -127,15 +137,22 @@ Circuit reasoning under 25s4p. The rows describe direction and rough size, not m
 | 4 | +19.0 % | ≈ 0.845 V |
 
 Levels are uneven, so the **worst** level crosses the ~0.81 V top of the operating window **sooner than the
-average predicts**: after the third shorted level rather than the fourth, where the average only just reaches it.
+average predicts**. How much sooner depends on the spread between levels, which is not fixed. Levels balance
+through their current draw, so the balance is weakest at light load, and a higher setpoint moves every level
+up. Depending on the operating point, the worst level can reach the window top after the **second** shorted
+level, not only the third or fourth. A guard has to act on the live worst level, not on a fixed count of faults.
 
-**0.81 V is the top of the operating window, not a damage threshold.**
-- The ASIC's own voltage shutdown acts on `ch0` and `ch1` against programmable thresholds
-  ([voltage sensor channels](blockscale-asic-integration-guide.md#voltage-sensor-channels)).
+**0.81 V is the top of the published operating window. It is not a published trip or damage limit.**
+- The ASIC's own voltage shutdown acts **per domain**, on `ch0` and `ch1` separately, against programmable
+  thresholds ([voltage sensor channels](blockscale-asic-integration-guide.md#voltage-sensor-channels)).
+- A per-domain threshold catches one domain collapsing, where the other domain suddenly carries the whole
+  ASIC span, or a gross overvoltage. A **uniform** rise of a whole level moves each domain by only half as
+  much, so a level can sit well above 0.81 V without either domain reaching its threshold.
 - The absolute-maximum `VDD_HASH` and the default trip thresholds are **not public**.
-- Between the operating maximum and the chip's own trip there is a band in which nothing on the chip acts.
-  **Host software has to guard that band**: bound per-level voltage, and take the board down before the
-  chip's own trip is the only protection.
+- So there is a band above the operating maximum in which nothing on the chip acts. **Host software has to
+  guard that band**: bound the per-level voltage, and take the board down before the chip's own trip is the
+  only protection. Allow for the accuracy of the sense channels, whose conversion the Integration Guide describes as
+  uncalibrated ([Voltage sensing](blockscale-asic-integration-guide.md#voltage-sensing)).
 
 ### Why voltage cannot be trimmed per board
 
@@ -151,19 +168,25 @@ action is **on/off**.
 
 ### Fault-tolerance implications
 
-- **Single open ASIC: survivable in principle.** Its three partners carry the level at about +33 % current, and
-  the board can keep running at a derated string current if that stays inside the parts' limits.
-- **Single short: survivable in principle, at a cost.**
+- **Single open ASIC: survivable in principle.** Its three partners carry the level at up to about +33 %
+  current, and the board can keep running at a derated string current if that stays inside the parts' limits.
+- **Single short: tolerable for the string, at a cost. Not established at the fault site.**
   - 4 ASICs stop.
   - The rest of the string runs about 4 % high on average, with the worst level higher.
-  - The failed part carries the string current.
-  - Each further short narrows the margin quickly, and by the third the worst level is past the operating
-    maximum.
+  - The failed part carries the whole string current. Whether it survives that is not established.
+  - Each further short narrows the margin quickly. By the second or third, depending on the operating
+    point, the worst level can be past the operating maximum.
 - **A failed-open level ends that board**, and removes a third of the load from a supply shared with two other
   boards.
 - **Detection has to come from per-ASIC telemetry.**
   - The publicly documented sense is per ASIC (`ch0`/`ch1`/`ch2`).
   - A level's state is inferred from its four members, and a string's total must include the midpoint term.
+  - A **shorted level cannot report**: its members have no core voltage. The UART forwards through each ASIC
+    ([ASIC enumeration model](blockscale-asic-integration-guide.md#asic-enumeration-model)), so the chain probably goes dark from that level
+    onward (inferred). What is observable is the rise of the surviving levels and where the chain goes dark.
+    Mapping a chain position to a level needs the board's layout (not public).
+  - On a shared rail, supply current is machine-wide. One board's string opening shows up as a one-third
+    current drop that needs another signal to pin to a board.
 - **Isolation is board-granular.** The only isolating action is disabling a whole board. Conventional practice
   treats a failed hashboard as catastrophic: disable it, keep the others hashing, and do not bring it back
   automatically.
@@ -175,6 +198,9 @@ action is **on/off**.
 - the calibration range of the setpoint;
 - `VDD_HASH` absolute maximum and default trip thresholds;
 - whether the board has per-level bypass or bleed elements;
+- whether the four ASICs' midpoints are tied on the board;
+- the per-level spread and how it varies with load;
+- the map from UART chain position to series level;
 - the result of the continuity check.
 
 ## Comparison examples
@@ -195,7 +221,7 @@ The topology below is read off the design files; it says nothing about whether t
 | property | value | basis |
 | --- | --- | --- |
 | ASICs | 4 | [`README.md`](https://github.com/bitaxeorg/bitaxeBIRDS/blob/11d188de8778dd4a394ca4740a7cc3f722619baf/README.md) line 10: "Four Intel BZM2 ASICs, powered in series" |
-| series levels × parallel | **4 × 1** | [`ASIC.kicad_sch`](https://github.com/bitaxeorg/bitaxeBIRDS/blob/11d188de8778dd4a394ca4740a7cc3f722619baf/ASIC.kicad_sch) nets: A1 `VSS` = `GND`; A1 `VDD` = `DOMAIN1` = A2 `VSS`; A2 `VDD` = `DOMAIN2` = A3 `VSS`; A3 `VDD` = `DOMAIN3` = A4 `VSS`; A4 `VDD` = `VDD` (regulator output). One ASIC per level |
+| series levels × parallel | **4 × 1** | [`ASIC.kicad_sch`](https://github.com/bitaxeorg/bitaxeBIRDS/blob/11d188de8778dd4a394ca4740a7cc3f722619baf/ASIC.kicad_sch) nets: A1 `VSS` = `GND`; A1 `VDD` = `DOMAIN1` = A2 `VSS`; A2 `VDD` = `DOMAIN2` = A3 `VSS`; A3 `VDD` = `DOMAIN3` = A4 `VSS`; A4 `VDD` = `VDD` (regulator output). One ASIC per level. `DOMAIN1-3` are the sheet's hierarchical labels (lines 8096-8118); the same nodes carry the local labels `GND2`, `GND3`, `GND4` inside the sheet |
 | rail | one TPS546D24S "tuned for 2.8V output @ 20A" | `README.md` line 16; regulator `U2` TPS546D24 in [`Power.kicad_sch`](https://github.com/bitaxeorg/bitaxeBIRDS/blob/11d188de8778dd4a394ca4740a7cc3f722619baf/Power.kicad_sch) driving net `VDD` |
 | per-ASIC voltage | ≈ 0.70 V (2.8 V / 4; arithmetic) | README line 11: "Each BZM2 is nominally 0.7V"; single-chip sweep 0.68-0.81 V in [`doc/specs.md`](https://github.com/bitaxeorg/bitaxeBIRDS/blob/11d188de8778dd4a394ca4740a7cc3f722619baf/doc/specs.md) |
 | per-level IO rail | four MCP1824T-1202 1.2 V LDOs (`U6`, `U1`, `U3`, `U4`), each with its `GND` pin on its level's bottom node (`GND`, `DOMAIN1`, `DOMAIN2`, `DOMAIN3`), each output feeding that ASIC's `VDDIO` (`1V2-1`..`1V2-4`) | `ASIC.kicad_sch` |
@@ -277,17 +303,19 @@ carried by the partners at p/(p−1) of their share, and a short costs a whole l
 | per-ASIC voltage | ≈ rail / 25 | ≈ 0.70 V | ≈ 0.71 V (nominal assumed) | unknown |
 | per-level host sense | per-ASIC VS only (public) | yes: 3 ADC nodes | not found | unconfirmed |
 | per-board voltage trim | **no** (shared rail; board control is on/off) | n/a (one board) | n/a | unconfirmed |
-| single short (inferred) | 4 ASICs lost; failed part carries the string current; others +4.2 % average | survivors ≈ 0.93 V: rail down | level lost; others ≈ 0.95 V: rail down | depends on p |
-| single open (inferred) | partners +33 % | string stops | partner at ≈ 2× | depends on p |
-| survives one device fault? | **yes, within limits** (inferred) | no | open: marginal; short: no | unconfirmed |
+| single short (inferred) | 4 ASICs lost; failed part carries the string current (survival not established); others +4.2 % average, worst level more | survivors ≈ 0.93 V: rail down | level lost; others ≈ 0.95 V: rail down | depends on p |
+| half-die (inferred) | surviving domain ≈ 2× its share unless midpoints are tied (not public) | surviving domain ≈ 2× its share | depends on midpoint ties | depends on p |
+| single open (inferred) | partners up to +33 % | string stops | partner at up to ≈ 2× | depends on p |
+| survives one device fault? | **open: yes, within limits; short: the string yes, the fault site not established** (inferred) | no | open: marginal; short: no | unconfirmed |
 
 **The pattern:**
 - more ASICs in parallel per level make a single open survivable;
 - more levels make a single short survivable at a small overvoltage;
 - a one-per-level design trades that tolerance for per-level observability at low cost.
 
-In every case the limits (worst-level voltage, partner current, and the band between the operating maximum and
-the chip's own trip) must be characterised on the real board before any firmware relies on them.
+In every case the limits must be characterised on the real board before any firmware relies on them: the
+worst-level voltage across operating points, partner current, and the band between the operating maximum and the
+chip's own trip.
 
 ## Gaps
 

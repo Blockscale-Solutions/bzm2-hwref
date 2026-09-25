@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" role="img" aria-label="RDS stack wiring: 25 levels of 4 in parallel; 2s2p ruled out">
+  <title>RDS hashboard stack wiring: 25s4p settled by analysis; 2s2p ruled out</title>
+  <desc>Structure-only diagram of the two readings of how the 4 ASICs in each of 25 stacks are wired on an RDS hashboard. 25 ASIC levels of 4 in parallel (50 voltage domains), settled by analysis; physical confirmation is an unpowered continuity check. 2s2p (2 in series by 2 in parallel per stack) is ruled out: it would put each ASIC near 0.35 V, below its operating window. No RDS measurements; arithmetic on the published nominal per-ASIC voltage.</desc>
+  <rect width="900" height="700" fill="#12171c"/>
+  <rect x="20" y="20" width="860" height="660" rx="10" fill="#1a2228" stroke="#3a4650" stroke-width="1.5"/>
+  <text x="450.0" y="50" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="11" font-weight="600" letter-spacing="0.1em">RDS · PRIMARY EXAMPLE · HASHBOARD STACK WIRING</text>
+  <text x="450.0" y="70" text-anchor="middle" fill="#2dd4bf" font-family="Ubuntu,sans-serif" font-size="11">Structure only · 3 boards on one shared rail · 100 ASICs per board shown by the vendor as 25 stacks × 4</text>
+  <text x="240" y="100" text-anchor="middle" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="10" font-weight="600" letter-spacing="0.1em">25S4P · SETTLED BY ANALYSIS</text>
+  <text x="240" y="116" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">physical confirmation: unpowered continuity check</text>
+  <text x="660" y="100" text-anchor="middle" fill="#E86A2B" font-family="Orbitron,sans-serif" font-size="10" font-weight="600" letter-spacing="0.1em">RULED OUT · 25 × (2S2P)</text>
+  <text x="660" y="116" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">shown for comparison only</text>
+  <rect x="115" y="132" width="250" height="24" rx="3" fill="#1e3a4a" stroke="#60a5fa" stroke-width="1.2"/><text x="240" y="148" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">shared rail · one setpoint · 3 boards</text>
+  <line x1="240" y1="156" x2="240" y2="164" stroke="#2dd4bf" stroke-width="2"/>
+  <rect x="114.0" y="164" width="252" height="46" rx="5" fill="#151a1f" stroke="#3a4650" stroke-width="1"/>
+  <text x="108.0" y="192" text-anchor="end" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">L25</text>
+  <rect x="124.0" y="171" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="150.0" y="185" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="150.0" y="197" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <rect x="184.0" y="171" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="210.0" y="185" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="210.0" y="197" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <rect x="244.0" y="171" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="270.0" y="185" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="270.0" y="197" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <rect x="304.0" y="171" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="330.0" y="185" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="330.0" y="197" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <line x1="240" y1="210" x2="240" y2="218" stroke="#2dd4bf" stroke-width="2"/>
+  <rect x="114.0" y="218" width="252" height="46" rx="5" fill="#151a1f" stroke="#3a4650" stroke-width="1"/>
+  <text x="108.0" y="246" text-anchor="end" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">L24</text>
+  <rect x="124.0" y="225" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="150.0" y="239" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="150.0" y="251" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <rect x="184.0" y="225" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="210.0" y="239" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="210.0" y="251" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <rect x="244.0" y="225" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="270.0" y="239" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="270.0" y="251" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <rect x="304.0" y="225" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="330.0" y="239" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="330.0" y="251" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <line x1="240" y1="264" x2="240" y2="272" stroke="#2dd4bf" stroke-width="2"/>
+  <text x="240" y="290" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="12">… levels L23 to L2 …</text>
+  <line x1="240" y1="300" x2="240" y2="308" stroke="#2dd4bf" stroke-width="2"/>
+  <rect x="114.0" y="308" width="252" height="46" rx="5" fill="#151a1f" stroke="#3a4650" stroke-width="1"/>
+  <text x="108.0" y="336" text-anchor="end" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">L1</text>
+  <rect x="124.0" y="315" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="150.0" y="329" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="150.0" y="341" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <rect x="184.0" y="315" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="210.0" y="329" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="210.0" y="341" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <rect x="244.0" y="315" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="270.0" y="329" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="270.0" y="341" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <rect x="304.0" y="315" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="330.0" y="329" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="330.0" y="341" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <line x1="240" y1="354" x2="240" y2="362" stroke="#2dd4bf" stroke-width="2"/>
+  <rect x="180" y="362" width="120" height="20" rx="3" fill="#2a2f35" stroke="#556069" stroke-width="1.1"/><text x="240.0" y="376" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">board return</text>
+  <text x="240" y="406" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">25 ASIC levels = 50 voltage domains in series</text>
+  <text x="240" y="422" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">level ≈ rail / 25 (uneven) · ≈ 17.75 V at 0.71 V nominal (arithmetic)</text>
+  <text x="240" y="438" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">one level = one ASIC's span (ch0 + ch1 + midpoint); 4 share its current</text>
+  <text x="240" y="454" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">rail is a commanded setpoint; no per-board voltage trim</text>
+  <rect x="550" y="132" width="220" height="24" rx="3" fill="#252018" stroke="#E86A2B" stroke-width="1.2" stroke-dasharray="6 4"/><text x="660" y="148" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="11">one "stack" of 4</text>
+  <line x1="660" y1="156" x2="660" y2="164" stroke="#E86A2B" stroke-width="2"/>
+  <rect x="594" y="164" width="132" height="46" rx="5" fill="#151a1f" stroke="#3a4650" stroke-width="1" stroke-dasharray="6 4"/>
+  <rect x="604" y="171" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="630" y="185" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="630" y="197" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <rect x="664" y="171" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="690" y="185" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="690" y="197" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <line x1="660" y1="210" x2="660" y2="218" stroke="#E86A2B" stroke-width="2"/>
+  <rect x="594" y="218" width="132" height="46" rx="5" fill="#151a1f" stroke="#3a4650" stroke-width="1" stroke-dasharray="6 4"/>
+  <rect x="604" y="225" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="630" y="239" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="630" y="251" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <rect x="664" y="225" width="52" height="32" rx="3" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.2"/><text x="690" y="239" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace" font-size="10">ASIC</text><text x="690" y="251" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="8">≈0.71 V</text>
+  <line x1="660" y1="264" x2="660" y2="272" stroke="#E86A2B" stroke-width="2"/>
+  <text x="660" y="292" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">2 in series × 2 in parallel per stack</text>
+  <text x="660" y="310" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">25 stacks = 50 levels × 0.71 V ≈ 35.5 V nominal</text>
+  <text x="660" y="326" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">(arithmetic): twice the 25s4p rail</text>
+  <rect x="470" y="348" width="380" height="92" rx="6" fill="#252018" stroke="#E86A2B" stroke-width="1.3" stroke-dasharray="6 4"/>
+  <text x="660" y="368" text-anchor="middle" fill="#E86A2B" font-family="Orbitron,sans-serif" font-size="9" font-weight="600" letter-spacing="0.1em">WHY RULED OUT</text>
+  <text x="660" y="388" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">50 ASICs in series on the same rail puts each near 0.35 V:</text>
+  <text x="660" y="404" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">half nominal, below the ~0.6 V operating floor. The boards hash.</text>
+  <text x="660" y="420" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="11">~355 mV is one internal domain (ch0 or ch1), not a whole ASIC.</text>
+  <rect x="470" y="458" width="380" height="86" rx="6" fill="#151a1f" stroke="#2dd4bf" stroke-width="1.2"/>
+  <text x="660" y="478" text-anchor="middle" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="9" font-weight="600" letter-spacing="0.1em">25S4P FAULT REASONING (INFERRED)</text>
+  <text x="660" y="498" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="10">short: failed ASIC carries ≈ the string current (hot spot); partners ≈ 0</text>
+  <text x="660" y="514" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="10">others +4.2 % on average, worst level more (levels uneven)</text>
+  <text x="660" y="530" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="10">open: 3 partners carry the level, up to +33 % each (upper bound)</text>
+  <text x="450.0" y="664" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Caption: structure and reasoning only; no RDS measurements. Voltages are arithmetic on the Integration Guide's nominal 0.71 V per ASIC. Issue #31.</text>
+</svg>

@@ -161,7 +161,7 @@ Additional named rails described in the vendor material:
 
 ![BZM2 single-ASIC rail and stack topology](../drawings/rails/single-asic-rail-stack.svg)
 
-Original diagram from this section and the Electrical Quick Reference / pinout Rails table. Multi-ASIC series stacking is not drawn here: see [Voltage-Stack Topology Examples](bzm2-voltage-stack-examples.md) for public multi-ASIC boards (bitaxeBIRDS 4s1p, bitaxeBonanza 4s2p), HashBed, and the RDS readings. No Product Brief tracing.
+Original diagram from this section and the Electrical Quick Reference / pinout Rails table. Multi-ASIC series stacking is not drawn here: see [Voltage-Stack Topology Examples](bzm2-voltage-stack-examples.md) for the RDS (25 levels × 4 in parallel) and the published bitaxeBIRDS (4s1p) and bitaxeBonanza (4s2p) designs. No Product Brief tracing.
 
 ### Why voltage stacking matters
 

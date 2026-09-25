@@ -78,6 +78,17 @@
       ]
     },
     {
+      "id": "stacks",
+      "title": "Voltage-Stack Topology Examples",
+      "file": "bzm2-voltage-stack-examples.md",
+      "summary": "Series levels and parallel counts on real boards (bitaxeBIRDS, bitaxeBonanza, HashBed, RDS readings), balancing, inferred failure behaviour.",
+      "tasks": [
+        "architecture",
+        "implementations",
+        "board"
+      ]
+    },
+    {
       "id": "roadmap",
       "title": "Reference Implementation Roadmap",
       "file": "blockscale-reference-roadmap.md",

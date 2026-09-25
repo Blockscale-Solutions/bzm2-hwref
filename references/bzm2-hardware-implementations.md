@@ -37,6 +37,8 @@ boards still in private development are marked as such. This survey is a compani
   share one ground and one core rail; multi-ASIC boards (bitaxeBIRDS 4, HashBed 16) put ASICs in a series
   stack with per-domain grounds, which drives the level-translation, clock-chaining, and per-domain
   rail complexity. A firmware/driver that supports the family must be topology-agnostic across these.
+  Worked stack examples (levels, parallel count, balancing, failure behaviour) are in
+  [Voltage-Stack Topology Examples](bzm2-voltage-stack-examples.md).
 - **The 9-bit UART is the recurring gate.** Every board's controller choice is really a choice about how
   to speak the ASIC's 9-bit multidrop UART: a hardware bridge with a native 9-bit mode, or an MCU whose
   UART/PIO can do 9-bit (RP2040/RP2350), or an FPGA. General MCUs that only offer a parity bit do not

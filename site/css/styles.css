@@ -255,11 +255,58 @@ main.hub { padding: 2.5rem 0 3.5rem; }
     align-items: start;
   }
 }
+
+.doc-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.toc-toggle {
+  display: none;
+  font-family: var(--font);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), background 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.toc-toggle:hover {
+  background: var(--hover-fill);
+}
+.toc-toggle:focus-visible {
+  outline: 2px solid var(--accent-cool);
+  outline-offset: 2px;
+}
+.toc-toggle[aria-expanded="true"] {
+  color: var(--accent-cool);
+  border-color: var(--accent-cool-mid);
+  background: var(--accent-cool-soft);
+}
+
+.toc-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(14, 17, 20, 0.45);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.toc-backdrop.is-open {
+  display: block;
+}
+
 .doc-toc {
-  position: sticky;
-  top: 68px;
-  max-height: calc(100vh - 80px);
-  overflow: auto;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -290,12 +337,75 @@ main.hub { padding: 2.5rem 0 3.5rem; }
   border-left-color: var(--accent-cool);
 }
 
+/* Sticky side TOC only when two-column layout is active */
+@media (min-width: 960px) {
+  .doc-toc {
+    position: sticky;
+    top: 68px;
+    max-height: calc(100vh - 80px);
+    overflow: auto;
+  }
+  .toc-toggle,
+  .toc-backdrop {
+    display: none !important;
+  }
+}
+
+/* Mid/narrow: drawer TOC — closed by default, no sticky overlay */
+@media (max-width: 959px) {
+  .doc-layout {
+    display: block;
+  }
+  .toc-toggle {
+    display: inline-flex;
+    align-items: center;
+  }
+  .toc-toggle[hidden] {
+    display: none !important;
+  }
+  .doc-toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    width: min(300px, 88vw);
+    max-height: none;
+    overflow: auto;
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+    padding: 1.25rem 1.1rem 2rem;
+    transform: translateX(100%);
+    visibility: hidden;
+    pointer-events: none;
+    /* Delay hiding visibility until slide-out finishes; show immediately on open */
+    transition: transform 0.25s var(--ease), visibility 0s linear 0.25s;
+  }
+  .doc-toc[hidden] {
+    display: none !important;
+  }
+  .doc-toc.is-open {
+    display: block;
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition: transform 0.25s var(--ease), visibility 0s;
+  }
+  body.toc-drawer-open {
+    overflow: hidden;
+  }
+}
+
 .doc-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
   align-items: center;
-  margin-bottom: 1.25rem;
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .doc-meta .chip {
   font-family: var(--mono);
@@ -411,5 +521,4 @@ main.hub { padding: 2.5rem 0 3.5rem; }
 @media (max-width: 720px) {
   .wrap { width: min(100% - 1.25rem, var(--max)); }
   .prose { padding: 1.1rem 1rem 1.5rem; }
-  .doc-toc { display: none; }
 }

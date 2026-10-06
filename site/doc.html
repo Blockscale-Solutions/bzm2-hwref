@@ -16,7 +16,8 @@
   <nav class="site-nav" aria-label="Section navigation">
     <div class="inner">
       <a class="nav-brand" href="./">BZM2 · <span class="accent">hardware ref</span></a>
-      <div class="nav-links">
+      <button type="button" class="nav-menu-toggle" id="nav-menu-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open section menu">Menu</button>
+      <div class="nav-links" id="nav-links">
         <a href="doc.html?doc=integration#power-up-and-bring-up-sequence" data-task="bring-up">Bring-up</a>
         <a href="doc.html?doc=board" data-task="board">Board design</a>
         <a href="doc.html?doc=uart" data-task="uart">UART/TDM</a>
@@ -41,10 +42,14 @@
     <div id="search-results" class="search-results" role="listbox" aria-label="Search results"></div>
   </div>
 
+  <button type="button" id="toc-backdrop" class="toc-backdrop" aria-label="Close table of contents" tabindex="-1" hidden></button>
   <div class="wrap doc-layout">
-    <aside id="doc-toc" class="doc-toc" aria-label="Table of contents"></aside>
+    <aside id="doc-toc" class="doc-toc" aria-label="Table of contents" hidden></aside>
     <article>
-      <div id="doc-meta" class="doc-meta"></div>
+      <div class="doc-head">
+        <button type="button" id="toc-toggle" class="toc-toggle" aria-expanded="false" aria-controls="doc-toc" hidden>On this page</button>
+        <div id="doc-meta" class="doc-meta"></div>
+      </div>
       <div id="doc-body" class="prose">Loading…</div>
     </article>
   </div>

@@ -167,11 +167,139 @@
     });
   }
 
+  var tocDrawerWired = false;
+  var navMenuWired = false;
+  var TOC_MQ = "(min-width: 960px)";
+  var NAV_MQ = "(max-width: 840px)";
+
+  function isWideDocLayout() {
+    return window.matchMedia(TOC_MQ).matches;
+  }
+
+  function setTocOpen(open) {
+    var toc = $("#doc-toc");
+    var toggle = $("#toc-toggle");
+    var backdrop = $("#toc-backdrop");
+    if (!toc || !toggle) return;
+    if (isWideDocLayout()) open = false;
+    toc.classList.toggle("is-open", open);
+    if (backdrop) {
+      backdrop.classList.toggle("is-open", open);
+      if (open) backdrop.removeAttribute("hidden");
+      else backdrop.setAttribute("hidden", "");
+    }
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    document.body.classList.toggle("toc-drawer-open", open);
+  }
+
+  function setTocAvailable(available) {
+    var toc = $("#doc-toc");
+    var toggle = $("#toc-toggle");
+    if (!toc || !toggle) return;
+    if (available) {
+      toc.removeAttribute("hidden");
+      toggle.removeAttribute("hidden");
+    } else {
+      setTocOpen(false);
+      toc.setAttribute("hidden", "");
+      toggle.setAttribute("hidden", "");
+    }
+  }
+
+  function wireTocDrawer() {
+    var toc = $("#doc-toc");
+    var toggle = $("#toc-toggle");
+    var backdrop = $("#toc-backdrop");
+    if (!toc || !toggle || tocDrawerWired) return;
+    tocDrawerWired = true;
+
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (isWideDocLayout()) return;
+      var open = toggle.getAttribute("aria-expanded") !== "true";
+      setTocOpen(open);
+    });
+
+    if (backdrop) {
+      backdrop.addEventListener("click", function () { setTocOpen(false); });
+    }
+
+    toc.addEventListener("click", function (e) {
+      var a = e.target.closest("a[href^='#']");
+      if (!a || isWideDocLayout()) return;
+      setTocOpen(false);
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setTocOpen(false);
+    });
+
+    document.addEventListener("click", function (e) {
+      if (isWideDocLayout()) return;
+      if (toggle.getAttribute("aria-expanded") !== "true") return;
+      if (toc.contains(e.target) || toggle.contains(e.target)) return;
+      if (backdrop && backdrop.contains(e.target)) return;
+      setTocOpen(false);
+    });
+
+    var mq = window.matchMedia(TOC_MQ);
+    function onMq() {
+      if (mq.matches) setTocOpen(false);
+    }
+    if (mq.addEventListener) mq.addEventListener("change", onMq);
+    else if (mq.addListener) mq.addListener(onMq);
+  }
+
+  function setNavOpen(open) {
+    var links = $("#nav-links");
+    var toggle = $("#nav-menu-toggle");
+    if (!links || !toggle) return;
+    if (!window.matchMedia(NAV_MQ).matches) open = false;
+    links.classList.toggle("is-open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close section menu" : "Open section menu");
+  }
+
+  function wireNavMenu() {
+    var links = $("#nav-links");
+    var toggle = $("#nav-menu-toggle");
+    if (!links || !toggle || navMenuWired) return;
+    navMenuWired = true;
+
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var open = toggle.getAttribute("aria-expanded") !== "true";
+      setNavOpen(open);
+    });
+
+    links.addEventListener("click", function (e) {
+      if (e.target.closest("a")) setNavOpen(false);
+    });
+
+    document.addEventListener("click", function (e) {
+      if (toggle.getAttribute("aria-expanded") !== "true") return;
+      if (links.contains(e.target) || toggle.contains(e.target)) return;
+      setNavOpen(false);
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setNavOpen(false);
+    });
+
+    var mq = window.matchMedia(NAV_MQ);
+    function onMq() {
+      if (!mq.matches) setNavOpen(false);
+    }
+    if (mq.addEventListener) mq.addEventListener("change", onMq);
+    else if (mq.addListener) mq.addListener(onMq);
+  }
+
   function buildToc(root, tocEl) {
     if (!tocEl) return;
     var heads = $$("h2, h3", root);
     if (!heads.length) {
       tocEl.innerHTML = '<div class="toc-label">On this page</div><p class="t-muted" style="margin:0;font-size:0.8rem">No sections</p>';
+      setTocAvailable(false);
       return;
     }
     var html = '<div class="toc-label">On this page</div>';
@@ -180,6 +308,8 @@
       html += '<a class="' + depth.trim() + '" href="#' + h.id + '">' + escapeHtml(h.textContent) + "</a>";
     });
     tocEl.innerHTML = html;
+    setTocAvailable(true);
+    setTocOpen(false);
   }
 
   function loadDocPage() {
@@ -220,7 +350,11 @@
       .then(function (text) {
         if (doc.kind === "csv" || /\.csv$/i.test(doc.file)) {
           body.innerHTML = csvToHtml(text);
-          if (toc) toc.innerHTML = '<div class="toc-label">Ball map</div><p style="margin:0;font-size:0.8rem;color:var(--muted)">CSV rendered as a table from the public pad map. No invented pin assignments.</p>';
+          if (toc) {
+            toc.innerHTML = '<div class="toc-label">Ball map</div><p style="margin:0;font-size:0.8rem;color:var(--muted)">CSV rendered as a table from the public pad map. No invented pin assignments.</p>';
+            setTocAvailable(true);
+            setTocOpen(false);
+          }
           return;
         }
         if (typeof marked === "undefined") {
@@ -356,6 +490,8 @@
   }
 
   function init() {
+    wireNavMenu();
+    wireTocDrawer();
     loadCatalog()
       .then(function () {
         if ($("#task-grid")) buildHub();

@@ -78,6 +78,17 @@
       ]
     },
     {
+      "id": "stacks",
+      "title": "Voltage-Stack Topology Examples",
+      "file": "bzm2-voltage-stack-examples.md",
+      "summary": "RDS first: 25 levels \u00d7 4 in parallel on a rail shared by three boards, failure reasoning, why voltage can't be trimmed per board. Published bitaxe designs and HashBed as comparisons.",
+      "tasks": [
+        "architecture",
+        "implementations",
+        "board"
+      ]
+    },
+    {
       "id": "roadmap",
       "title": "Reference Implementation Roadmap",
       "file": "blockscale-reference-roadmap.md",

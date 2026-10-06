@@ -2,7 +2,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 620" role="img"
      aria-label="BZM2 single-ASIC rail and voltage-stack topology from public Integration Guide">
   <title>BZM2 single-ASIC rail / stack topology</title>
-  <desc>Original single-ASIC rail topology from Integration Guide Core Rails And Voltage Architecture and pinout rails table. Multi-ASIC series stacking is a labeled documentation gap (issue #4). No RDS millivolts.</desc>
+  <desc>Original single-ASIC rail topology from Integration Guide Core Rails And Voltage Architecture and pinout rails table. Multi-ASIC series stacking is covered by the Voltage-Stack Topology Examples page (issue #31), not this diagram. No RDS millivolts.</desc>
   <rect width="860" height="620" fill="#12171c"/>
   <rect x="20" y="20" width="820" height="580" rx="10" fill="#1a2228" stroke="#3a4650" stroke-width="1.5"/>
   <text x="430" y="50" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="11" font-weight="600" letter-spacing="0.12em">BZM2 · SINGLE-ASIC RAIL / STACK TOPOLOGY</text>
@@ -76,7 +76,7 @@
   <!-- Multi-ASIC gap -->
   <rect x="48" y="520" width="764" height="48" rx="6" fill="#252018" stroke="#E86A2B" stroke-width="1.3" stroke-dasharray="6 4"/>
   <text x="430" y="540" text-anchor="middle" fill="#E86A2B" font-family="Orbitron,sans-serif" font-size="10" letter-spacing="0.08em">MULTI-ASIC SERIES STACKING</text>
-  <text x="430" y="558" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Documentation gap — see issue #4 · not asserted in this diagram</text>
+  <text x="430" y="558" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Worked examples: Voltage-Stack Topology Examples page (#31) · not asserted in this diagram</text>
 
   <text x="430" y="586" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Caption: voltages and rail names from Integration Guide § Core Rails And Voltage Architecture + Electrical QR and pinout Rails table. Original diagram from public references. No Product Brief tracing.</text>
 </svg>

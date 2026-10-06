@@ -26,6 +26,10 @@ Hardware Reference Documentation for the Bonanza Mine 2 ASIC (Intel® Blockscale
   translators, 9-bit UART bridges, 1.2 V clock, digital VCORE control, sense/telemetry, input
   protection, supervision, thermal/TRIP interlock), with trade-offs and a "when to pick it" — the
   parts companion to the Board Design Guide
+- [Voltage-Stack Topology Examples](references/bzm2-voltage-stack-examples.md) — how boards stack
+  BZM2s in series and parallel, led by the RDS (25 levels × 4 in parallel on a rail shared by three
+  boards), with bitaxeBIRDS, bitaxeBonanza and HashBed as comparisons: levels, parallel count, rail vs
+  per-ASIC voltage, balancing, and inferred failure behaviour
 - [Hardware Implementations Survey](references/bzm2-hardware-implementations.md) — the known
   BZM2 boards and firmware (bitaxeBIRDS, bitaxeBonanza, Satoshi Starter, HashBed, EmberOne01,
   bonanza-bridge-fw, Mujina) across a maturity/availability spectrum — from fully public OSHW to

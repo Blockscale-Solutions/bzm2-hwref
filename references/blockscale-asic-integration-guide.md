@@ -185,7 +185,7 @@ setting any limit:
 | --- | --- | --- | --- |
 | `ch0` | differential across the **bottom** stack | `~355 mV` | **yes** |
 | `ch1` | differential across the **top** stack | `~355 mV` | **yes** |
-| `ch2` | top-stack return against bottom-stack supply - the **midpoint error** | **`~0 mV`** | **no** |
+| `ch2` | top-stack return against bottom-stack supply - the **midpoint error** | small, near zero at idle, grows with load | **no** |
 
 Both stack channels read the differential across their **own** stack, not an
 absolute node voltage, so both sit near `355 mV` and are directly comparable
@@ -195,9 +195,13 @@ single spread limit - neither would be coherent if the two were on different
 scales.
 
 `ch2` is **not** a third rail and is **not** the `~355 mV` step between the
-stacks. It is the same physical node measured from both sides, so a healthy
-part reads approximately zero. Bound it by **absolute magnitude**, not by
-proximity to `355 mV`. It is the channel that detects midpoint collapse.
+stacks. It is also **not** `ch1 − ch0`. It is the gap between the bottom
+domain's top and the top domain's bottom: near zero on a healthy part at light
+load, but it grows with load current (it behaves like a resistive drop across
+the internal midpoint path). Bound it by **absolute magnitude** with a
+**current-scaled** limit - a fixed near-zero alarm false-trips healthy parts at
+full load - not by proximity to `355 mV`. The per-ASIC span is
+`ch0 + ch2 + ch1`. `[BZM2-VS-001]`
 
 **Only `ch0` and `ch1` feed the ASIC's own voltage shutdown.** The
 voltage-sensor control register carries a threshold field for each of those

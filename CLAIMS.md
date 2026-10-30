@@ -31,6 +31,8 @@ that evidence is:
 | `BZM2-ENG-004` | Both nonce window endpoints must be even. | `vendor-stated` |
 | `BZM2-ENG-005` | Each addressable position contains **4 engines**, for 944 engines per ASIC. | `vendor-stated` |
 | `BZM2-VS-001` | On a healthy part, `ch2` (midpoint error) is near zero at light load and grows with load current as an IR drop across the internal midpoint path; a `ch2` bound must scale with current. It is not `ch1 − ch0`; the per-ASIC span is `ch0 + ch2 + ch1`. | `our-inference` |
+| `BZM2-PLL-001` | A live PLL move that changes the feedback divider alone re-locks: 753 of 753 sets read back locked (MJ-TUNE-02, run `bonanza.MJ-TUNE-02.v17550b0.20261029T071354Z`). | `measured` |
+| `BZM2-PLL-002` | While PLL sets run on a chain whose only dispatch path they hold, every ASIC on that chain returns result frames with the nonce-valid bit clear; they stop about 40 s after the last set; chains with no sets return about none (same run). | `measured` |
 
 ### Public sources for `third-party` rows
 

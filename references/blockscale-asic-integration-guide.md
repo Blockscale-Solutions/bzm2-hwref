@@ -306,6 +306,44 @@ When both divider classes are changed, the documented programming rule is:
 
 Do not reverse that order during live clock changes.
 
+### Live clock changes on a hashing chain (measured)
+
+What follows was measured on the RDS (unit `bonanza`, three boards of 100 ASICs) under the Mujina reference
+firmware, in case MJ-TUNE-02, run `bonanza.MJ-TUNE-02.v17550b0.20261029T071354Z`. One chain had its ASICs' PLLs
+moved one ASIC at a time, in ramped steps, while the other two chains hashed at fixed clocks. `[BZM2-PLL-001]`
+`[BZM2-PLL-002]`
+
+- **A live move of the feedback divider alone re-locks.** Every one of the 753 sets in that run read back locked.
+  Die temperature on the chain stayed flat (mean about 56 C), so the effect below is not thermal.
+- **One set costs the host about a second.** A separate run measured an upper bound of 1.06 s per set, including
+  the caller's own cadence (MJ-TUNE-03, run `bonanza.MJ-TUNE-03.p1.20261029T043249Z`).
+- **While sets run, the whole chain returns result frames with the nonce-valid status bit clear**, not only the ASIC
+  being set. The reference firmware reads that bit as bit 3 (`0x08`) of the result status byte. In the run above
+  the chain carrying the sets returned 38,000 to 130,000 such frames per 20 s poll for as long as the sets went on.
+  The two chains with no sets returned about none. The frames stopped on every ASIC of the chain together, about
+  40 s after the last set.
+- **The host was starving the chain.** In that firmware each set was issued from the same single writer that sends
+  work to the chain, so for the length of every set no ASIC on the chain received new work, and a round of 100 sets
+  held the chain for most of ten minutes. The frames line up with that hold. Whether the ASIC clears the bit
+  because its work ran out, or because of a PLL write elsewhere on the chain, is not separated by this run
+  ([#40](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/40)).
+- **One unexplained burst.** The two chains with no sets showed one short burst of such frames, at about 915 s into
+  the run, with no set running anywhere. Its trigger was not measured.
+
+What a host should take from this:
+
+- **A frame with the nonce-valid bit clear is not a result.** Count it on its own. Do not count it as a valid result
+  or as a wrong one, and keep it out of any error ratio. Counted as wrong, it turned that run's start-frequency error
+  figure into 72.7 %, when the chain's own steady-state wrong share with no sets running was 1.0 to 2.2 %.
+- **Do not measure a chain while its clocks are being moved, or just after.** Mujina now discards any measurement
+  interval that starts within a quiet period after the latest PLL set on the chain. It uses 45 s, which is that
+  run's 40 s tail plus a margin, not a measured property of every board.
+- **Do not block work dispatch for a run of PLL sets.** Each set holds whatever path it is issued from. If that is
+  the chain's only dispatch path, the whole chain idles for the whole sequence.
+
+Not yet established: whether these parts lock and run cleanly below 800 MHz in a hashing system
+([#41](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/41)).
+
 ### DLL health
 
 The legacy software also validates DLL state using `coarsecon` and `fincon`

@@ -400,6 +400,11 @@ Returned fields include:
 A clear valid bit is not the same as a framing error. The host is expected to
 consume the full response length even when no valid result is present.
 
+The same holds for result frames in the TDM stream: a frame whose nonce-valid status bit is clear is not a
+result, valid or wrong, and belongs in its own count. A chain can return such frames in large numbers while its
+clocks are being changed; see the Integration Guide,
+[Live clock changes on a hashing chain (measured)](blockscale-asic-integration-guide.md#live-clock-changes-on-a-hashing-chain-measured).
+
 ### `WRITEREG`
 
 Purpose:

@@ -41,6 +41,8 @@ that evidence is:
 | `BZM2-RDS-003` | On the RDS, board 2 carries the hottest die and die mean, and board 1 the hottest outlet, in all eleven clean RDS-PROF-01 holds. | `measured` |
 | `BZM2-RDS-004` | At a 17,550 mV setpoint the three RDS board rails read 17.46 to 17.83 V (MJ-TUNE-02, run `bonanza.MJ-TUNE-02.v17550b0.20261029T071354Z`). | `measured` |
 | `BZM2-RDS-005` | An RDS board's level deviation at a uniform clock stays under about 0.018 V, and raising single ASICs off that clock widens it to about 0.025 to 0.029 V, widest at the raised ASICs and their neighbours (MJ-TUNE-02 runs `20261029T135804Z`, `20261029T172540Z`, `20261030T011051Z`). | `measured` |
+| `BZM2-RDS-006` | The RDS needs both of its supplies and shares the running load about evenly between their cords: 1.76 and 1.84 kWh over RDS-PROF-01 run `r1-20261021T063723Z`; idle draw about 28 W at the wall. | `measured` |
+| `BZM2-RDS-007` | The RDS supply's reported input power reads about 8 % above the wall at the low profile and 1 to 2 % below it at hp2 (wall over reported 0.922 to 1.017 across ten clean RDS-PROF-01 holds). | `measured` |
 
 ### Public sources for `third-party` rows
 

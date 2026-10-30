@@ -92,7 +92,7 @@
       "id": "rds-measured",
       "title": "RDS Measured Reference",
       "file": "rds-measured-reference.md",
-      "summary": "What has been measured on an RDS, each figure tied to its run: board identity, heat by board and profile, rails and level deviation.",
+      "summary": "What has been measured on an RDS, each figure tied to its run: board identity, heat by board and profile, rails and level deviation, power feeds.",
       "tasks": [
         "lab",
         "architecture"

@@ -62,7 +62,7 @@ Where:
 Example:
 
 ```text
-1.2 GHz * (236 * 4 / 3) * 1.0 = 377.6 GH/s
+1.2 GHz * (236 * 4 / 3) * 1.0 = 377.6 gigahash per second
 ```
 
 That formula is useful for sizing cooling, PSU headroom, calibration targets,
@@ -224,9 +224,9 @@ before committing limits.
 | `VDD_HASH` (stack rail) | `0.71 V` nominal | tunable window roughly `0.6` to `0.81 V` |
 | Internal stack split | `0 - 0.355 V` / `0.355 - 0.71 V` | bottom / top engine stacks |
 | Control / GPIO IO rail (`VDDIO`) | `1.2 V` nominal (`1.0 - 1.3 V` range), `1.3 V` abs max | UART, reset, trip signaling; per-pin input/output levels below |
-| Stack current, stock operating point | `~14 A` at `~330 GH/s` | roughly `10 W` core power; public sweep gives `13.6 A / 0.326 TH/s / 9.4 W` at `1.05 GHz` and `14.2 A / 0.344 TH/s / 9.9 W` at `1.10 GHz` |
-| Stack current, maximum tuned point | `~27 A` at `~577 GH/s` | roughly `22 W`; plan copper for `~30 A` headroom. Public sweep's top row is `27.1 A / 0.577 TH/s / 21.95 W` at `0.810 V, 1.85 GHz` |
-| Efficiency | **from** `~26 J/TH`, rising with clock | `~26.3` best (near `0.60-0.75 GHz`), `~28.9` at the stock point, `~38.0` at the maximum tuned point. The figure is a **floor**: chasing best efficiency costs hashrate, and a single efficiency number is meaningless without the clock it was measured at |
+| Stack current, stock operating point | `~14 A` | roughly `10 W` core power; a public sweep gives `13.6 A / 9.4 W` at `1.05 GHz` and `14.2 A / 9.9 W` at `1.10 GHz` |
+| Stack current, maximum tuned point | `~27 A` | roughly `22 W`; plan copper for `~30 A` headroom. A public sweep's top row is `27.1 A / 21.95 W` at `0.810 V, 1.85 GHz` |
+| Efficiency | best at a low clock, worsening as the clock rises | A public sweep puts the best efficiency near `0.60-0.75 GHz` and the worst at the maximum tuned point. Chasing best efficiency costs hashrate, and a single efficiency number is meaningless without the clock it was measured at |
 | Reference clock | up to `50 MHz` on `REFCLKIN` | `50 MHz` is the standard choice |
 | UART baud range | `2.5` to `10 Mbps` (50 MHz refclk) | bring-up convention is `5 Mbps` |
 | Junction temperature | `50 - 85 C` operating, `115 C` abs max | plan top-side thermal extraction |

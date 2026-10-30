@@ -162,3 +162,41 @@ and 149 s after the first write.
 
 Not yet established: whether a domain this far from its board's mean costs anything in errors, and the deviation at
 the stock firmware's higher profiles ([#44](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/44)).
+
+## Power feeds
+
+`[BZM2-RDS-006]` `[BZM2-RDS-007]`
+
+**Two supplies, both needed.** The RDS takes two power supplies, each on its own cord. They are not interchangeable:
+by the owner's observation on this unit (2026-10-20), supply A alone powers the control board but the machine does not
+start, and supply B is needed for the hashboards. Measured at the two cords (each on its own inlet-metered PDU), the
+running load is shared about evenly between them: over the arm window of RDS-PROF-01 run `r1-20261021T063723Z`, cord
+A carried 1.76 kWh and cord B 1.84 kWh. Size each feed for the whole machine's share with margin, and gate on each
+cord's current, not on the total.
+
+**Idle draw.** With both supplies on and nothing running, the RDS drew about 28 W at the wall (cord A 5.3 W, cord B
+22.8 W), measured over a 10-minute stage on 2026-10-21 against an off stage on the same cords (RDS-PROF-01 stage
+baselines, before run `r1-20261021T063723Z`).
+
+**Power factor** at the wall was 0.994 over the hold of `r1-20261021T063723Z` (low profile).
+
+**The supply's own power report is not the wall.** Over the clean RDS-PROF-01 holds, wall power (non-RDS load
+removed) divided by the supply's reported input power was:
+
+| profile | runs | wall / supply-reported input |
+|---|---|---|
+| low | `r1-20261021T063723Z`, `r2-20261021T172423Z` | 0.922 - 0.925 |
+| regular | `r3-20261021T191033Z` | 0.981 |
+| high | `r5-20261022T023030Z`, `r5-20261022T140005Z`, `r6-20261022T160430Z` | 0.998 - 1.003 |
+| hp2 | `r7-20261022T210432Z`, `r7-20261023T035144Z`, `r7-20261026T015213Z`, `r8-20261026T042113Z` | 1.013 - 1.017 |
+
+So the supply's report reads about 8 % above an independent AC meter at light load, and slightly below it at heavy
+load. Above the wall cannot be physical for an input meter, so treat the supply's figure as an instrument with an
+error that depends on load, and use a wall meter for any energy figure. (`r4-20261021T212909Z` is left out: its supply
+record covers only 82 % of its hold.) The supply's DC output fields, read at the scale and pairing we believe they have,
+give DC out over wall AC of 0.889 to 0.915 across the same holds; that pairing is not yet independently confirmed
+([#45](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/45)).
+
+**Power follows one board's clock.** Moving board 0 alone by whole-board steps, with the other two boards at their
+stored maps, changed the supply's AC input by +0.345 W per MHz of board 0's mean frequency (95 % interval 0.079 to
+0.612, four holds) in MJ-TUNE-03 (analysis `bonanza.MJ-TUNE-03.p1.20261029T043249Z`).

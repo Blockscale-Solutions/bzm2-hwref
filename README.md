@@ -36,8 +36,8 @@ Hardware Reference Documentation for the Bonanza Mine 2 ASIC (Intel® Blockscale
   boards still in private hardware development — with topologies, controller/bridge choices, and status
 
 - [RDS Measured Reference](references/rds-measured-reference.md) — what has been measured on an RDS,
-  each figure tied to the run it came from: which software board is which hashboard, and heat by board
-  across the stock profiles
+  each figure tied to the run it came from: which software board is which hashboard, heat by board
+  across the stock profiles, and rail and level-deviation readings
 
 **Product collateral:**
 - [Product Brief](Product%20Brief%20v012623.pdf)

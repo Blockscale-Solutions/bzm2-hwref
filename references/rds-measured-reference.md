@@ -116,3 +116,49 @@ Two further stock observations from the same holds:
 
 The stock firmware's die readings and Mujina's agree in pattern. An offset between them is not measured
 ([#46](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/46)).
+
+## Rails and level deviation
+
+`[BZM2-RDS-004]` `[BZM2-RDS-005]`
+
+**One setpoint, three rails close to it.** With the shared supply set to `17,550 mV`, the three board rails read 17.46
+to 17.83 V for the whole of run `bonanza.MJ-TUNE-02.v17550b0.20261029T071354Z`, board for board alike. Because the
+three boards share that one setpoint (see
+[Why voltage cannot be trimmed per board](bzm2-voltage-stack-examples.md#why-voltage-cannot-be-trimmed-per-board)),
+a test that changes the setpoint changes all three boards, and cannot isolate one board's voltage.
+
+**Level deviation** here means: take every internal-domain voltage (the two halves of every ASIC) on one board, and
+report the largest distance of any one of them from their mean. It is the board's worst level imbalance, in volts.
+
+At a uniform clock (every ASIC at the same frequency, no ASIC being moved), under the Mujina reference firmware at
+`17,550 mV`, in MJ-TUNE-02:
+
+| run | board | rounds read | level deviation |
+|---|---|---|---|
+| `bonanza.MJ-TUNE-02.v17550b0.20261029T135804Z` | 0 | 220 | at most 0.0125 V |
+| `bonanza.MJ-TUNE-02.v17550b1.20261029T172540Z`, before any ASIC moved | 1 | 221 | mean 0.0115 V, at most 0.0129 V |
+| `bonanza.MJ-TUNE-02.v17550b2.20261030T011051Z` | 2 | 213 | 0.0104 to 0.0183 V, mean 0.0178 V |
+
+**Moving single ASICs off the common clock widens it.** In `bonanza.MJ-TUNE-02.v17550b1.20261029T172540Z`, one ASIC
+was raised from 800 to 1,075 MHz in steps while its neighbours stayed at 800. The deviation went from about 0.0114 V
+at 900 MHz to 0.0157 V at 1,000 MHz and 0.0206 V at 1,075 MHz, and 0.0252 V the round after. With a few ASICs raised,
+it averaged 0.0243 V over the next 1,590 rounds and reached 0.0287 V at most. The widest halves were the raised ASICs
+and their immediate neighbours. So a per-ASIC climb makes the imbalance it is measured by, and a ceiling fitted to
+boards at one common clock will be crossed by the climb itself.
+
+**Moving the whole board at once moves it much less.** In MJ-TUNE-03 (arms `bonanza.MJ-TUNE-03.p0.20261028T231202Z`
+and `bonanza.MJ-TUNE-03.p1.20261029T043249Z`), board 0 was moved from its stored map (mean 1,163.7 MHz) by whole-board
+steps and back. The largest half-voltage excursion from its pre-move mean, per step size, was:
+
+| board-wide step | largest excursion |
+|---|---|
+| 25 MHz | 1.898 mV |
+| 50 MHz | 3.658 mV |
+| 75 MHz (applied as 50 then 25) | 3.218 mV |
+| 100 MHz (applied as 50 then 50) | 6.479 mV |
+
+After the 50 and 75 MHz moves the levels had not returned to their pre-move band by the end of the hold, at least 82 s
+and 149 s after the first write.
+
+Not yet established: whether a domain this far from its board's mean costs anything in errors, and the deviation at
+the stock firmware's higher profiles ([#44](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/44)).

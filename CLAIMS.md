@@ -39,6 +39,8 @@ that evidence is:
 | `BZM2-RDS-001` | On the RDS, software board N, chain `tty9bit<N>0`, board-controller bus `/dev/i2c-(N+2)` and the stock firmware's board N are one hashboard: outlet prints match at a median difference of 0.00 C only for equal numbers (RDS-PROF-01, run `r7-20261022T210432Z`). | `measured` |
 | `BZM2-RDS-002` | An RDS board's per-ASIC die temperature pattern identifies it across firmwares: Pearson r 0.958 to 0.998 for matching boards, 0.455 to 0.673 otherwise (RDS-PROF-01 run `r3-20261021T191033Z` against three MJ-TUNE-02 arms). | `measured` |
 | `BZM2-RDS-003` | On the RDS, board 2 carries the hottest die and die mean, and board 1 the hottest outlet, in all eleven clean RDS-PROF-01 holds. | `measured` |
+| `BZM2-RDS-004` | At a 17,550 mV setpoint the three RDS board rails read 17.46 to 17.83 V (MJ-TUNE-02, run `bonanza.MJ-TUNE-02.v17550b0.20261029T071354Z`). | `measured` |
+| `BZM2-RDS-005` | An RDS board's level deviation at a uniform clock stays under about 0.018 V, and raising single ASICs off that clock widens it to about 0.025 to 0.029 V, widest at the raised ASICs and their neighbours (MJ-TUNE-02 runs `20261029T135804Z`, `20261029T172540Z`, `20261030T011051Z`). | `measured` |
 
 ### Public sources for `third-party` rows
 

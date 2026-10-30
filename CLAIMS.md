@@ -33,6 +33,9 @@ that evidence is:
 | `BZM2-VS-001` | On a healthy part, `ch2` (midpoint error) is near zero at light load and grows with load current as an IR drop across the internal midpoint path; a `ch2` bound must scale with current. It is not `ch1 − ch0`; the per-ASIC span is `ch0 + ch2 + ch1`. | `our-inference` |
 | `BZM2-PLL-001` | A live PLL move that changes the feedback divider alone re-locks: 753 of 753 sets read back locked (MJ-TUNE-02, run `bonanza.MJ-TUNE-02.v17550b0.20261029T071354Z`). | `measured` |
 | `BZM2-PLL-002` | While PLL sets run on a chain whose only dispatch path they hold, every ASIC on that chain returns result frames with the nonce-valid bit clear; they stop about 40 s after the last set; chains with no sets return about none (same run). | `measured` |
+| `BZM2-CAL-001` | At a uniform 800 MHz start the ASICs on one RDS board do not share one error rate: dispersion 7.9 to 11.1, median ASIC under 0.7 %, worst ASICs 4 to 7 % (MJ-TUNE-02 runs `20261029T135804Z`, `20261029T172540Z`, `20261030T011051Z`). | `measured` |
+| `BZM2-CAL-002` | The same RDS board at the same start gave about twice the error ratio on a later run (MJ-TUNE-02 runs `20261029T172540Z` and `20261030T035225Z`; `20261029T135804Z` and `20261030T021147Z`). | `measured` |
+| `BZM2-CAL-003` | The stock RDS firmware enables every PLL at 800 MHz, measures each board there, then moves the whole board up (RDS-CAL-03, run `20261009T174718Z`). | `measured` |
 
 ### Public sources for `third-party` rows
 

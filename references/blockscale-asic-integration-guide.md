@@ -501,6 +501,37 @@ Where:
 At default 12-bit resolution, a raw code near `2084` maps to approximately
 `27.6 C`.
 
+### Temperature thresholds
+
+Three different temperatures appear in the vendor material and they are not the same quantity. Keep them apart.
+
+1. **Junction temperature**, a datasheet figure: `0 - 85 C` operating range (typical `70 C`), `115 C` absolute maximum. The
+   characterisation data adds that hash throughput falls off above `85 C` and recommends keeping the ASICs between `55`
+   and `85 C`. This is a rating of the silicon, not a reading the software takes.
+2. **The on-die sensor reading** (the thermal tune code above, converted to Celsius). This is what the host and the trip
+   logic see. **No public or vendor source we hold gives the offset between the sensor reading and the junction
+   temperature**, so a junction rating must not be applied to a sensor reading as if they were one number.
+3. **The sensor trip level** a host programs into the ASIC (the trip described under Protection behavior).
+
+The vendor software specification states staged thresholds on the sensor reading, per mining strategy:
+
+| strategy | warning (event recorded per ASIC) | software shutdown (per ASIC, system shut down) | hardware thermal trip |
+|---|---|---|---|
+| balanced | `85 C` | `95 C` | `105 C` |
+| high performance 1 | `90 C` | `100 C` | `110 C` |
+| high performance 2 | `95 C` | `105 C` | `115 C` |
+
+The same specification marks a working temperature of under `85 C` and says the thresholds were still to be settled. The
+legacy daemon's own compiled defaults differ below the highest strategy: a warning at `105 C`, a software shutdown at
+`110 C` (acted on only after the reading stays at or above it for more than ten consecutive polls) and a chip trip of
+`115 C`, with the trip adjustable up to `125 C`. Both agree on `115 C` for the chip trip, and a capture of the stock
+firmware at power-on shows it programming `115 C`. Which table a given daemon build applies is not settled by these
+sources.
+
+Observed on the stock firmware (RDS-PROF-01, high-performance-2 holds, for example run `r7-20261022T210432Z`): the hottest
+board's hottest die printed `104 - 106 C` for about nineteen minutes without a shutdown, across four such holds of one hour.
+No damage rating on the sensor reading exists in the material we hold.
+
 ### Voltage sensing
 
 The voltage conversion used by the vendor guide and legacy implementation is:

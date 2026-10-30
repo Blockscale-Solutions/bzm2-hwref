@@ -89,6 +89,16 @@
       ]
     },
     {
+      "id": "rds-measured",
+      "title": "RDS Measured Reference",
+      "file": "rds-measured-reference.md",
+      "summary": "What has been measured on an RDS, each figure tied to its run: board identity, heat by board and profile.",
+      "tasks": [
+        "lab",
+        "architecture"
+      ]
+    },
+    {
       "id": "roadmap",
       "title": "Reference Implementation Roadmap",
       "file": "blockscale-reference-roadmap.md",

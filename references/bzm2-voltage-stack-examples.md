@@ -54,7 +54,8 @@ the division follows the load. That is why a stacked board has to keep every lev
 
 ## Primary example: RDS (production system; 3 boards on one rail)
 
-**Source:** structure and reasoning only. No measurements from this system are published on this page.
+**Source:** structure and reasoning only. No measurements from this system are published on this page. What has been
+measured on an RDS is in the [RDS Measured Reference](rds-measured-reference.md), each figure with its run.
 
 ### Structure
 

@@ -632,6 +632,53 @@ numbers. The reusable sequence is:
    in smaller steps, for example `6.25 MHz`
 10. persist the resulting operating point for restart reuse
 
+### Measured: the error ratio at a fixed start
+
+The figures here were measured on the RDS (unit `bonanza`) under the Mujina reference firmware, case MJ-TUNE-02. In
+each run every ASIC of one board started at a uniform `800 MHz`, with the shared supply set to `17,550 mV` (the three
+board rails read `17.46 - 17.83 V`). The **error ratio** is wrong results over valid plus wrong, where a wrong result
+is a nonce that does not meet the target. Frames with the nonce-valid bit clear are counted apart and left out (see
+[Live clock changes on a hashing chain](#live-clock-changes-on-a-hashing-chain-measured)). Each ASIC's figure is its
+first dwell at the start. `[BZM2-CAL-001]` `[BZM2-CAL-002]` `[BZM2-CAL-003]`
+
+| run | board | board ratio (all ASICs pooled) | median ASIC | dispersion (chi-squared per degree of freedom) | board ratio without its high-error tail |
+|---|---|---|---|---|---|
+| `bonanza.MJ-TUNE-02.v17550b0.20261029T135804Z` | 0 | 1.0748 % | 0.5939 % | 11.13 | 0.6548 % |
+| `bonanza.MJ-TUNE-02.v17550b1.20261029T172540Z` | 1 | 0.5168 % | 0.2642 % | 7.92 | 0.3817 % |
+| `bonanza.MJ-TUNE-02.v17550b2.20261030T011051Z` | 2 | 1.1049 % | 0.6614 % | 11.08 | 0.7717 % |
+
+What the table and its reruns show:
+
+- **ASICs on one board do not share one error rate.** A dispersion of 8 to 11 is far above the 1 that a common rate
+  would give. The median ASIC on every board is under 0.7 %, while the worst ASICs read 4 to 7 % at the same clock:
+  on board 0, ASIC 20 read 6.60 % and ASIC 98 read 5.28 %; on board 2, ASIC 87 read 6.96 % and ASIC 43 read 6.04 %.
+- **A board's pooled figure is carried by its tail.** A handful of high-error ASICs set the board number, so a board
+  pass or fail at one clock is mostly a statement about those few ASICs.
+- **Boards differ even without the tail.** With the high-error ASICs taken out, the boards still read 0.38, 0.65 and
+  0.77 %. That is silicon variation between boards, at an identical start.
+- **Runs differ.** The same board at the same start gave about twice the figure on a later run: board 1 read 0.5168 %
+  and then 1.038 % (`bonanza.MJ-TUNE-02.v17550b1.20261030T035225Z`), and board 0 read 1.075 % and then 1.985 %
+  (`bonanza.MJ-TUNE-02.v17550b0.20261030T021147Z`). A single reading at a fixed threshold is not a property of the
+  board.
+- **A threshold taken from one board of one run does not transfer.** A start ceiling derived from one board's
+  earlier figure failed two of these three boards.
+- **The stock firmware starts the same way.** Our capture of it (RDS-CAL-03, run `20261009T174718Z`) enables every
+  PLL at `800 MHz`, measures each board at that uniform point, and then moves the whole board up. All three boards
+  went on from that point, at figures the stock firmware printed as 0.24 to 0.35 %. The two firmwares' ratios are not
+  directly comparable: at the same board and start, the reference firmware's figure ran 2.15 to 3.25 times the stock
+  print, and board 1 was the lowest in both
+  ([#43](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/43)).
+
+What to take from this for a calibration design:
+
+- Make the **ASIC** the unit that a start-frequency decision acts on. Keep the board's pooled figure as a record and a
+  reference for that board, not as a gate.
+- Expect a tail. A few ASICs per board will sit well above the rest. Park them low and keep them hashing rather than
+  failing the board.
+- Derive thresholds from several boards and several runs, and record which ones.
+- Whether a high-error ASIC improves at a lower clock is not yet known
+  ([#41](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/41)).
+
 ### Calibration inputs that should be board-specific
 
 The following should be measured on your own design, not copied from a vendor

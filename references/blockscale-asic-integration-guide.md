@@ -532,6 +532,9 @@ Observed on the stock firmware (RDS-PROF-01, high-performance-2 holds, for examp
 board's hottest die printed `104 - 106 C` for about nineteen minutes without a shutdown, across four such holds of one hour.
 No damage rating on the sensor reading exists in the material we hold.
 
+Open gaps in this section, each with how to close it safely: the sensor-to-junction offset (#36), which threshold table the
+stock daemon applies per strategy (#37), and damage or wear data on the sensor reading (#38).
+
 ### Voltage sensing
 
 The voltage conversion used by the vendor guide and legacy implementation is:

@@ -765,16 +765,16 @@ Before calling a hardware platform ready, verify:
 ## Relationship To The Mujina Reference Firmware
 
 **Mujina** is the open-source miner firmware (256 Foundation) that the firmware-side examples in this reference
-follow. As of 2026-11-01, its default branch has no BZM2 driver. BZM2 support is proposed in open pull requests against
-[256foundation/mujina](https://github.com/256foundation/mujina), none of them merged, and the same branches are public in
-a [reference fork](https://github.com/recklessnode/mujinabzm2). The proposal is split into:
+follow. BZM2 support for it is proposed upstream and is not part of its default branch. The proposal is tracked in
+[Mujina's pull requests](https://github.com/256foundation/mujina/pulls?q=is%3Apr+bzm2), and the same branches are public in a
+[reference fork](https://github.com/recklessnode/mujinabzm2). It covers:
 
-- an ASIC and UART protocol driver ([#117](https://github.com/256foundation/mujina/pull/117)): frame codec, UART
-  controller and enumeration, on-die sensor streaming, engine discovery over TDM, PLL and DLL clock control, a
-  calibration planner, a thermal interlock, work dispatch and result decoding, and UART diagnostics
-- general fixes found along the way ([#120](https://github.com/256foundation/mujina/pull/120))
-- an RDS platform layer ([#121](https://github.com/256foundation/mujina/pull/121)): the hashboard controller, rail
-  sequencing and bring-up, fan control, run-time calibration and replay of a saved operating point
+- an ASIC and UART protocol driver: frame codec, UART controller and enumeration, on-die sensor streaming, engine
+  discovery over TDM, PLL and DLL clock control, a calibration planner, a thermal interlock, work dispatch and result
+  decoding, and UART diagnostics
+- general fixes found along the way
+- an RDS platform layer: the hashboard controller, rail sequencing and bring-up, fan control, run-time calibration and
+  replay of a saved operating point
 
 Mujina describes itself as a developer preview, so check the repository for current state before relying on any of
 this. See the [Hardware Implementations Survey](bzm2-hardware-implementations.md) for how it sits among the other

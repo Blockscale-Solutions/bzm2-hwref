@@ -52,7 +52,7 @@ boards still in private development are marked as such. This survey is a compani
 | Project | Role | Notes |
 |---|---|---|
 | **[bonanza-bridge-fw](https://github.com/bitaxeorg/bonanza-bridge-fw)** (bitaxe) | RP2040 passthrough firmware, driven by an ESP32-S3 | Rust; implements the 9-bit multidrop UART on the RP2040 PIO. **Not a USB bridge** — the RP2040 is a passthrough for an ESP32-S3 host, not for a PC, so it does not enumerate as a USB device you can drive from a workstation |
-| **[Mujina](https://github.com/256foundation/mujina)** (256 Foundation) | Open miner firmware | **BZM2 support is proposed, not yet in the default branch** (as of 2026-11-01). The default branch has no BZM2 driver; the work is carried in three open pull requests that are not merged: an ASIC and UART protocol driver ([#117](https://github.com/256foundation/mujina/pull/117)), general fixes ([#120](https://github.com/256foundation/mujina/pull/120)) and an RDS platform layer ([#121](https://github.com/256foundation/mujina/pull/121)). The same branches are public in a [reference fork](https://github.com/recklessnode/mujinabzm2). Mujina describes itself as a developer preview |
+| **[Mujina](https://github.com/256foundation/mujina)** (256 Foundation) | Open miner firmware | **BZM2 support is proposed upstream and is not in the default branch.** The default branch has no BZM2 driver; the proposal (an ASIC and UART protocol driver, general fixes and an RDS platform layer) is tracked in [Mujina's pull requests](https://github.com/256foundation/mujina/pulls?q=is%3Apr+bzm2), and the same branches are public in a [reference fork](https://github.com/recklessnode/mujinabzm2). Mujina describes itself as a developer preview |
 
 ## Adjacent / related (not BZM2 hashboards)
 

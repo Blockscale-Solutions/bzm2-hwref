@@ -42,6 +42,8 @@ Eleven clean holds, each about an hour at the stock firmware's own operating poi
 | repeat-2 | 2 | `bonanza.MJ-TUNE-02.v17550r2.20261030T160549Z` |
 | repeat-3 | 2 | `bonanza.MJ-TUNE-02.v17550r2.20261030T174010Z` |
 | repeat-4 | 2 | `bonanza.MJ-TUNE-02.v17550s2.20261030T195256Z` |
+| record-b0 | 0 | `bonanza.MJ-TUNE-02.v17550r0.20261030T131846Z` |
+| record-b1 | 1 | `bonanza.MJ-TUNE-02.v17550r1.20261030T144115Z` |
 | tune-b0-later | 0 | `20261030T021147Z` |
 | tune-b1-later | 1 | `20261030T035225Z` |
 
@@ -218,8 +220,33 @@ What the pairs show, and what they do not:
   more errors, or whether the refusing runs' threshold is too low. That correlation is not yet measured, and none of these runs reached an exit, so none produced a finished map
   to compare.
 
-Not yet established: whether a domain this far from its board's mean costs anything in errors, and the deviation at
-the stock firmware's higher profiles.
+### Error cost of the level deviation at the 800 MHz floor
+
+`[BZM2-RDS-013]`
+
+The recording runs and the repeats (record-b0, record-b1, repeat-1 to repeat-4) dwelled every ASIC at 800 MHz and
+recorded the level each round. Each dwell's error ratio (wrong results over valid plus wrong results) was joined to the
+level deviation of the round with the same time, over 1,065 dwells in 298 rounds, with a level deviation of 0.0122 to
+0.0587 V (414 dwells over the 0.0345 V threshold). The fit weights each dwell by its result count, takes one
+intercept per run and clusters its standard errors by round.
+
+| design | cost per 0.01 V of level deviation | 95 % interval | dwells | runs |
+|---|---|---|---|---|
+| level, run intercepts | +0.0001 | -0.0017 to +0.0019 | 1,065 | record-b0, record-b1, repeat-1, repeat-2, repeat-3, repeat-4 |
+| level, hottest die of the round also controlled | -0.0012 | -0.0028 to +0.0005 | 1,065 | record-b0, record-b1, repeat-1, repeat-2, repeat-3, repeat-4 |
+
+Dwells per run: record-b0 196, record-b1 188, repeat-1 195, repeat-2 97, repeat-3 195, repeat-4 194. The boards are 0
+(record-b0), 1 (record-b1) and 2 (the others).
+
+- **No cost is established at the floor.** Both intervals include zero. At 95 % any real cost is under about 0.002 in
+  error ratio per 0.01 V, in either direction.
+- **Not controlled:** the individual ASIC. Each ASIC has about two dwells, so an ASIC effect cannot be estimated, and a
+  few episodic ASICs carry most of the errors.
+- **The cost at a climbed clock has not been measured.** Every dwell in these runs is at the one starting clock, and
+  the record holds no dwells at a higher clock. Whether a
+  domain far from its board's mean costs errors when its ASIC runs faster, where margins are smaller, remains open.
+
+Not yet established: the cost at a climbed clock, and the deviation at the stock firmware's higher profiles.
 
 ## Power feeds
 

@@ -46,6 +46,7 @@ that evidence is:
 | `BZM2-RDS-006` | The RDS needs both of its supplies and shares the running load about evenly between their cords: 1.76 and 1.84 kWh over RDS-PROF-01 run `r1-20261021T063723Z`; idle draw about 28 W at the wall. | `measured` |
 | `BZM2-RDS-007` | The RDS supply's reported input power reads about 8 % above the wall at the low profile and 1 to 2 % below it at hp2 (wall over reported 0.922 to 1.017 across ten clean RDS-PROF-01 holds). | `measured` |
 | `BZM2-RDS-008` | On an RDS board, a level-deviation guard that only recorded let the per-ASIC climb proceed (73 and 68 upward steps, none refused) and the level reach 0.054939 and 0.060539 V, where the same arm with the guard refusing at 0.0345 V issued 4 and 18 and reached 0.03864 and 0.040352 V (MJ-TUNE-02 boards 1 and 2: `20261030T081756Z` against `20261030T144115Z`, `20261030T092911Z` against `20261030T112640Z`). | `measured` |
+| `BZM2-RDS-009` | On the RDS stock image, the final close of a chain UART tty faulted the kernel three times in 266 boots' logs, under two different programs, and left the closing process unkillable; in MJ-TUNE-02 run `20261030T195256Z` two boards went dark only through their controllers' loss-of-heartbeat shutdown about 88 s after the last heartbeat. | `measured` |
 
 ### Public sources for `third-party` rows
 

@@ -43,6 +43,7 @@ that evidence is:
 | `BZM2-RDS-005` | An RDS board's level deviation at a uniform clock stays under about 0.018 V, and raising single ASICs off that clock widens it to about 0.025 to 0.029 V, widest at the raised ASICs and their neighbours (MJ-TUNE-02 runs `20261029T135804Z`, `20261029T172540Z`, `20261030T011051Z`). | `measured` |
 | `BZM2-RDS-006` | The RDS needs both of its supplies and shares the running load about evenly between their cords: 1.76 and 1.84 kWh over RDS-PROF-01 run `r1-20261021T063723Z`; idle draw about 28 W at the wall. | `measured` |
 | `BZM2-RDS-007` | The RDS supply's reported input power reads about 8 % above the wall at the low profile and 1 to 2 % below it at hp2 (wall over reported 0.922 to 1.017 across ten clean RDS-PROF-01 holds). | `measured` |
+| `BZM2-RDS-008` | On an RDS board, a level-deviation guard that only recorded let the per-ASIC climb proceed (73 and 68 upward steps, none refused) and the level reach 0.054939 and 0.060539 V, where the same arm with the guard refusing at 0.0345 V issued 4 and 18 and reached 0.03864 and 0.040352 V (MJ-TUNE-02 boards 1 and 2: `20261030T081756Z` against `20261030T144115Z`, `20261030T092911Z` against `20261030T112640Z`). | `measured` |
 
 ### Public sources for `third-party` rows
 

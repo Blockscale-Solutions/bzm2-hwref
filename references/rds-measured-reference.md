@@ -160,6 +160,45 @@ steps and back. The largest half-voltage excursion from its pre-move mean, per s
 After the 50 and 75 MHz moves the levels had not returned to their pre-move band by the end of the hold, at least 82 s
 and 149 s after the first write.
 
+### What a record-only guard showed: the same arm, refusing and recording
+
+`[BZM2-RDS-008]`
+
+A per-ASIC climb makes the imbalance it is measured by (above), so a guard that refuses a climb step while the level is
+over a threshold will stop the climb it is measuring. MJ-TUNE-02 ran the same board and arm twice under the Mujina
+reference firmware, once with the guard **refusing** upward steps whenever a round's level deviation was over its
+threshold (0.0345 V), and once **recording** the same rounds and moving nothing. Each pair is the same board, the
+same start (every ASIC at 800 MHz, `17,550 mV`) and the same step-one mode; the run's other conditions differ a little
+(start inlet 19.3 to 20.8 C, and for board 2 the two runs are about two hours apart). One pair per board is evidence about
+this unit on that night, not a rate.
+
+| board | run | guard | rounds read | level deviation range (mean) | rounds over 0.0345 V | upward steps refused for the guard | upward steps issued | ASICs ended above 800 MHz |
+|---|---|---|---|---|---|---|---|---|
+| 1 | `bonanza.MJ-TUNE-02.v17550m1.20261030T081756Z` | refuse | 1,850 | 0.009312 to 0.03864 V (0.030313 V) | 430 (23.2 %) | 164, on 86 ASICs | 4 | 6 |
+| 1 | `bonanza.MJ-TUNE-02.v17550r1.20261030T144115Z` | record | 1,553 | 0.010940 to 0.054939 V (0.038842 V) | 1,263 (81.3 %) | 0 | 73 | 76 |
+| 2 | `bonanza.MJ-TUNE-02.v17550m2.20261030T092911Z` | refuse | 1,712 | 0.007299 to 0.040352 V (0.028755 V) | 539 (31.5 %) | 94, on 57 ASICs | 18 | 18 |
+| 2 | `bonanza.MJ-TUNE-02.v17550r2.20261030T112640Z` | record | 1,511 | 0.010624 to 0.060539 V (0.034780 V) | 842 (55.7 %) | 0 | 68 | 70 |
+
+What the pairs show, and what they do not:
+
+- **Readings above the threshold are routine once the climb runs.** The level is the board's worst domain's distance
+  from the board mean. Board 2 before its climb read 0.007299 to 0.011884 V in the refusing run, and 0.010624 to
+  0.024033 V in the recording run; it rose with the climb in both.
+- **With the guard refusing, the climb was held for about a quarter to a third of the reads and mostly stopped.** The
+  refusing runs breached from about 1,125 s (board 1) and 1,456 s (board 2) into the run and issued 4 and 18 upward steps.
+  Board 1's long breach ran about 1,057 s and board 2's 1,143 s.
+- **With the guard only recording, the climb proceeded though breaches were recorded,** and the level reached higher: its
+  maximum was 0.054939 V on board 1 and 0.060539 V on board 2, against 0.03864 V and 0.040352 V when refusing. In both
+  recording runs 59 of 73 and 53 of 68 upward steps were issued in a round that was over the threshold.
+- **The per-ASIC verdicts kept working.** In the recording run of board 1 one ASIC was stepped down once, after it
+  returned 10 valid and 748 wrong results at 1,075 MHz; one step down was issued in each recording run. The climb was
+  limited by errors, not by the level.
+- **Not shown: that a high level costs anything.** These runs record the level and the climb. They do not tie a round's
+  level to the error ratios of the ASICs in it, so they cannot say whether a domain 0.05 V from its board's mean returns
+  more errors, or whether the refusing runs' threshold is too low. That correlation is the open part of
+  [#44](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/44), and none of these runs reached an exit, so none
+  produced a finished map to compare.
+
 Not yet established: whether a domain this far from its board's mean costs anything in errors, and the deviation at
 the stock firmware's higher profiles ([#44](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/44)).
 

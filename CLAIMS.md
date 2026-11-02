@@ -51,6 +51,7 @@ that evidence is:
 | `BZM2-RDS-010` | On the RDS, the wall's overhead over the supply's DC output is a smooth curve in main current (134 to 251 A) plus a fan term of about 208 W at full fan speed, residual 4.66 W over 848 minutes; the fan exponent is not identified (fan_full 186 to 287 W for exponents 3.5 to 2.0) (the eleven clean RDS-PROF-01 holds, `r1-20261021T063723Z` to `r8-20261026T042113Z`). | `measured` |
 | `BZM2-RDS-011` | The RDS supply's AC-input report divided by the wall read 1.08 at the low profile, about 1.01 to 1.02 at regular, about 1.00 at high and 0.983 to 0.986 at hp2 over the last 1,800 s of the clean RDS-PROF-01 holds; the stock firmware's own wall and conversion prints are built on that field. | `measured` |
 | `BZM2-RDS-012` | Counting the fans as output, the RDS supply's modelled conversion falls from 0.9489 to 0.9294 across the clean RDS-PROF-01 holds, and the marginal supply loss runs 0.077 to 0.172 wall W per extra DC W (RDS-PROF-01 runs `r1-20261021T063723Z` to `r8-20261026T042113Z`). | `measured` |
+| `BZM2-RDS-013` | Over 1,065 dwells at the 800 MHz floor in six record-only Mujina reference-firmware runs (level deviation 0.0122 to 0.0587 V), the error ratio's change per 0.01 V of level deviation is +0.0001 (95 % interval -0.0017 to +0.0019), and -0.0012 (-0.0028 to +0.0005) with the round's hottest die controlled: no cost is established, and any real cost at the floor is under about 0.002 per 0.01 V; the cost at a climbed clock is unmeasured. | `measured` |
 
 ### Public sources for `third-party` rows
 

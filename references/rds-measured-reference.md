@@ -274,3 +274,92 @@ Guidance, ours:
 
 Not established: the fault rate per close, and the behaviour once the driver is fixed
 ([#54](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/54)).
+
+## Stock supply, fan power and the wall's overhead
+
+`[BZM2-RDS-010]` `[BZM2-RDS-011]` `[BZM2-RDS-012]`
+
+This section models the gap between what the RDS draws at the wall and what its supply delivers to the boards, from the
+eleven clean RDS-PROF-01 holds (run ids in the table at the top of this page). It is derived from the raw per-minute
+rows of those holds, and every figure below belongs to the runs named with it. None is a rating of the unit or of either
+firmware.
+
+**Instruments, kept apart.** The wall is both PDU cords' own minute log, less the non-RDS load on those circuits
+(measured with the machine off). The DC figure is the supply's main-output current times its main-output voltage, paired
+within 1 s. That is **one instrument**: no second meter has checked the supply's current sensor. The supply's AC-input
+report is a third series, treated as an instrument under test. The fit uses whole minutes with both cords, the supply and
+the fans all covered: 881 minutes offered, 848 kept after dropping minutes where clock error alone could move the figure
+by more than the fit's own residual (calibration ramps fall out this way).
+
+**The overhead is a smooth curve in current, with a fan term on top.** Overhead here is wall power minus the supply's DC
+output. Fitted over 134 to 251 A of main current as
+
+    overhead = c0 + c1 I + c2 I^2 + fan_full (rpm / rpm_full)^3
+
+the result is c0 = 170.6 W, c1 = -1.633 W/A, c2 = 0.0096 W/A^2 and fan_full = 208.4 W at 6,759 rpm (the chassis fans at
+full duty), with a residual standard deviation of 4.66 W over the 848 kept minutes. Leaving each run out in turn moves
+fan_full between 195.9 and 210.5 W. The three current coefficients are a local fit: they are not separate physical
+losses and mean nothing outside 134 to 251 A. The supply fixed loss and the control board's draw sit together in c0 and
+are not separated; that needs the control board measured alone with the main output off.
+
+**The fan exponent is not identified, so the fan watts are a range.** Fan shaft power should follow the cube of speed, but
+the data do not pick the exponent. The same minutes fitted with exponent 2.0, 2.5, 3.0 and 3.5 give fan_full of 287, 240,
+208 and 186 W with residual standard deviations of 4.674, 4.647, 4.657 and 4.700 W. Using only the five runs whose fan duty
+moved within the hold gives 215.3 W. A dark sweep (boards off, fans stepped through several duties) would settle it.
+
+Per run, over the last 1,800 s of each hold (`r4-20261021T212909Z` over the last 1,800 s of the hold its supply stream
+covers):
+
+| run | profile | wall (W) | supply DC output (W) | overhead (W) | fan duty | fan speed (rpm) | fans, modelled (W) | DC / wall |
+|---|---|---|---|---|---|---|---|---|
+| `r1-20261021T063723Z` | low | 2903 | 2648 | 255 | 0.727 | 5400 | 106 | 0.9122 |
+| `r2-20261021T172423Z` | low | 2904 | 2649 | 255 | 0.725 | 5386 | 106 | 0.9123 |
+| `r3-20261021T191033Z` | regular | 3586 | 3242 | 344 | 0.829 | 6021 | 147 | 0.9041 |
+| `r4-20261021T212909Z` | regular | 3651 | 3248 | 402 | 0.972 | 6712 | 204 | 0.8898 |
+| `r5-20261022T023030Z` | high | 4544 | 4045 | 499 | 1.000 | 6764 | 209 | 0.8902 |
+| `r5-20261022T140005Z` | high | 4396 | 3918 | 478 | 1.000 | 6753 | 208 | 0.8913 |
+| `r6-20261022T160430Z` | high | 4420 | 3942 | 478 | 1.000 | 6755 | 208 | 0.8918 |
+| `r7-20261022T210432Z` | hp2 | 5182 | 4609 | 573 | 1.000 | 6754 | 208 | 0.8894 |
+| `r7-20261023T035144Z` | hp2 | 5200 | 4626 | 574 | 1.000 | 6743 | 207 | 0.8896 |
+| `r7-20261026T015213Z` | hp2 | 5076 | 4522 | 554 | 1.000 | 6757 | 208 | 0.8909 |
+| `r8-20261026T042113Z` | hp2 | 5096 | 4537 | 560 | 1.000 | 6756 | 208 | 0.8902 |
+
+What the table and the fit say:
+
+- **The measured DC/wall ratio steps down near the regular profile because the fans go to full, not because the supply
+  gets worse.** The stock fan law runs the fans between about 0.73 and 0.97 duty in the low and regular holds and pins
+  them at full in the high and hp2 holds. With the modelled fan power counted as output, the supply's conversion falls
+  steadily with load, from 0.9489 (`r1-20261021T063723Z`) to 0.9294 (`r7-20261023T035144Z`) across the holds.
+- **Each extra DC watt costs more wall watts at high current.** With the fans held, the marginal supply loss runs from
+  0.077 to 0.172 W of wall power per extra DC watt across the current range, rising with current.
+- **Heat enters the overhead too.** Adding the supply's own ambient field as a term (1.876 W per count over the 9-count
+  span the kept minutes cover, 16.9 W across the span, 15.8 to 18.7 W leaving a run out) lowers the residual standard
+  deviation from 4.66 to 3.54 W. The field's unit is unresolved and it moves together with time, the room and the supply
+  fan, so this is a covariate, not a measured temperature coefficient.
+
+![Wall overhead against main current, per minute, shaded by chassis fan speed, with the model at full fans and with the fan term removed](../drawings/lab/stock-power/fig-wall-overhead.svg)
+
+Caption: RDS-PROF-01 clean holds `r1-20261021T063723Z` to `r8-20261026T042113Z` (the eleven runs above); per-minute points,
+the fit above, and its residuals. A test-reported fit over those runs, not a rating.
+
+**The supply's AC-input report is not a wall meter, and its error changes sign with load.** Over the same last 1,800 s,
+the report divided by the wall reads 1.0798 and 1.0824 at the low profile (`r1-20261021T063723Z`, `r2-20261021T172423Z`),
+1.0172 and 1.0110 at regular (`r3-20261021T191033Z`, `r4-20261021T212909Z`), 0.9972 to 0.9987 at high, and 0.9830 to 0.9855
+at hp2 (`r7-20261023T035144Z` to `r8-20261026T042113Z`). Per minute the report minus the wall runs from -102 to +322 W; every
+positive minute is at or below 4,374 W of wall power and every negative one at or above 4,045 W. This is the same finding
+as [Power feeds](#power-feeds), stated over a shorter span (the ratios there are wall over report, over the whole hold,
+and agree to within the span). The report is steady from run to run, so a trip derived in its own units can use it. It must
+not be read as wall power, and a watts-per-MHz slope taken on it is not the slope at the wall. Our captures show the stock
+firmware's own printed wall power and conversion efficiency are built on this field, and they read 89.6 to 93.8 % where the
+measured DC/wall is 0.89 to 0.91 above.
+
+![The supply's input report minus the wall, against the wall](../drawings/lab/stock-power/fig-supply-input-report.svg)
+
+Caption: RDS-PROF-01 clean holds `r1-20261021T063723Z` to `r8-20261026T042113Z`, per-minute points. A test-reported
+comparison of two instruments, not a rating.
+
+**Not established:** per-board power (the board controller's current field returns the rail voltage, not a current), the
+fan law's exponent, the control board's draw apart from the supply's fixed loss, any second witness for the supply's
+current sensor, and the supply's DC output pairing ([#45](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/45)).
+No stock run held a clock at a second voltage, so none of the above says what the overhead does at a clock off the four
+stock maps.

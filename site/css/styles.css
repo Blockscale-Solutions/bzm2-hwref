@@ -455,6 +455,7 @@ main.hub { padding: 2.5rem 0 3.5rem; }
   color: var(--ink-soft);
 }
 .prose p, .prose ul, .prose ol, .prose table { margin: 0 0 1rem; }
+.prose img { max-width: 100%; height: auto; }
 .prose li { margin: 0.25rem 0; }
 .prose code {
   font-family: var(--mono);

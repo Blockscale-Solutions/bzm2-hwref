@@ -3,6 +3,16 @@ Hardware Reference Documentation for the Bonanza Mine 2 ASIC (Intel® Blockscale
 
 **Site:** [https://blockscale-solutions.github.io/bzm2-hwref/](https://blockscale-solutions.github.io/bzm2-hwref/) — task-oriented hub (Bring-up · Board design · UART/TDM · Pinout & rails · Architecture · Implementations · Roadmap). Contributors: see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Where to start
+
+| If you are... | Read, in this order |
+| --- | --- |
+| designing a first board | [Board Design Guide](references/bzm2-board-design-guide.md), then the [Integration Guide](references/blockscale-asic-integration-guide.md) sections *Electrical Quick Reference* and *IO DC thresholds*, the [Pinout and Ball Map Reference](references/bzm2-pinout-reference.md), and the [Reference Design Guidance](references/bzm2-reference-design-guidance.md) for parts |
+| bringing up a board for the first time | [Integration Guide](references/blockscale-asic-integration-guide.md), *Power-Up And Bring-Up Sequence* (with its flowchart), then the [UART and TDM Protocol Reference](references/blockscale-uart-protocol-reference.md) for `NOOP` and enumeration, and the Board Design Guide's *First-article bring-up checklist* |
+| writing host software or a driver | [UART and TDM Protocol Reference](references/blockscale-uart-protocol-reference.md), then the Integration Guide's *Mining Programming Model* and *Telemetry And Protection* |
+| stacking ASICs in series | [Voltage-Stack Topology Examples](references/bzm2-voltage-stack-examples.md), then the Integration Guide's *Core Rails And Voltage Architecture* |
+| looking for measured data | [RDS Reference Measurements](references/rds-measured-reference.md): observations from one unit, not specification |
+
 ## Documentation
 
 **Hardware reference (start here):**

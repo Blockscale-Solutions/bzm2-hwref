@@ -92,7 +92,7 @@
       "id": "rds-measured",
       "title": "RDS Reference Measurements",
       "file": "rds-measured-reference.md",
-      "summary": "Observed data from one RDS unit, kept apart from the specification: board identity, heat by board and profile, rails and level deviation, power feeds, the supply's fan power and wall overhead, close order, live clock changes, error ratio at a fixed start.",
+      "summary": "Observed data from one RDS unit, kept apart from the specification: board identity, heat by board and profile, rails and level deviation, power feeds, the supply's fan power and wall overhead, a chain-port close fault, live clock changes, error ratio at a fixed start.",
       "tasks": [
         "lab",
         "architecture"

@@ -448,6 +448,22 @@ power balancing, not merely a debug trick. In practice, dummy jobs help:
 - prevent some engines from sitting unloaded while others are active
 - hold a repeatable thermal and electrical state during calibration
 
+### Shutdown order and chain-port close
+
+On a host whose chain UART driver can fault when a port is closed for the last time (observed on the RDS stock image, see
+[Chain port close fault](rds-measured-reference.md#chain-port-close-fault)), a stop must not depend on the close
+returning:
+
+1. **Power the boards off, and verify them dark, before closing the chain ports.** Never the other way round. The Mujina
+   BZM2 reference firmware stops in this order, with a bounded wait for each board and for each port release. That order
+   has not yet been tested against a fault.
+2. **Do not block a stop on a close returning.** Bound each wait, log which port and thread a close was on, and go on.
+3. **A process that survives KILL after closing these ports is a kernel fault, not a live power owner.** Treat the
+   tty lock as held and the unit as needing a power cycle. Do not keep sending it TERM and KILL, and do not read it as
+   proof the boards are still being driven. Prove dark from the supply and the board controllers instead.
+4. **Reboot between sessions that open and close the chain ports,** and before the next run after any such fault, check
+   that the kernel is untainted and no chain port is held.
+
 ## Mining Programming Model
 
 ![BZM2 process walk — job → engines → result](../drawings/process/job-to-result-path.svg)
@@ -627,46 +643,27 @@ take from this for a calibration design:
 - Derive thresholds from several boards and several runs, and record which ones.
 - Whether a high-error ASIC improves at a lower clock is not yet known.
 
-### The error ratio as an instrument: pooled, per ASIC, and run to run (measured)
+### The error ratio as an instrument
 
-`[BZM2-CAL-004]` `[BZM2-CAL-005]`
+Measured repeatability of the pooled error ratio is in
+[How far the pooled ratio can be trusted](rds-measured-reference.md#how-far-the-pooled-ratio-can-be-trusted). It shows one
+board's pooled ratio moving by more than its own confidence interval between repeats, and a small, stable set of ASICs
+carrying most of the pool. What to take from it:
 
-The table in [Error ratio at a fixed start](rds-measured-reference.md#error-ratio-at-a-fixed-start) pools every ASIC of a board into one number. This section says how far that number can be trusted as a
-measurement, from four runs of one arm on one board (RDS board 2, MJ-TUNE-02 arm `v17550r2` and its successor `v17550s2`,
-the same start as in that table: every ASIC at `800 MHz`, `17,550 mV`). The search's upper error edge in these runs is `2.671 %`;
-the "interval" is the pool's 95 % Wilson interval.
-
-| run | board ratio (pooled) | interval | ASICs in the pool | ASICs individually over the edge | what the pool alone decided |
-|---|---|---|---|---|---|
-| `bonanza.MJ-TUNE-02.v17550r2.20261030T112640Z` | 2.248 % | 2.144 to 2.357 % | 98 | 14 | under the edge: measured, climb ran |
-| `bonanza.MJ-TUNE-02.v17550r2.20261030T160549Z` | 2.870 % | 2.752 to 2.994 % | 97 | 12 | lower bound over the edge: board stopped, no ASIC raised |
-| `bonanza.MJ-TUNE-02.v17550r2.20261030T174010Z` | 2.342 % | 2.236 to 2.453 % | 99 | 15 to 18 (two counts of one record differ; not traced) | under the edge: measured, climb ran |
-| `bonanza.MJ-TUNE-02.v17550s2.20261030T195256Z` | 2.0546 % | 1.9555 to 2.1585 % | 99 | 14 | under the edge: measured, climb ran |
-
-(An ASIC is individually over the edge when its own first dwell's lower bound is above it. The earlier arm `b2` read lower
-on this board, 1.1049 % in that table; the two arms are not compared here and the difference is not explained.)
-
-- **The pooled figure repeats badly, and the edge sat between two repeats.** The same arm on the same board read 2.248 %
-  and then 2.870 %, a ratio of 1.28 with disjoint intervals, and `2.671 %` lay between them. One repeat flipped the
-  board from measured to stopped. The third and fourth runs read 2.342 % and 2.0546 %. A single pooled reading at a fixed
-  threshold is a statement about that board at that minute, not a property of the board.
-- **A few ASICs carry the pool, and they are the same ASICs.** About an eighth of the board was over the edge in every
-  run (12 to 18 of 97 to 99), and the board stop that the second run took was decided by those 12. The per-ASIC ranking
-  agrees from run to run (Spearman 0.83 to 0.88 between the first three runs), and ASIC 87 read over 10 % in all three.
-  The tail is a stable property of those ASICs, which is what makes the ASIC, not the board, the unit that a decision
-  can rest on. The median ASIC read 1.518 %, 1.316 % and 1.318 % in the first three runs, far under the edge each time.
-- **The median-ASIC rule.** A board should be called suspect (the instrument or the operating point is wrong) only when the
-  board as a whole reads in error territory, and that is what the median ASIC says: the median cannot be moved by fewer
-  than half the ASICs, however far over the edge they read. The rule used by the reference firmware's later mode is: judge
-  each ASIC on its own first dwell at the start, count the ASICs individually over the edge, and stop the board only when
-  that count is more than half of the ASICs at the start. On the two earlier pools it reproduces the pool rule's call for
-  the first run (measured) and disagrees with it for the second (the pool rule stopped the board, the median rule measures it).
-  In the fourth run it decided, with 14 of 99 over the edge. Pooling "everything but the tail" was considered and not used: it
-  removes the ASICs it would have to count, and a trimmed pool needs a trim fraction that nothing measured sizes.
-- **What stays true.** A board stop on the pool is still right for a gross fault, a board wholly over the edge (an
-  instrument or operating-point fault, such as the frames lost while PLLs were being moved, see
-  [Live clock changes on a hashing chain](#live-clock-changes-on-a-hashing-chain)). A fault confined to fewer than
-  half the ASICs looks the same as a tail and is handled the same way, per ASIC.
+- **Do not read a single pooled figure as a property of the board.** At a fixed threshold it is a statement about that
+  board at that time.
+- **Make the ASIC the unit a decision rests on.** The high-error tail is a stable property of those ASICs.
+- **Use the median-ASIC rule.** Call a board suspect (the instrument or the operating point is wrong) only when the
+  board as a whole reads in error territory, which is what the median ASIC shows: fewer than half the ASICs cannot move
+  the median, however far over the edge they read. Judge each ASIC on its own first dwell at the start, count the ASICs
+  individually over the edge, and stop the board only when that count is more than half of the ASICs at the start. The
+  Mujina BZM2 reference firmware has a mode that applies this rule.
+- **Do not trim the tail out of the pool.** A trimmed pool removes the ASICs the rule has to count, and no measurement
+  sizes the trim fraction.
+- **Keep the board stop on the pooled ratio for a gross fault.** A board wholly over the edge points to an instrument or
+  operating-point fault, such as the frames lost while PLLs are being moved (see
+  [Live clock changes on a hashing chain](#live-clock-changes-on-a-hashing-chain)). A fault confined to fewer than half
+  the ASICs looks like a tail and is handled the same way, per ASIC.
 
 ### Calibration inputs that should be board-specific
 

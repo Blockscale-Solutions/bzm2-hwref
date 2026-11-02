@@ -3,7 +3,8 @@
 > **Observed data, not specification.** Everything on this page was measured on one RDS unit (three hashboards of 100
 > BZM2 ASICs on one shared supply rail), under the stock firmware and under the Mujina reference firmware. A figure
 > from one unit is evidence about that unit. It is not a rating of the ASIC and not a performance claim for either
-> firmware. The normative text (what the ASIC requires and how to design for it) is in the
+> firmware. A figure from a Mujina run is the result of the one test named with it (this test ran and read this): it does
+> not characterize the ASIC under Mujina, and it is not compared with the stock firmware. The normative text (what the ASIC requires and how to design for it) is in the
 > [Integration Guide](blockscale-asic-integration-guide.md), the
 > [UART and TDM Protocol Reference](blockscale-uart-protocol-reference.md) and the
 > [Board Design Guide](bzm2-board-design-guide.md).
@@ -39,6 +40,15 @@ Eleven clean holds, each about an hour at the stock firmware's own operating poi
 | tune-b2 | 2 | `bonanza.MJ-TUNE-02.v17550b2.20261030T011051Z` |
 | board-step-1 | 0 | `bonanza.MJ-TUNE-03.p0.20261028T231202Z` |
 | board-step-2 | 0 | `bonanza.MJ-TUNE-03.p1.20261029T043249Z` |
+| guard-refuse-b1 | 1 | `bonanza.MJ-TUNE-02.v17550m1.20261030T081756Z` |
+| guard-record-b1 | 1 | `bonanza.MJ-TUNE-02.v17550r1.20261030T144115Z` |
+| guard-refuse-b2 | 2 | `bonanza.MJ-TUNE-02.v17550m2.20261030T092911Z` |
+| guard-record-b2 | 2 | `bonanza.MJ-TUNE-02.v17550r2.20261030T112640Z` |
+| repeat-2 | 2 | `bonanza.MJ-TUNE-02.v17550r2.20261030T160549Z` |
+| repeat-3 | 2 | `bonanza.MJ-TUNE-02.v17550r2.20261030T174010Z` |
+| repeat-4 | 2 | `bonanza.MJ-TUNE-02.v17550s2.20261030T195256Z` |
+
+*guard-record-b2* is also the first of the four repeats of one arm on board 2 (*repeat-2* to *repeat-4* are the others).
 
 ## Board identity
 
@@ -180,19 +190,18 @@ and 149 s after the first write.
 `[BZM2-RDS-008]`
 
 A per-ASIC climb makes the imbalance it is measured by (above), so a guard that refuses a climb step while the level is
-over a threshold will stop the climb it is measuring. MJ-TUNE-02 ran the same board and arm twice under the Mujina
-reference firmware, once with the guard **refusing** upward steps whenever a round's level deviation was over its
+over a threshold will stop the climb it is measuring. The Mujina reference firmware ran the same board and arm twice, once with the guard **refusing** upward steps whenever a round's level deviation was over its
 threshold (0.0345 V), and once **recording** the same rounds and moving nothing. Each pair is the same board, the
 same start (every ASIC at 800 MHz, `17,550 mV`) and the same step-one mode; the run's other conditions differ a little
 (start inlet 19.3 to 20.8 C, and for board 2 the two runs are about two hours apart). One pair per board is evidence about
 this unit on that night, not a rate.
 
-| board | run | guard | rounds read | level deviation range (mean) | rounds over 0.0345 V | upward steps refused for the guard | upward steps issued | ASICs ended above 800 MHz |
+| board | run (label) | guard | rounds read | level deviation range (mean) | rounds over 0.0345 V | upward steps refused for the guard | upward steps issued | ASICs ended above 800 MHz |
 |---|---|---|---|---|---|---|---|---|
-| 1 | `bonanza.MJ-TUNE-02.v17550m1.20261030T081756Z` | refuse | 1,850 | 0.009312 to 0.03864 V (0.030313 V) | 430 (23.2 %) | 164, on 86 ASICs | 4 | 6 |
-| 1 | `bonanza.MJ-TUNE-02.v17550r1.20261030T144115Z` | record | 1,553 | 0.010940 to 0.054939 V (0.038842 V) | 1,263 (81.3 %) | 0 | 73 | 76 |
-| 2 | `bonanza.MJ-TUNE-02.v17550m2.20261030T092911Z` | refuse | 1,712 | 0.007299 to 0.040352 V (0.028755 V) | 539 (31.5 %) | 94, on 57 ASICs | 18 | 18 |
-| 2 | `bonanza.MJ-TUNE-02.v17550r2.20261030T112640Z` | record | 1,511 | 0.010624 to 0.060539 V (0.034780 V) | 842 (55.7 %) | 0 | 68 | 70 |
+| 1 | guard-refuse-b1 | refuse | 1,850 | 0.009312 to 0.03864 V (0.030313 V) | 430 (23.2 %) | 164, on 86 ASICs | 4 | 6 |
+| 1 | guard-record-b1 | record | 1,553 | 0.010940 to 0.054939 V (0.038842 V) | 1,263 (81.3 %) | 0 | 73 | 76 |
+| 2 | guard-refuse-b2 | refuse | 1,712 | 0.007299 to 0.040352 V (0.028755 V) | 539 (31.5 %) | 94, on 57 ASICs | 18 | 18 |
+| 2 | guard-record-b2 | record | 1,511 | 0.010624 to 0.060539 V (0.034780 V) | 842 (55.7 %) | 0 | 68 | 70 |
 
 What the pairs show, and what they do not:
 
@@ -210,9 +219,8 @@ What the pairs show, and what they do not:
   limited by errors, not by the level.
 - **Not shown: that a high level costs anything.** These runs record the level and the climb. They do not tie a round's
   level to the error ratios of the ASICs in it, so they cannot say whether a domain 0.05 V from its board's mean returns
-  more errors, or whether the refusing runs' threshold is too low. That correlation is the open part of
-  [#44](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/44), and none of these runs reached an exit, so none
-  produced a finished map to compare.
+  more errors, or whether the refusing runs' threshold is too low. That correlation is not yet established, and none of
+  these runs reached an exit, so none produced a finished map to compare.
 
 Not yet established: whether a domain this far from its board's mean costs anything in errors, and the deviation at
 the stock firmware's higher profiles.
@@ -253,47 +261,33 @@ give DC out over wall AC of 0.889 to 0.915 across the same holds; that pairing i
 stored maps, changed the supply's AC input by +0.345 W per MHz of board 0's mean frequency (95 % interval 0.079 to
 0.612, four holds) in run board-step-2.
 
-## Operational guidance: close order and kernel fault
+## Chain port close fault
 
 `[BZM2-RDS-009]`
 
-The stock image's driver for the chain UART ttys (`/dev/tty9bit00`, `10`, `20`, kernel 4.9.78) can fault the kernel when
-a chain tty is closed for the last time. This is a property of the platform, not of any one program, and it is tracked as
-[#54](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/54), which holds the full description and the way to
-close the gap. In short:
+The stock image's driver for the three chain UART ports (kernel 4.9.78) can fault the kernel when a chain port is closed
+for the last time. This is a property of the platform's kernel driver, not of any one program. Guidance for hosts that
+can meet this fault is in the Integration Guide,
+[Shutdown order and chain-port close](blockscale-asic-integration-guide.md#shutdown-order-and-chain-port-close).
 
-- **How often.** Three faults in 266 boots' kernel logs: the stock mining daemon exiting (MJ-HASH-07, 2026-09-24), the
-  Mujina miner at a normal stop (MJ-TUNE-03 arm `p0`, 2026-10-28) and the Mujina miner at its stop in
-  `bonanza.MJ-TUNE-02.v17550s2.20261030T195256Z` (2026-10-30). Different chains, two different programs, different builds.
-  The timing and traffic before the close match the closes that passed.
-- **Why it hurts.** The faulting thread dies holding a kernel-wide tty lock, so any later final close of a chain tty
+- **How often.** Three faults in 266 boots' kernel logs: the stock mining daemon exiting in an earlier test, the Mujina
+  miner at a normal stop (*board-step-1*) and the Mujina miner at its stop in *repeat-4*. Different chains, two
+  different programs, different builds. The timing and traffic before the close match the closes that passed.
+- **Why it hurts.** The faulting thread dies holding a kernel-wide tty lock, so any later final close of a chain port
   blocks for good in uninterruptible sleep. The closing process cannot exit, and TERM and KILL do nothing. Only a reboot
   or power cycle clears it.
-- **What it did to a stop.** In the 2026-10-30 run the miner released its chain ports before powering the boards off, so
-  the fault in the first close left boards 1 and 2 powered. They went dark only through the board controllers' own
+- **What it did to a stop.** In *repeat-4* the miner released its chain ports before powering the boards off, so the
+  fault in the first close left boards 1 and 2 powered. They went dark only through the board controllers' own
   loss-of-heartbeat shutdown, about 88 s after their last heartbeat. The process stayed alive past KILL.
 
-Guidance, ours:
-
-1. **Power the boards off, and verify them dark, before closing the chain ports.** Never the other way round. The
-   Mujina reference firmware's stop now does this, with a bounded wait for each board and for each port release. That
-   change has not been exercised against a fault.
-2. **Do not block a stop on a close returning.** Bound each wait, log which port and thread a close was on, and go on.
-3. **A process that survives KILL after closing these ports is a kernel fault, not a live power owner.** Treat the
-   tty lock as held and the unit as needing a power cycle; do not keep sending it TERM and KILL, and do not read it as
-   proof the boards are still being driven. Prove dark from the supply and the board controllers instead.
-4. **Reboot between sessions that open and close the chain ports,** and before the next run after any such fault check
-   that the kernel is untainted and no chain tty is held.
-
-Not established: the fault rate per close, and the behaviour once the driver is fixed
-([#54](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/54)).
+Not established: the fault rate per close, and the behaviour once the driver is fixed.
 
 ## Stock supply, fan power and the wall's overhead
 
 `[BZM2-RDS-010]` `[BZM2-RDS-011]` `[BZM2-RDS-012]`
 
 This section models the gap between what the RDS draws at the wall and what its supply delivers to the boards, from the
-eleven clean RDS-PROF-01 holds (run ids in the table at the top of this page). It is derived from the raw per-minute
+eleven clean stock-firmware holds (labels and run ids in the table at the top of this page). It is derived from the raw per-minute
 rows of those holds, and every figure below belongs to the runs named with it. None is a rating of the unit or of either
 firmware.
 
@@ -320,29 +314,28 @@ the data do not pick the exponent. The same minutes fitted with exponent 2.0, 2.
 208 and 186 W with residual standard deviations of 4.674, 4.647, 4.657 and 4.700 W. Using only the five runs whose fan duty
 moved within the hold gives 215.3 W. A dark sweep (boards off, fans stepped through several duties) would settle it.
 
-Per run, over the last 1,800 s of each hold (`r4-20261021T212909Z` over the last 1,800 s of the hold its supply stream
-covers):
+Per run, over the last 1,800 s of each hold (*regular-2* over the last 1,800 s of the hold its supply stream covers):
 
-| run | profile | wall (W) | supply DC output (W) | overhead (W) | fan duty | fan speed (rpm) | fans, modelled (W) | DC / wall |
+| hold | profile | wall (W) | supply DC output (W) | overhead (W) | fan duty | fan speed (rpm) | fans, modelled (W) | DC / wall |
 |---|---|---|---|---|---|---|---|---|
-| `r1-20261021T063723Z` | low | 2903 | 2648 | 255 | 0.727 | 5400 | 106 | 0.9122 |
-| `r2-20261021T172423Z` | low | 2904 | 2649 | 255 | 0.725 | 5386 | 106 | 0.9123 |
-| `r3-20261021T191033Z` | regular | 3586 | 3242 | 344 | 0.829 | 6021 | 147 | 0.9041 |
-| `r4-20261021T212909Z` | regular | 3651 | 3248 | 402 | 0.972 | 6712 | 204 | 0.8898 |
-| `r5-20261022T023030Z` | high | 4544 | 4045 | 499 | 1.000 | 6764 | 209 | 0.8902 |
-| `r5-20261022T140005Z` | high | 4396 | 3918 | 478 | 1.000 | 6753 | 208 | 0.8913 |
-| `r6-20261022T160430Z` | high | 4420 | 3942 | 478 | 1.000 | 6755 | 208 | 0.8918 |
-| `r7-20261022T210432Z` | hp2 | 5182 | 4609 | 573 | 1.000 | 6754 | 208 | 0.8894 |
-| `r7-20261023T035144Z` | hp2 | 5200 | 4626 | 574 | 1.000 | 6743 | 207 | 0.8896 |
-| `r7-20261026T015213Z` | hp2 | 5076 | 4522 | 554 | 1.000 | 6757 | 208 | 0.8909 |
-| `r8-20261026T042113Z` | hp2 | 5096 | 4537 | 560 | 1.000 | 6756 | 208 | 0.8902 |
+| *low-1* | low | 2903 | 2648 | 255 | 0.727 | 5400 | 106 | 0.9122 |
+| *low-2* | low | 2904 | 2649 | 255 | 0.725 | 5386 | 106 | 0.9123 |
+| *regular-1* | regular | 3586 | 3242 | 344 | 0.829 | 6021 | 147 | 0.9041 |
+| *regular-2* | regular | 3651 | 3248 | 402 | 0.972 | 6712 | 204 | 0.8898 |
+| *high-1* | high | 4544 | 4045 | 499 | 1.000 | 6764 | 209 | 0.8902 |
+| *high-2* | high | 4396 | 3918 | 478 | 1.000 | 6753 | 208 | 0.8913 |
+| *high-3* | high | 4420 | 3942 | 478 | 1.000 | 6755 | 208 | 0.8918 |
+| *hp2-1* | hp2 | 5182 | 4609 | 573 | 1.000 | 6754 | 208 | 0.8894 |
+| *hp2-2* | hp2 | 5200 | 4626 | 574 | 1.000 | 6743 | 207 | 0.8896 |
+| *hp2-3* | hp2 | 5076 | 4522 | 554 | 1.000 | 6757 | 208 | 0.8909 |
+| *hp2-4* | hp2 | 5096 | 4537 | 560 | 1.000 | 6756 | 208 | 0.8902 |
 
 What the table and the fit say:
 
 - **The measured DC/wall ratio steps down near the regular profile because the fans go to full, not because the supply
   gets worse.** The stock fan law runs the fans between about 0.73 and 0.97 duty in the low and regular holds and pins
   them at full in the high and hp2 holds. With the modelled fan power counted as output, the supply's conversion falls
-  steadily with load, from 0.9489 (`r1-20261021T063723Z`) to 0.9294 (`r7-20261023T035144Z`) across the holds.
+  steadily with load, from 0.9489 (*low-1*) to 0.9294 (*hp2-2*) across the holds.
 - **Each extra DC watt costs more wall watts at high current.** With the fans held, the marginal supply loss runs from
   0.077 to 0.172 W of wall power per extra DC watt across the current range, rising with current.
 - **Heat enters the overhead too.** Adding the supply's own ambient field as a term (1.876 W per count over the 9-count
@@ -352,28 +345,25 @@ What the table and the fit say:
 
 ![Wall overhead against main current, per minute, shaded by chassis fan speed, with the model at full fans and with the fan term removed](../drawings/lab/stock-power/fig-wall-overhead.svg)
 
-Caption: RDS-PROF-01 clean holds `r1-20261021T063723Z` to `r8-20261026T042113Z` (the eleven runs above); per-minute points,
-the fit above, and its residuals. A test-reported fit over those runs, not a rating.
+*Per-minute points from the eleven stock-firmware holds above, the fit above, and its residuals. A fit over those holds, not a rating.*
 
 **The supply's AC-input report is not a wall meter, and its error changes sign with load.** Over the same last 1,800 s,
-the report divided by the wall reads 1.0798 and 1.0824 at the low profile (`r1-20261021T063723Z`, `r2-20261021T172423Z`),
-1.0172 and 1.0110 at regular (`r3-20261021T191033Z`, `r4-20261021T212909Z`), 0.9972 to 0.9987 at high, and 0.9830 to 0.9855
-at hp2 (`r7-20261023T035144Z` to `r8-20261026T042113Z`). Per minute the report minus the wall runs from -102 to +322 W; every
+the report divided by the wall reads 1.0798 and 1.0824 at the low profile (*low-1*, *low-2*),
+1.0172 and 1.0110 at regular (*regular-1*, *regular-2*), 0.9972 to 0.9987 at high, and 0.9830 to 0.9855
+at hp2 (*hp2-2* to *hp2-4*). Per minute the report minus the wall runs from -102 to +322 W; every
 positive minute is at or below 4,374 W of wall power and every negative one at or above 4,045 W. This is the same finding
 as [Power feeds](#power-feeds), stated over a shorter span (the ratios there are wall over report, over the whole hold,
 and agree to within the span). The report is steady from run to run, so a trip derived in its own units can use it. It must
-not be read as wall power, and a watts-per-MHz slope taken on it is not the slope at the wall. Our captures show the stock
-firmware's own printed wall power and conversion efficiency are built on this field, and they read 89.6 to 93.8 % where the
+not be read as wall power, and a watts-per-MHz slope taken on it is not the slope at the wall. Captures of the stock firmware show that its own printed wall power and conversion efficiency are built on this field, and they read 89.6 to 93.8 % where the
 measured DC/wall is 0.89 to 0.91 above.
 
 ![The supply's input report minus the wall, against the wall](../drawings/lab/stock-power/fig-supply-input-report.svg)
 
-Caption: RDS-PROF-01 clean holds `r1-20261021T063723Z` to `r8-20261026T042113Z`, per-minute points. A test-reported
-comparison of two instruments, not a rating.
+*Per-minute points from the eleven stock-firmware holds. A comparison of two instruments, not a rating.*
 
 **Not established:** per-board power (the board controller's current field returns the rail voltage, not a current), the
 fan law's exponent, the control board's draw apart from the supply's fixed loss, any second witness for the supply's
-current sensor, and the supply's DC output pairing ([#45](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/45)).
+current sensor, and the supply's DC output pairing.
 No stock run held a clock at a second voltage, so none of the above says what the overhead does at a clock off the four
 stock maps.
 
@@ -445,6 +435,38 @@ What the table and its reruns show:
   stock firmware printed as 0.24 to 0.35 %. The two firmwares' ratios are not directly comparable: at the same board
   and start, the reference firmware's figure ran 2.15 to 3.25 times the stock print, and board 1 was the lowest in
   both.
+
+### How far the pooled ratio can be trusted
+
+`[BZM2-CAL-004]` `[BZM2-CAL-005]`
+
+The table above pools every ASIC of a board into one number. This subsection shows how far that number repeats, from four
+runs of one arm on board 2 (the Mujina reference firmware's tuning arm, and a later version of it for *repeat-4*; the same
+start as above: every ASIC at `800 MHz`, `17,550 mV`). The search's upper error edge in these runs is `2.671 %`; the
+"interval" is the pool's 95 % Wilson interval.
+
+| run | board ratio (pooled) | interval | ASICs in the pool | ASICs individually over the edge | what the pool alone decided |
+|---|---|---|---|---|---|
+| guard-record-b2 | 2.248 % | 2.144 to 2.357 % | 98 | 14 | under the edge: measured, climb ran |
+| repeat-2 | 2.870 % | 2.752 to 2.994 % | 97 | 12 | lower bound over the edge: board stopped, no ASIC raised |
+| repeat-3 | 2.342 % | 2.236 to 2.453 % | 99 | 15 to 18 (two counts of one record differ; not traced) | under the edge: measured, climb ran |
+| repeat-4 | 2.0546 % | 1.9555 to 2.1585 % | 99 | 14 | under the edge: measured, climb ran |
+
+(An ASIC is individually over the edge when its own first dwell's lower bound is above it. The earlier arm *tune-b2*
+read lower on this board, 1.1049 % in the table above; the two arms are not compared here and the difference is not
+explained.)
+
+- **The pooled figure repeats badly, and the edge sat between two repeats.** The same arm on the same board read 2.248 %
+  and then 2.870 %, a ratio of 1.28 with disjoint intervals, and `2.671 %` lay between them. One repeat flipped the
+  board from measured to stopped. The third and fourth runs read 2.342 % and 2.0546 %.
+- **A few ASICs carry the pool, and they are the same ASICs.** About an eighth of the board was over the edge in every
+  run (12 to 18 of 97 to 99), and the board stop in *repeat-2* was decided by those 12. The per-ASIC ranking agrees from
+  run to run (Spearman 0.83 to 0.88 between the first three runs), and ASIC 87 read over 10 % in all three. The median
+  ASIC read 1.518 %, 1.316 % and 1.318 % in the first three runs, far under the edge each time.
+- **What a per-ASIC count would have decided.** Counting the ASICs individually over the edge, and stopping the board
+  only when that count exceeds half of the ASICs at the start, gives the pool rule's call for *guard-record-b2*
+  (measured) and a different one for *repeat-2* (the pool rule stopped the board; the count measures it). In *repeat-4*
+  it decided, with 14 of 99 over the edge.
 
 The calibration guidance that follows from these observations is in the Integration Guide,
 [Start-frequency calibration](blockscale-asic-integration-guide.md#start-frequency-calibration).

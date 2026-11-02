@@ -1,7 +1,6 @@
 %% BZM2 power-up / bring-up sequence
-%% Editable Mermaid source for redraws. Published source of truth is power-up-sequence.svg.
+%% Mermaid source for power-up-sequence.svg.
 %% Derived from Integration Guide Power-Up And Bring-Up Sequence + Board Design Guide §7 / §9.
-%% Not a lab measurement. STOP after arming is terminal (not a retry loop).
 flowchart TD
     A["Apply control rails and reference clock"] --> B["Apply safe initial stack voltage"]
     B --> C["Hold ASICs in reset"]

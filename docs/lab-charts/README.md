@@ -1,4 +1,6 @@
-# Lab chart placeholders (RDS measured data only)
+# Lab chart placeholders (contributor planning notes)
+
+These placeholders and capture schemas are planning material for future measured charts. They are not part of the published site (the Pages workflow only copies `references/` and `drawings/`). Published measurements live in [`references/rds-measured-reference.md`](../../references/rds-measured-reference.md).
 
 ## Purpose
 
@@ -13,27 +15,27 @@ efficiencies. Every figure caption says **needs measured RDS data**.
 
 | Chart | Case id | SVG | Schema CSV |
 | --- | --- | --- | --- |
-| Power | `RDS-PWR-CHART-01` | [drawings/lab/rds-pwr-chart-placeholder.svg](../drawings/lab/rds-pwr-chart-placeholder.svg) | `site/data/schemas/RDS-PWR-CHART-01.csv` |
-| Thermal | `RDS-THR-CHART-01` | [drawings/lab/rds-thr-chart-placeholder.svg](../drawings/lab/rds-thr-chart-placeholder.svg) | `site/data/schemas/RDS-THR-CHART-01.csv` |
-| Performance | `RDS-MIN-CHART-01` | [drawings/lab/rds-min-chart-placeholder.svg](../drawings/lab/rds-min-chart-placeholder.svg) | `site/data/schemas/RDS-MIN-CHART-01.csv` |
+| Power | `RDS-PWR-CHART-01` | [rds-pwr-chart-placeholder.svg](./rds-pwr-chart-placeholder.svg) | `schemas/RDS-PWR-CHART-01.csv` |
+| Thermal | `RDS-THR-CHART-01` | [rds-thr-chart-placeholder.svg](./rds-thr-chart-placeholder.svg) | `schemas/RDS-THR-CHART-01.csv` |
+| Performance | `RDS-MIN-CHART-01` | [rds-min-chart-placeholder.svg](./rds-min-chart-placeholder.svg) | `schemas/RDS-MIN-CHART-01.csv` |
 
 ### Power
 
-![Power chart placeholder — needs measured RDS data](../drawings/lab/rds-pwr-chart-placeholder.svg)
+![Power chart placeholder — needs measured RDS data](./rds-pwr-chart-placeholder.svg)
 
 Caption: **needs measured RDS data**. Intended fill from a publish decision on
 `RDS-PWR-01` (power-on sequence capture today — not a steady-state curve).
 
 ### Thermal
 
-![Thermal chart placeholder — needs measured RDS data](../drawings/lab/rds-thr-chart-placeholder.svg)
+![Thermal chart placeholder — needs measured RDS data](./rds-thr-chart-placeholder.svg)
 
 Caption: **needs measured RDS data**. `RDS-THR-01` arm A only; arm B unrun; no
 per-ASIC thermal series extracted yet.
 
 ### Performance
 
-![Performance chart placeholder — needs measured RDS data](../drawings/lab/rds-min-chart-placeholder.svg)
+![Performance chart placeholder — needs measured RDS data](./rds-min-chart-placeholder.svg)
 
 Caption: **needs measured RDS data**. `RDS-MIN-01` gated (needs explicit
 go-ahead and a cool day). Related gated cases: `RDS-FLU-01`, `MJ-HASH-01`,
@@ -47,7 +49,7 @@ go-ahead and a cool day). Related gated cases: `RDS-FLU-01`, `MJ-HASH-01`,
 | Thermal | `RDS-THR-CHART-01` | `t_s`, `die_avg_C`, `die_min_C`, `die_max_C`, `inlet_C`, `outlet_C`, `fan_duty_pct`, `fan_rpm` |
 | Performance | `RDS-MIN-CHART-01` | `t_s`, `config_id`, `pll_MHz`, `v_hash_mV`, `shares`, `difficulty`, `throughput_GHs`, `p_wall_W`, `j_per_share`, `boundary` |
 
-Header-only CSV files live under `site/data/schemas/`. **No data rows.**
+Header-only CSV files live under `schemas/`. **No data rows.**
 
 ## Already-public wall-power note (not a chart)
 

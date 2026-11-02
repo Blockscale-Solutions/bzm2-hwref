@@ -1,6 +1,6 @@
 # BZM2 Board Design Guide — effective patterns and common pitfalls
 
-A practical companion to the reference docs in this repository. Where the
+A practical companion to the reference documents. Where the
 [Integration Guide](blockscale-asic-integration-guide.md), [Pinout Reference](bzm2-pinout-reference.md),
 and [UART Protocol Reference](blockscale-uart-protocol-reference.md) tell you *what* the ASIC needs,
 this guide captures *how* to build a board around it that is likely to work on first power-up.
@@ -56,18 +56,17 @@ it exceeds the 1.5 V input ceiling and degrades the edge. Series-terminate the c
 **Multi-ASIC:** daisy-chain `REFCLKOUT → REFCLKIN` down the chain, **AC-coupled** so the series-stack
 ground offsets between ASICs don't fight the DC level.
 
-## 3. VDDIO (1.2 V IO rail) — we connect both pads
+## 3. VDDIO (1.2 V IO rail) — connect both pads
 
 The BZM2 exposes two VDDIO pads, `19` and `30`, on opposite edges of the package, both in the
 1.2 V IO domain.
 
-**What we don't know.** No source available to us states whether the two pads are joined on-die.
-They may be a redundant pair, or they may each feed their own IO bank. We have not measured it, and
-we have not found it written down anywhere we can cite. **Tying both is not a requirement** - it is
-a choice that is safe under either assumption.
+**What is not documented.** No public source states whether the two pads are joined on-die.
+They may be a redundant pair, or they may each feed their own IO bank. **Tying both is not a
+requirement** - it is a choice that is safe under either assumption.
 
-**What we do, and why.** We connect both pads to the 1.2 V rail and tie them together at the
-package. This is also the ideal configuration suggested by the vendor reference platform. That costs a via and a short trace, and it is correct under either assumption — whereas
+**Recommendation.** Connect both pads to the 1.2 V rail and tie them together at the
+package. This is also the configuration suggested by the vendor reference platform. It costs a via and a short trace, and it is correct under either assumption — whereas
 leaving a pad unfed is correct under only one of them. The margin argument: IO thresholds in this
 domain are specified as fractions of VDDIO rather than as fixed voltages, so droop moves every
 input and output threshold together. If the pads are separate bank feeds, an unfed pad leaves that
@@ -83,8 +82,8 @@ stub with a capacitor on it. If you are not going to feed a pad, leave it genuin
 layout allows, plus bulk at whatever generates the local 1.2 V.
 
 **Other boards differ.** Several third-party BZM2 boards leave pad `19` unconnected and appear to
-work, which is reasonable evidence that the pads are joined on-die. We connect both anyway, rather
-than depend on an assumption none of us can check.
+work, which is reasonable evidence that the pads are joined on-die. Connect both anyway, rather
+than depend on an assumption that cannot be checked.
 
 Label the rail net either way, so a later schematic edit cannot silently orphan a pad.
 
@@ -130,7 +129,7 @@ maxed single ASIC), not a trace.
 ## 7. Power sequencing & reset — fail safe
 
 
-See also the Integration Guide bring-up flowchart: [power-up-sequence.svg](../drawings/bring-up/power-up-sequence.svg) (fail-safes from this section are drawn as parallel gates).
+See also the bring-up flowchart in the Integration Guide, which draws the fail-safes from this section as parallel gates: [power-up-sequence.svg](../drawings/bring-up/power-up-sequence.svg).
 
 - **Hold the ASIC in reset and the core rail off until the host is ready.** A pull-down on `NRST` (reset
   asserted) and on the core-buck enable (off) at power-up is the correct default; firmware releases them

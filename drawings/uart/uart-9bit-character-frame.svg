@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" role="img"
-     aria-label="BZM2 UART 9-bit multidrop character frame from Physical Layer reference">
+     aria-label="BZM2 UART 9-bit multidrop character frame">
   <title>BZM2 UART 9-bit character frame</title>
-  <desc>Original diagram of one UART character: start, D0–D7, 9th address flag, stop — from blockscale-uart-protocol-reference.md Physical Layer. Original diagram from public references.</desc>
+  <desc>One UART character: start, D0–D7, 9th address flag, stop (UART protocol reference, Physical Layer And Link Characteristics).</desc>
   <rect width="920" height="420" fill="#12171c"/>
   <rect x="20" y="20" width="880" height="380" rx="10" fill="#1a2228" stroke="#3a4650" stroke-width="1.5"/>
   <text x="460" y="50" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="11" font-weight="600" letter-spacing="0.12em">BZM2 UART · FIXED 9-BIT MULTIDROP CHARACTER</text>
@@ -79,5 +79,5 @@
   <text x="490" y="310" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Fixed 9-bit mode — not configurable to 8-bit.</text>
   <text x="490" y="330" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="11">IO: 1.2 V · bring-up convention 5 Mbps (2.5–10 Mbps).</text>
 
-  <text x="460" y="380" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Caption: bit fields from UART protocol reference § Physical Layer And Link Characteristics (Fixed 9-bit multidrop framing). Original diagram from public references. Companion: tdm-frame-and-result-path.svg (opaque slot; #13).</text>
+  <text x="460" y="380" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Source: UART protocol reference, Physical Layer And Link Characteristics (fixed 9-bit multidrop framing)</text>
 </svg>

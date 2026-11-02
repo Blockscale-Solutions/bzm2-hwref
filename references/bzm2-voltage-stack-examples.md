@@ -10,8 +10,8 @@ with examples. It makes no new claim about the silicon.
   ([`single-asic-rail-stack.svg`](../drawings/rails/single-asic-rail-stack.svg)), the
   [voltage sensor channels](blockscale-asic-integration-guide.md#voltage-sensor-channels) table, and the
   [Hardware Implementations Survey](bzm2-hardware-implementations.md).
-- **Evidence rules on this page:**
-  - the RDS section is **topology and reasoning only**: no measurements from the system are published here;
+- **How to read this page:**
+  - the RDS section covers topology and reasoning; observed values are in the [RDS reference measurements](rds-measured-reference.md);
   - every statement about an open-source board is cited to a repository, a commit and a file;
   - anything that cannot be read from a public source is marked **unconfirmed** or **not public**;
   - failure behaviour is circuit reasoning, not a measurement, and is marked **inferred**;
@@ -54,8 +54,7 @@ the division follows the load. That is why a stacked board has to keep every lev
 
 ## Primary example: RDS (production system; 3 boards on one rail)
 
-**Source:** structure and reasoning only. No measurements from this system are published on this page. What has been
-measured on an RDS is in the [RDS Measured Reference](rds-measured-reference.md), each figure with its run.
+**Basis:** structure and reasoning. Values observed on an RDS are in the [RDS reference measurements](rds-measured-reference.md).
 
 ### Structure
 
@@ -63,9 +62,9 @@ measured on an RDS is in the [RDS Measured Reference](rds-measured-reference.md)
 - Each board has **100 ASICs**, presented by the vendor telemetry as **25 stacks of 4**.
 - Each board's controller **enables or disables** its board. It has **no per-board voltage setpoint**.
 
-![RDS stack wiring: 25s4p settled; 2s2p ruled out](../drawings/rails/stack-example-rds-readings.svg)
+![RDS stack wiring: 25s4p; 2s2p ruled out](../drawings/rails/stack-example-rds-readings.svg)
 
-### Wiring: 25 ASIC levels × 4 in parallel (settled by analysis)
+### Wiring: 25 ASIC levels × 4 in parallel (determined by analysis)
 
 Each board is **25 ASIC levels of 4 ASICs in parallel (25s4p)**. Because every ASIC is two internal domains
 in series, that is **50 voltage domains in series but 25 ASIC levels**. The "50" that appears when a rail is
@@ -79,7 +78,7 @@ which puts **50 ASICs** in series per board.
 - The boards hash at their normal operating point. They could not do that with every ASIC at half its
   minimum operating voltage.
 - Read the other way, 2s2p at the nominal 0.71 V per ASIC would need a rail of about 50 × 0.71 ≈ 35.5 V: twice
-  the setpoint discussed in [#4](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/4).
+  the 25s4p rail (25 × 0.71 ≈ 17.75 V).
 - 2s2p would also halve the parallel count, so each ASIC would carry **twice** the current it carries under
   25s4p. Against the published per-ASIC current figures that does not fit either.
 - The 2s2p reading comes from dividing the rail by one ~355 mV domain sense as if it were a whole ASIC.

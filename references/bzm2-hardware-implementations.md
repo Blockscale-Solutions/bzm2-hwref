@@ -6,7 +6,7 @@ fully public OSHW designs to boards still in **private hardware development** ah
 open-source release. Each entry notes its status; **publicly available repositories are linked**, and
 boards still in private development are marked as such. This survey is a companion to the
 [Board Design Guide](bzm2-board-design-guide.md) (how to build one) and the
-[Reference Implementation Roadmap](blockscale-reference-roadmap.md) (the software/firmware landscape).
+[Hardware Reference Roadmap](blockscale-reference-roadmap.md) (what this reference covers and plans to cover).
 
 > Intel provides its own evaluation and reference-design hardware for the Blockscale 1000 series; the
 > open boards below draw on that lineage. This survey documents the **community and open-source**
@@ -52,7 +52,7 @@ boards still in private development are marked as such. This survey is a compani
 | Project | Role | Notes |
 |---|---|---|
 | **[bonanza-bridge-fw](https://github.com/bitaxeorg/bonanza-bridge-fw)** (bitaxe) | RP2040 passthrough firmware, driven by an ESP32-S3 | Rust; implements the 9-bit multidrop UART on the RP2040 PIO. **Not a USB bridge** — the RP2040 is a passthrough for an ESP32-S3 host, not for a PC, so it does not enumerate as a USB device you can drive from a workstation |
-| **[Mujina](https://github.com/256foundation/mujina)** (256 Foundation) | Open miner firmware | **No BZM2 support in the repository today** — the default branch contains no BZM2 driver, and cloning it gets you a bm13xx miner with no way to reach a BZM2 part. BZM2 work exists only as unmerged pull requests against it, which are being rebuilt; this row will name a merged commit when there is one to name |
+| **[Mujina](https://github.com/256foundation/mujina)** (256 Foundation) | Open miner firmware | **BZM2 support is proposed upstream and is not in the default branch.** The default branch has no BZM2 driver; the proposal (an ASIC and UART protocol driver, general fixes and an RDS platform layer) is tracked in [Mujina's pull requests](https://github.com/256foundation/mujina/pulls?q=is%3Apr+bzm2), and the same branches are public in a [reference fork](https://github.com/recklessnode/mujinabzm2). Mujina describes itself as a developer preview |
 
 ## Adjacent / related (not BZM2 hashboards)
 

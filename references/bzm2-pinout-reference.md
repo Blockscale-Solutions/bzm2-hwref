@@ -12,7 +12,7 @@ column, south row in top view) then the inner field (`41-60`).
 
 ![BZM2 60-pad schematic pad map](../drawings/pinout/bzm2-padmap.svg)
 
-Original schematic generated from [`bzm2-ballmap.csv`](bzm2-ballmap.csv) (source of truth for pad IDs/names). Drawn **to scale** from the land pattern below. Regenerable via [`scripts/generate_padmap_svg.py`](../scripts/generate_padmap_svg.py), which also emits the reference footprint. This is the **PCB land pattern**, not a package drawing — see *Assumptions And Tolerances* before using the figures.
+Pad map drawn **to scale** from the land pattern below, with pad IDs and names from [`bzm2-ballmap.csv`](bzm2-ballmap.csv). This is the **PCB land pattern**, not a package drawing — see *Assumptions And Tolerances* before using the figures.
 
 ## Rails
 
@@ -20,7 +20,7 @@ Original schematic generated from [`bzm2-ballmap.csv`](bzm2-ballmap.csv) (source
 | --- | --- | --- | --- |
 | `VDD` (`VDD_HASH`) | `2-8`, `41-42`, `49-52`, `59-60` | `15` | `0.71 V` nominal; size for `~14 A` stock, `~27 A` maxed - roughly `1-2 A` per pad at the extremes |
 | `VSS` | `14`, `21-28`, `35`, `43-48`, `53-58` | `22` | ground return for everything |
-| `VDDIO` | `19`, `30` | `2` | `1.2 V` IO rail. We connect **both** pads; whether they are joined on-die is not documented anywhere we can cite, so this is our conservative default rather than a stated requirement - see the [Board Design Guide](bzm2-board-design-guide.md) |
+| `VDDIO` | `19`, `30` | `2` | `1.2 V` IO rail. Connect **both** pads: whether they are joined on-die is not documented in any public source, so this is a conservative default rather than a stated requirement - see the [Board Design Guide](bzm2-board-design-guide.md) |
 | `VDDINT_1` / `VDDINT_2` | `1`, `12` | `2` | internal stack midpoint (~`0.355 V`) brought out for reference/decoupling - **outputs**, not load rails |
 | `VDDPLL` (datasheet: `RSVD`) | `13` | `1` | PLL supply decoupling point in the reference designs |
 | `VDD_P75` (datasheet: `RSVD`) | `37` | `1` | `0.75 V` backup rail used if the on-chip LDO path is unavailable |
@@ -130,9 +130,9 @@ ring double-books four lands.
 land pattern is normally larger than the part that seats on it. Nothing here is a
 package drawing, and the vendor's own land dimensions are not stated.
 
-### Provenance
+### Land pattern source
 
-Corroborated against the **public open-source footprint** shipped by
+The geometry agrees with the **public open-source footprint** shipped by
 [`bitaxeorg/bitaxeBonanza`](https://github.com/bitaxeorg/bitaxeBonanza) and
 [`bitaxeorg/bitaxeBIRDS`](https://github.com/bitaxeorg/bitaxeBIRDS) as
 `bitaxe.pretty/bzm2.kicad_mod`. The two are geometrically identical to each other,
@@ -140,9 +140,8 @@ and agree with this table to **0.5 um** -- that residue is their rounding to thr
 decimal places, where the values above are exact (`11 x 0.615 = 6.765`, so the row
 half-span is `3.3825` rather than a rounded `3.382` / `3.383`).
 
-A generated reference footprint is at
-[`footprints/BZM2.pretty/BZM2-FCLGA60.kicad_mod`](../footprints/BZM2.pretty/BZM2-FCLGA60.kicad_mod),
-emitted by [`drawings/gen_padmap.py`](../drawings/gen_padmap.py) from
+A reference KiCad footprint is in the repository at
+`footprints/BZM2.pretty/BZM2-FCLGA60.kicad_mod`, generated from
 [`bzm2-ballmap.csv`](bzm2-ballmap.csv) plus the table above. It carries each land's
 name and function from the CSV, which neither open-source footprint does. It is
 oriented to this document's top-view convention (E to the right), which is 180
@@ -152,7 +151,7 @@ difference.
 ### Assumptions And Tolerances
 
 State these before using the figures. They are **nominal centres and sizes with
-no tolerance band**, because no tolerance is published anywhere we can cite.
+no tolerance band**, because no tolerance is published in any public source.
 
 | | |
 | --- | --- |
@@ -162,11 +161,11 @@ no tolerance band**, because no tolerance is published anywhere we can cite.
 | **Exact vs rounded** | Where the rounding is recoverable the exact value is used: row half-span `3.3825`, since `11 x 0.615 = 6.765`. The public parts store `-3.382 / +3.383`. |
 | **Orientation** | Top view, `+x` east, `+y` north, `y` up. The generated footprint is **180 degrees** from the bitaxeorg parts. A placement rotation, not a geometry difference. |
 | **Package body `7.5 x 7 mm`** | Taken from the header of this document. **Not measured**, and not derived from the land pattern. |
-| **Courtyard `body + 0.25 mm`** | **Our choice**, not from any source. Change it to suit your own DFM rules. |
+| **Courtyard `body + 0.25 mm`** | **A default chosen here**, not taken from any source. Change it to suit your own DFM rules. |
 | **Paste and mask** | The generated footprint applies KiCad defaults. **No stencil design is implied** - aperture reduction on the inner field in particular is a stencil-house decision. |
-| **Corroboration is not independence** | `bitaxeBonanza` and `bitaxeBIRDS` are geometrically identical, so they are **one source, not two**. Confidence rests on one open-source lineage plus our own board, which agrees with it by pure translation. |
+| **One source lineage** | `bitaxeBonanza` and `bitaxeBIRDS` are geometrically identical, so they are **one source, not two**. Confidence rests on that open-source lineage plus a working single-ASIC board design, which agrees with it by pure translation. |
 
-**Not verified by us:** that this land pattern reflows correctly, that the inner
+**Not verified:** that this land pattern reflows correctly, that the inner
 field's paste coverage is right, or that any of it matches the vendor's
 recommended land pattern. It is what working open-source boards use.
 

@@ -201,7 +201,7 @@ def render(pads: dict[int, dict]) -> str:
     )
     label(o, 40, 76, "60 lands - 40 peripheral + 20 inner field - top view", "start",
           size=13, fill=DIM)
-    label(o, 40, 96, "Generated from references/bzm2-ballmap.csv", "start", size=11, fill=DIM)
+    label(o, 40, 96, "Pad assignments: ball map (bzm2-ballmap.csv)", "start", size=11, fill=DIM)
 
     # ---- true-proportion placement, mm -> px, Y flipped (mm is Y-up)
     SCALE = 80.0
@@ -275,7 +275,7 @@ def render(pads: dict[int, dict]) -> str:
     # ---- notes / gaps
     nx = 600
     ny = 1030
-    label(o, nx, ny, "NOTES AND OPEN GAPS", "start", size=12, fill=FG, weight="700")
+    label(o, nx, ny, "NOTES", "start", size=12, fill=FG, weight="700")
     notes = [
         ("Drawn to scale from the public open-source land pattern.", True),
         ("Peripheral pitch 0.615 mm, uniform on both axes. Lands: E/W", False),
@@ -288,7 +288,7 @@ def render(pads: dict[int, dict]) -> str:
         ("Package envelope 7.5 x 7 mm FCLGA, exposed die, per the pinout reference.", False),
         ("", False),
         ("Numbering walks counterclockwise: E(8) -> N(12) -> W(8) -> S(12),", False),
-        ("then the inner field (41-60). Verified contiguous against the CSV.", False),
+        ("then the inner field (41-60).", False),
         ("", False),
         ("The 40 peripheral lands share no corner: the 12-land N and S rows span", False),
         ("the full width and the 8-land E and W columns sit between them.", False),
@@ -311,10 +311,10 @@ def render(pads: dict[int, dict]) -> str:
 
     # ---- caption
     label(o, 40, H - 34,
-          "Original diagram generated from public references. Pad assignments: references/bzm2-ballmap.csv. "
+          "Pad assignments: ball map (bzm2-ballmap.csv). "
           "Land geometry corroborated against", "start", size=10, fill=DIM)
     label(o, 40, H - 18,
-          "the public open-source footprint in bitaxeorg/bitaxeBonanza and bitaxeorg/bitaxeBIRDS. No vendor package art was traced.", "start", size=10, fill=DIM)
+          "the public open-source footprint in bitaxeorg/bitaxeBonanza and bitaxeorg/bitaxeBIRDS.", "start", size=10, fill=DIM)
 
     o.append("</svg>")
     return "\n".join(o)

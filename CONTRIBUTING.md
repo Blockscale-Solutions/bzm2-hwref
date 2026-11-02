@@ -72,3 +72,10 @@ python3 -m http.server --directory /tmp/hwref-site 8000
 ## Pull requests
 
 Describe the change as Summary / Changes / Test plan. Keep documentation changes separate from generator or workflow changes where practical.
+
+Before opening a PR, run:
+
+- `python3 scripts/check_claims.py`: every claim tag has a `CLAIMS.md` row and every row is used.
+- `python3 scripts/check_links.py`: every in-repository link, image and anchor resolves, on the published site (whose viewer gives ids to h1-h3 headings only) and on GitHub. Its tests: `python3 -B -m unittest discover -s scripts -p '*_test.py'`.
+- `python3 scripts/generate_padmap_svg.py --check` if the ball map or the generator changed.
+- `tools/rds/check-public.sh` (see *Publishing policy*), against an exported copy of the tree (`git archive HEAD | tar -x -C <dir>`), not a worktree.

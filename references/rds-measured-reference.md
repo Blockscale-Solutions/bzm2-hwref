@@ -175,6 +175,45 @@ steps and back. The largest half-voltage excursion from its pre-move mean, per s
 After the 50 and 75 MHz moves the levels had not returned to their pre-move band by the end of the hold, at least 82 s
 and 149 s after the first write.
 
+### What a record-only guard showed: the same arm, refusing and recording
+
+`[BZM2-RDS-008]`
+
+A per-ASIC climb makes the imbalance it is measured by (above), so a guard that refuses a climb step while the level is
+over a threshold will stop the climb it is measuring. MJ-TUNE-02 ran the same board and arm twice under the Mujina
+reference firmware, once with the guard **refusing** upward steps whenever a round's level deviation was over its
+threshold (0.0345 V), and once **recording** the same rounds and moving nothing. Each pair is the same board, the
+same start (every ASIC at 800 MHz, `17,550 mV`) and the same step-one mode; the run's other conditions differ a little
+(start inlet 19.3 to 20.8 C, and for board 2 the two runs are about two hours apart). One pair per board is evidence about
+this unit on that night, not a rate.
+
+| board | run | guard | rounds read | level deviation range (mean) | rounds over 0.0345 V | upward steps refused for the guard | upward steps issued | ASICs ended above 800 MHz |
+|---|---|---|---|---|---|---|---|---|
+| 1 | `bonanza.MJ-TUNE-02.v17550m1.20261030T081756Z` | refuse | 1,850 | 0.009312 to 0.03864 V (0.030313 V) | 430 (23.2 %) | 164, on 86 ASICs | 4 | 6 |
+| 1 | `bonanza.MJ-TUNE-02.v17550r1.20261030T144115Z` | record | 1,553 | 0.010940 to 0.054939 V (0.038842 V) | 1,263 (81.3 %) | 0 | 73 | 76 |
+| 2 | `bonanza.MJ-TUNE-02.v17550m2.20261030T092911Z` | refuse | 1,712 | 0.007299 to 0.040352 V (0.028755 V) | 539 (31.5 %) | 94, on 57 ASICs | 18 | 18 |
+| 2 | `bonanza.MJ-TUNE-02.v17550r2.20261030T112640Z` | record | 1,511 | 0.010624 to 0.060539 V (0.034780 V) | 842 (55.7 %) | 0 | 68 | 70 |
+
+What the pairs show, and what they do not:
+
+- **Readings above the threshold are routine once the climb runs.** The level is the board's worst domain's distance
+  from the board mean. Board 2 before its climb read 0.007299 to 0.011884 V in the refusing run, and 0.010624 to
+  0.024033 V in the recording run; it rose with the climb in both.
+- **With the guard refusing, the climb was held for about a quarter to a third of the reads and mostly stopped.** The
+  refusing runs breached from about 1,125 s (board 1) and 1,456 s (board 2) into the run and issued 4 and 18 upward steps.
+  Board 1's long breach ran about 1,057 s and board 2's 1,143 s.
+- **With the guard only recording, the climb proceeded though breaches were recorded,** and the level reached higher: its
+  maximum was 0.054939 V on board 1 and 0.060539 V on board 2, against 0.03864 V and 0.040352 V when refusing. In both
+  recording runs 59 of 73 and 53 of 68 upward steps were issued in a round that was over the threshold.
+- **The per-ASIC verdicts kept working.** In the recording run of board 1 one ASIC was stepped down once, after it
+  returned 10 valid and 748 wrong results at 1,075 MHz; one step down was issued in each recording run. The climb was
+  limited by errors, not by the level.
+- **Not shown: that a high level costs anything.** These runs record the level and the climb. They do not tie a round's
+  level to the error ratios of the ASICs in it, so they cannot say whether a domain 0.05 V from its board's mean returns
+  more errors, or whether the refusing runs' threshold is too low. That correlation is the open part of
+  [#44](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/44), and none of these runs reached an exit, so none
+  produced a finished map to compare.
+
 Not yet established: whether a domain this far from its board's mean costs anything in errors, and the deviation at
 the stock firmware's higher profiles.
 
@@ -213,6 +252,130 @@ give DC out over wall AC of 0.889 to 0.915 across the same holds; that pairing i
 **Power follows one board's clock.** Moving board 0 alone by whole-board steps, with the other two boards at their
 stored maps, changed the supply's AC input by +0.345 W per MHz of board 0's mean frequency (95 % interval 0.079 to
 0.612, four holds) in run board-step-2.
+
+## Operational guidance: close order and kernel fault
+
+`[BZM2-RDS-009]`
+
+The stock image's driver for the chain UART ttys (`/dev/tty9bit00`, `10`, `20`, kernel 4.9.78) can fault the kernel when
+a chain tty is closed for the last time. This is a property of the platform, not of any one program, and it is tracked as
+[#54](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/54), which holds the full description and the way to
+close the gap. In short:
+
+- **How often.** Three faults in 266 boots' kernel logs: the stock mining daemon exiting (MJ-HASH-07, 2026-09-24), the
+  Mujina miner at a normal stop (MJ-TUNE-03 arm `p0`, 2026-10-28) and the Mujina miner at its stop in
+  `bonanza.MJ-TUNE-02.v17550s2.20261030T195256Z` (2026-10-30). Different chains, two different programs, different builds.
+  The timing and traffic before the close match the closes that passed.
+- **Why it hurts.** The faulting thread dies holding a kernel-wide tty lock, so any later final close of a chain tty
+  blocks for good in uninterruptible sleep. The closing process cannot exit, and TERM and KILL do nothing. Only a reboot
+  or power cycle clears it.
+- **What it did to a stop.** In the 2026-10-30 run the miner released its chain ports before powering the boards off, so
+  the fault in the first close left boards 1 and 2 powered. They went dark only through the board controllers' own
+  loss-of-heartbeat shutdown, about 88 s after their last heartbeat. The process stayed alive past KILL.
+
+Guidance, ours:
+
+1. **Power the boards off, and verify them dark, before closing the chain ports.** Never the other way round. The
+   Mujina reference firmware's stop now does this, with a bounded wait for each board and for each port release. That
+   change has not been exercised against a fault.
+2. **Do not block a stop on a close returning.** Bound each wait, log which port and thread a close was on, and go on.
+3. **A process that survives KILL after closing these ports is a kernel fault, not a live power owner.** Treat the
+   tty lock as held and the unit as needing a power cycle; do not keep sending it TERM and KILL, and do not read it as
+   proof the boards are still being driven. Prove dark from the supply and the board controllers instead.
+4. **Reboot between sessions that open and close the chain ports,** and before the next run after any such fault check
+   that the kernel is untainted and no chain tty is held.
+
+Not established: the fault rate per close, and the behaviour once the driver is fixed
+([#54](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/54)).
+
+## Stock supply, fan power and the wall's overhead
+
+`[BZM2-RDS-010]` `[BZM2-RDS-011]` `[BZM2-RDS-012]`
+
+This section models the gap between what the RDS draws at the wall and what its supply delivers to the boards, from the
+eleven clean RDS-PROF-01 holds (run ids in the table at the top of this page). It is derived from the raw per-minute
+rows of those holds, and every figure below belongs to the runs named with it. None is a rating of the unit or of either
+firmware.
+
+**Instruments, kept apart.** The wall is both PDU cords' own minute log, less the non-RDS load on those circuits
+(measured with the machine off). The DC figure is the supply's main-output current times its main-output voltage, paired
+within 1 s. That is **one instrument**: no second meter has checked the supply's current sensor. The supply's AC-input
+report is a third series, treated as an instrument under test. The fit uses whole minutes with both cords, the supply and
+the fans all covered: 881 minutes offered, 848 kept after dropping minutes where clock error alone could move the figure
+by more than the fit's own residual (calibration ramps fall out this way).
+
+**The overhead is a smooth curve in current, with a fan term on top.** Overhead here is wall power minus the supply's DC
+output. Fitted over 134 to 251 A of main current as
+
+    overhead = c0 + c1 I + c2 I^2 + fan_full (rpm / rpm_full)^3
+
+the result is c0 = 170.6 W, c1 = -1.633 W/A, c2 = 0.0096 W/A^2 and fan_full = 208.4 W at 6,759 rpm (the chassis fans at
+full duty), with a residual standard deviation of 4.66 W over the 848 kept minutes. Leaving each run out in turn moves
+fan_full between 195.9 and 210.5 W. The three current coefficients are a local fit: they are not separate physical
+losses and mean nothing outside 134 to 251 A. The supply fixed loss and the control board's draw sit together in c0 and
+are not separated; that needs the control board measured alone with the main output off.
+
+**The fan exponent is not identified, so the fan watts are a range.** Fan shaft power should follow the cube of speed, but
+the data do not pick the exponent. The same minutes fitted with exponent 2.0, 2.5, 3.0 and 3.5 give fan_full of 287, 240,
+208 and 186 W with residual standard deviations of 4.674, 4.647, 4.657 and 4.700 W. Using only the five runs whose fan duty
+moved within the hold gives 215.3 W. A dark sweep (boards off, fans stepped through several duties) would settle it.
+
+Per run, over the last 1,800 s of each hold (`r4-20261021T212909Z` over the last 1,800 s of the hold its supply stream
+covers):
+
+| run | profile | wall (W) | supply DC output (W) | overhead (W) | fan duty | fan speed (rpm) | fans, modelled (W) | DC / wall |
+|---|---|---|---|---|---|---|---|---|
+| `r1-20261021T063723Z` | low | 2903 | 2648 | 255 | 0.727 | 5400 | 106 | 0.9122 |
+| `r2-20261021T172423Z` | low | 2904 | 2649 | 255 | 0.725 | 5386 | 106 | 0.9123 |
+| `r3-20261021T191033Z` | regular | 3586 | 3242 | 344 | 0.829 | 6021 | 147 | 0.9041 |
+| `r4-20261021T212909Z` | regular | 3651 | 3248 | 402 | 0.972 | 6712 | 204 | 0.8898 |
+| `r5-20261022T023030Z` | high | 4544 | 4045 | 499 | 1.000 | 6764 | 209 | 0.8902 |
+| `r5-20261022T140005Z` | high | 4396 | 3918 | 478 | 1.000 | 6753 | 208 | 0.8913 |
+| `r6-20261022T160430Z` | high | 4420 | 3942 | 478 | 1.000 | 6755 | 208 | 0.8918 |
+| `r7-20261022T210432Z` | hp2 | 5182 | 4609 | 573 | 1.000 | 6754 | 208 | 0.8894 |
+| `r7-20261023T035144Z` | hp2 | 5200 | 4626 | 574 | 1.000 | 6743 | 207 | 0.8896 |
+| `r7-20261026T015213Z` | hp2 | 5076 | 4522 | 554 | 1.000 | 6757 | 208 | 0.8909 |
+| `r8-20261026T042113Z` | hp2 | 5096 | 4537 | 560 | 1.000 | 6756 | 208 | 0.8902 |
+
+What the table and the fit say:
+
+- **The measured DC/wall ratio steps down near the regular profile because the fans go to full, not because the supply
+  gets worse.** The stock fan law runs the fans between about 0.73 and 0.97 duty in the low and regular holds and pins
+  them at full in the high and hp2 holds. With the modelled fan power counted as output, the supply's conversion falls
+  steadily with load, from 0.9489 (`r1-20261021T063723Z`) to 0.9294 (`r7-20261023T035144Z`) across the holds.
+- **Each extra DC watt costs more wall watts at high current.** With the fans held, the marginal supply loss runs from
+  0.077 to 0.172 W of wall power per extra DC watt across the current range, rising with current.
+- **Heat enters the overhead too.** Adding the supply's own ambient field as a term (1.876 W per count over the 9-count
+  span the kept minutes cover, 16.9 W across the span, 15.8 to 18.7 W leaving a run out) lowers the residual standard
+  deviation from 4.66 to 3.54 W. The field's unit is unresolved and it moves together with time, the room and the supply
+  fan, so this is a covariate, not a measured temperature coefficient.
+
+![Wall overhead against main current, per minute, shaded by chassis fan speed, with the model at full fans and with the fan term removed](../drawings/lab/stock-power/fig-wall-overhead.svg)
+
+Caption: RDS-PROF-01 clean holds `r1-20261021T063723Z` to `r8-20261026T042113Z` (the eleven runs above); per-minute points,
+the fit above, and its residuals. A test-reported fit over those runs, not a rating.
+
+**The supply's AC-input report is not a wall meter, and its error changes sign with load.** Over the same last 1,800 s,
+the report divided by the wall reads 1.0798 and 1.0824 at the low profile (`r1-20261021T063723Z`, `r2-20261021T172423Z`),
+1.0172 and 1.0110 at regular (`r3-20261021T191033Z`, `r4-20261021T212909Z`), 0.9972 to 0.9987 at high, and 0.9830 to 0.9855
+at hp2 (`r7-20261023T035144Z` to `r8-20261026T042113Z`). Per minute the report minus the wall runs from -102 to +322 W; every
+positive minute is at or below 4,374 W of wall power and every negative one at or above 4,045 W. This is the same finding
+as [Power feeds](#power-feeds), stated over a shorter span (the ratios there are wall over report, over the whole hold,
+and agree to within the span). The report is steady from run to run, so a trip derived in its own units can use it. It must
+not be read as wall power, and a watts-per-MHz slope taken on it is not the slope at the wall. Our captures show the stock
+firmware's own printed wall power and conversion efficiency are built on this field, and they read 89.6 to 93.8 % where the
+measured DC/wall is 0.89 to 0.91 above.
+
+![The supply's input report minus the wall, against the wall](../drawings/lab/stock-power/fig-supply-input-report.svg)
+
+Caption: RDS-PROF-01 clean holds `r1-20261021T063723Z` to `r8-20261026T042113Z`, per-minute points. A test-reported
+comparison of two instruments, not a rating.
+
+**Not established:** per-board power (the board controller's current field returns the rail voltage, not a current), the
+fan law's exponent, the control board's draw apart from the supply's fixed loss, any second witness for the supply's
+current sensor, and the supply's DC output pairing ([#45](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/45)).
+No stock run held a clock at a second voltage, so none of the above says what the overhead does at a clock off the four
+stock maps.
 
 ## Live clock changes on a hashing chain
 

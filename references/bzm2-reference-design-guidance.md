@@ -1,4 +1,4 @@
-# BZM2 Reference Design Guidance — a menu of proven approaches and parts
+# BZM2 Reference Design Guidance: Parts and Approaches
 
 A **parts-and-approaches catalog** for building a board around the Intel BZM2 (Blockscale 1000-series)
 ASIC. Where the [Board Design Guide](bzm2-board-design-guide.md) tells you *what patterns* work and *what
@@ -11,7 +11,8 @@ choose deliberately rather than start from a blank page.
 Each entry is written as *"an effective, proven approach leverages [method] with [example parts] in this
 manner"* — a starting point to adapt, **not a schematic to copy**. Every named part is a real,
 publicly-datasheeted commodity component; every "an open board does this" note points at a public
-open-source design you can inspect. Pick the row that matches your cost, current, and hand-assembly
+open-source design you can inspect. A note that a board *in private development* uses a part cannot be
+inspected, and says so. Pick the row that matches your cost, current, and hand-assembly
 constraints, then verify the exact values against the ASIC's own datasheet on your board.
 
 - **This is designer guidance, not a reference schematic.** The approaches come from public component
@@ -27,15 +28,16 @@ constraints, then verify the exact values against the ASIC's own datasheet on yo
 
 ---
 
-# 1. Host ↔ ASIC digital interface & reference clock
+## 1. Host-to-ASIC digital interface and reference clock
 
 **The requirement.** Every host-facing digital pad — UART TX/RX, `NRST`, `TRIP`, `REFCLKIN` — lives on
-the ASIC's **1.2 V IO domain**, with an input ceiling of **`VDDIO + 0.3 V` ≈ 1.5 V** (VDDIO abs-max
-1.3 V). A typical host (USB bridge, MCU, oscillator) is 3.3 V. Crossing this boundary cleanly is the #1
+the ASIC's **1.2 V IO domain**, with the input ceiling and rail limits given under
+[IO DC thresholds](blockscale-asic-integration-guide.md#io-dc-thresholds-the-12-v-domain). A typical host (USB bridge, MCU, oscillator) is 3.3 V. Crossing this boundary cleanly is the #1
 dead-on-arrival risk, and the UART adds a second constraint: it is **fixed 9-bit multidrop** (8 data + a
-9th *address/data* bit — not parity), 2.5–10 Mbps, 5 Mbps bring-up convention.
+9th *address/data* bit — not parity), at the rates in
+[Baud and signaling](blockscale-uart-protocol-reference.md#baud-and-signaling).
 
-## 1.1 Level translation (1.2 V ↔ 3.3 V)
+### 1.1 Level translation (1.2 V to 3.3 V)
 
 A proven approach crosses the boundary with a **real IC level translator whose low-side supply (VCCA)
 sits on the ASIC's own 1.2 V IO rail** — this is both what the mature open BZM2 boards do and the
@@ -56,7 +58,7 @@ that choice.
 | A **1.2 V-floor translator** in a leaded package | TI **SN74AVC4T774** (TSSOP) · **SN74AVCH1T45** (SOT-23-6, bus-hold) [AVC4T774 ds](https://www.ti.com/lit/ds/symlink/sn74avc4t774.pdf) · [AVCH1T45 ds](https://www.ti.com/lit/ds/symlink/sn74avch1t45.pdf) | Same wiring; runs *at* the 1.2 V floor rather than below it — leaded TSSOP/SOT-23 are easier to hand-solder than the AXC's tiny QFN | When you want a leaded package and accept working at the floor (verify your 1.2 V rail tolerance). |
 | A **passive AC-couple + bias** for AC-only lines | series cap + bias network to ~0.6 V | Blocks DC and re-centers an *edge* signal (clock) in the 1.2 V window; the multi-ASIC `REFCLKOUT→REFCLKIN` chain is AC-coupled anyway | Clock hops between stacked ASICs; never for a DC-meaningful line like reset. |
 
-**Mis-picks — never on the 1.2 V rail:** **SN74LVC1T45** (1.65 V floor — the famous wrong choice, pin-alike
+**Mis-picks — never on the 1.2 V rail:** **SN74LVC1T45** (1.65 V floor — the common wrong choice, pin-compatible
 to AVC/AXC) · **TXS0102/TXS010x** (1.65 V floor *and* open-drain pass-gate) · **any resistive divider** into
 a pad (DC-loads the source, rounds edges, and can breach the ≈1.5 V ceiling). Auto-direction parts
 (TXB/TXS class) also dislike the 50 MHz clock — prefer a strap you can verify in review over edge-rate
@@ -66,7 +68,7 @@ artifacts you can't.
 Starter uses the `SN74AVCH1T45` (1.2 V floor, bus-hold), one per signal. *(EmberOne00/01 use the AVC4T774
 in TSSOP but translate the **BM1362** sibling's IO, not the BZM2's — a package data point only.)*
 
-## 1.2 9-bit UART host bridge
+### 1.2 9-bit UART host bridge
 
 The host must emit/receive **true 9-bit frames** at ≥5 Mbps. A proven approach uses either a hardware
 bridge with a native 9-bit mode, or a reprogrammable controller whose UART/PIO can be told to do 9 bits.
@@ -83,9 +85,9 @@ register and fails at ≥5 Mbps. This is publicly demonstrated: the ESP32 cannot
 RP2040 bridge (`bonanza-bridge-fw`) supplies the 9-bit UART. Also out on speed/mode: **CH340** (~2 Mbps), **FTDI FT231X** (3 Mbps) /
 **FT232** (no per-byte 9-bit), **CP2102** (8-bit only).
 
-## 1.3 50 MHz reference clock
+### 1.3 50 MHz reference clock
 
-`REFCLKIN` is a 1.2 V input with the same ≈1.5 V ceiling. The reference-grade and lowest-risk answer is a
+`REFCLKIN` is a 1.2 V input with the same input ceiling. The reference-grade and lowest-risk answer is a
 **1.2 V-domain clock source**, delivered directly.
 
 | An effective approach leverages… | …with these example parts | …in this manner | When to pick it |
@@ -102,18 +104,20 @@ AC-coupled down the stack. *Open-board corroboration: bitaxeBIRDS ships the nati
 
 ---
 
-# 2. Power delivery & control (VCORE / VDD_HASH)
+## 2. Power delivery and control (VCORE, VDD_HASH)
 
-**The requirement.** `VDD_HASH` is a **0.6–0.81 V window, 0.71 V nominal** rail that the host must **ramp
-in software under voltage-sensor feedback** and trim per-part — drawing ~14 A stock to ~27 A tuned
-(**plan ~30 A copper**). The ASIC has an on-die 3-channel voltage sensor but **no on-die VCORE
+**The requirement.** `VDD_HASH` is a tunable rail that the host must **ramp in software under
+voltage-sensor feedback** and trim per-part. Its window, nominal value and the current at the stock and
+maximum-tuned points are in the
+[Electrical Quick Reference](blockscale-asic-integration-guide.md#electrical-quick-reference-per-asic)
+(about 14 A to 27 A per ASIC; plan copper for about 30 A). The ASIC has an on-die 3-channel voltage sensor but **no on-die VCORE
 regulator**: the buck and its digital control are the board designer's to build. The reference-grade
 approach controls VCORE **digitally** (a controllable VRM, or a DAC injected onto a buck's feedback node) —
 never a fixed pot, which can neither ramp nor usually span the window.
 
-## 2.1 VCORE regulation with digital control
+### 2.1 VCORE regulation with digital control
 
-### Route A — an integrated PMBus/I²C VRM (fewest parts, richest telemetry)
+#### Route A: an integrated PMBus/I²C VRM (fewest parts, richest telemetry)
 
 A proven approach sets and ramps VCORE over a digital bus, and gets **remote sense and V/I telemetry in the
 same chip** — folding three functions into one part.
@@ -122,12 +126,12 @@ same chip** — folding three functions into one part.
 |---|---|---|---|
 | A **stackable integrated PMBus buck** | TI **TPS546D24A** (40 A/phase, up to 4× stack → 160 A, on-chip differential remote sense) [ds](https://www.ti.com/lit/ds/symlink/tps546d24a.pdf) | One chip = buck + digital set/ramp + Kelvin sense + IOUT/VOUT/temp readback; stack phases to cover 14→30 A and multi-ASIC on one address | **Default for a serious core rail.** **bitaxeBIRDS (single) and bitaxeBonanza (multi) use exactly this.** |
 | A **smaller integrated PMBus buck** | TI **TPS546B24A** (20 A) [ds](https://www.ti.com/lit/ds/symlink/tps546b24a.pdf) · ADI **MAX20730** (25 A integrated-FET) [ds](https://www.analog.com/media/en/technical-documentation/data-sheets/max20730.pdf) | Same digital-set + telemetry in a cheaper/smaller part; 20–25 A covers the stock point with modest headroom | Cost-down single-ASIC board that won't be pushed to the top of the tuning window. |
-| A **PMBus controller + external FETs** | ADI **LTC3886** (dual, 16-bit ADC/12-bit DAC, diff remote sense, fault logging) [ds](https://www.analog.com/en/products/ltc3886.html) driving discrete N-FETs (e.g. onsemi **NTMFS3D6N10MCL**) | Size current by choosing FETs; full PMBus telemetry + EEPROM fault logging | When you want to set current with discrete FETs and want rich telemetry. **A BZM2 hashboard uses this approach (LTC3886 + discrete FETs).** |
+| A **PMBus controller + external FETs** | ADI **LTC3886** (dual, 16-bit ADC/12-bit DAC, diff remote sense, fault logging) [ds](https://www.analog.com/en/products/ltc3886.html) driving discrete N-FETs (e.g. onsemi **NTMFS3D6N10MCL**) | Size current by choosing FETs; full PMBus telemetry + EEPROM fault logging | When you want to set current with discrete FETs and want rich telemetry. **A BZM2 board in private development uses this approach (LTC3886 + discrete FETs).** |
 
 For very large aggregated multi-ASIC domains, data-center VR controllers (TI **TPS53681**, MPS **MP2891**,
 Renesas **RAA228228**) scale further via DrMOS smart-stages — noted for completeness; overkill for one ASIC.
 
-### Route B — a DAC injected into a conventional buck's feedback (cheapest, most hand-solderable)
+#### Route B: a DAC injected into a conventional buck's feedback (cheapest, most hand-solderable)
 
 A proven approach keeps a commodity analog buck and lets firmware move its output by pushing/pulling a
 small current (or voltage) onto the feedback node — decoupling "which buck" from "how firmware controls
@@ -135,14 +139,14 @@ it."
 
 | An effective approach leverages… | …with these example parts | …in this manner | When to pick it |
 |---|---|---|---|
-| A **current-DAC into the FB node** | Maxim/ADI **DS4432U** (dual I²C 7-bit ±200 µA, **outputs zero on power-up**) [ds](https://www.analog.com/media/en/technical-documentation/data-sheets/ds4432.pdf) on a buck like TI **LM25119** [ds](https://www.ti.com/product/LM25119) | Sinks/sources current into FB to raise/lower Vout in fine steps; the buck's 0.8 V floor is *pulled down into* the 0.6–0.81 V window by the DAC; power-up-zero matches the "start conservative" bring-up rule | Cost-conscious, hand-assembled board. **This is the canonical EmberOne00 route (DS4432U → LM25119 FB, INA260 closing the loop).** |
+| A **current-DAC into the FB node** | Maxim/ADI **DS4432U** (dual I²C 7-bit ±200 µA, **outputs zero on power-up**) [ds](https://www.analog.com/media/en/technical-documentation/data-sheets/ds4432.pdf) on a buck like TI **LM25119** [ds](https://www.ti.com/product/LM25119) | Sinks/sources current into FB to raise/lower Vout in fine steps; the buck's 0.8 V floor is *pulled down into* the 0.6–0.81 V window by the DAC; power-up-zero matches the "start conservative" bring-up rule | Cost-conscious, hand-assembled board. **This is the EmberOne00 route, on a board for a different ASIC (DS4432U → LM25119 FB, INA260 closing the loop).** |
 | A **voltage-DAC into FB via a summing R** | Microchip **MCP4726** (12-bit, EEPROM-stored setpoint) [ds](https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/22272C.pdf) | Finer VCORE granularity than a 7-bit current-DAC; restores its setpoint from EEPROM; SOT-23 is the easiest solder | When you want fine, repeatable VCORE steps but still a simple analog buck. |
 
 **Route C — analog + trim (fixed divider / pot) is disqualified:** it cannot perform the host-driven
 ramp-under-sensor-feedback the ASIC expects, usually can't span the full window, and gives no per-part
-trim. Listed only to rule out (see the `bitaxeBonanza#1` VRM-strap failure).
+trim. Listed only to rule out (see the [bitaxeBonanza#1](https://github.com/bitaxeorg/bitaxeBonanza/issues/1) VRM-strap failure).
 
-## 2.2 Remote / Kelvin sense
+### 2.2 Remote / Kelvin sense
 
 At 0.71 V, 20–30 mV of IR drop is 3–4 % of the rail — sense **at the ASIC land**, not the converter cap.
 
@@ -154,7 +158,7 @@ At 0.71 V, 20–30 mV of IR drop is 3–4 % of the rail — sense **at the ASIC 
   controller that has no dedicated sense pins.
 - **No remote sense (regulate at the cap): rejected** for this rail — it bakes the IR drop into VCORE.
 
-## 2.3 Current sense + telemetry (feeds the stack-imbalance safety loop)
+### 2.3 Current sense and telemetry (feeds the stack-imbalance safety loop)
 
 The host needs live rail V/I for the safety loop the on-die sensor feeds. Note the **~30 A** ceiling:
 integrated-shunt monitors top out near ±15 A, so at full current, sense per-phase, use an external shunt,
@@ -167,7 +171,7 @@ or read the VRM's own PMBus.
 | The **VRM's own PMBus readback** | TPS546x / LTC3886 READ_IOUT/VOUT/TEMP | Zero added parts if a Route-A VRM is already present; covers full current inside the VRM | Default when a PMBus VRM is on the board; add an INA only for an independent cross-check. |
 | A **generic ADC across your own shunt + stack taps** | TI **ADS1115** (16-bit, 4-ch, PGA) [ds](https://www.ti.com/lit/ds/symlink/ads1115.pdf) | One ADC watches shunt current **and** the bottom/top stack-node voltages the on-die sensor reports | Belt-and-suspenders for the imbalance loop. |
 
-## 2.4 Rail LDOs (1.2 V VDDIO; 0.75 V normally on-chip)
+### 2.4 Rail LDOs (1.2 V VDDIO; 0.75 V normally on-chip)
 
 The **1.2 V VDDIO** is a *quality reference*, not a power rail — accuracy beats current, and you must never
 let tolerance stack push it past the **1.3 V abs-max**. A proven approach uses a tight-tolerance small LDO
@@ -180,14 +184,15 @@ datasheet-confirmed reason exists.
 
 ---
 
-# 3. Protection, supervision & thermal
+## 3. Protection, supervision and thermal
 
 **The requirement.** Input is usually a **12 V barrel and/or 5 V USB-PD** stepped down to the core rail;
 the high current lives on the 0.71 V *output* side, so input protection carries the smaller *input*
-current. `TRIP` (over-temp/over-voltage) is a **1.2 V-domain** ASIC output; `Tj` is 50–85 °C operating,
-**115 °C absolute max** — a stalled fan on an exposed-die FCLGA is a real hazard.
+current. `TRIP` (over-temp/over-voltage) is a **1.2 V-domain** ASIC output, and a stalled fan on an exposed-die
+FCLGA can take the junction past its limits
+([Electrical Quick Reference](blockscale-asic-integration-guide.md#electrical-quick-reference-per-asic)).
 
-## 3.1 Input power protection
+### 3.1 Input power protection
 
 The structurally cheapest fix is **one keyed input** — it eliminates both reverse-polarity and back-feed
 with zero parts (what most open boards do). Add a reverse block on any barrel; only add ORing if two live
@@ -195,29 +200,29 @@ inputs can genuinely coexist.
 
 | An effective approach leverages… | …with these example parts | …in this manner | When to pick it |
 |---|---|---|---|
-| A **series Schottky reverse-block** | Diodes **B560C** (60 V/5 A) [ds](https://datasheet.octopart.com/B560C-13-F-Diodes-Inc.-datasheet-530186.pdf) | Blocks reverse instantly; one part, no gate logic; big hand-solderable tab | Low-current input where ~1 W of `Vf·I` loss is acceptable and you want zero logic risk. **A BZM2 hashboard does exactly this (B560C).** |
+| A **series Schottky reverse-block** | Diodes **B560C** (60 V/5 A) [ds](https://datasheet.octopart.com/B560C-13-F-Diodes-Inc.-datasheet-530186.pdf) | Blocks reverse instantly; one part, no gate logic; big hand-solderable tab | Low-current input where ~1 W of `Vf·I` loss is acceptable and you want zero logic risk. **A BZM2 board in private development does this (B560C).** |
 | A **P-FET reverse-block** (lower loss) | AOS **AO3401A** (−30 V/−4 A) [ds](https://www.aosmd.com/res/datasheets/AO3401A.pdf) | Drop is `I·RDS` (tens of mV, ~10× less than Schottky); trivial to solder; up-size the FET above 4 A | Cost/efficiency-sensitive single input without an ORing controller. |
 | An **ideal-diode controller + N-FET** | TI **LM74700-Q1** (20 mV drop, 3.2–65 V) [ds](https://www.ti.com/lit/ds/symlink/lm74700-q1.pdf) · Diodes **AP74701Q** (adds −33 V VDS clamp) [ds](https://www.diodes.com/datasheet/download/AP74701Q.pdf) | Near-zero loss, scales to any current via the FET; one controller per input leg also ORs two rails | High-current input where a Schottky's watts are unacceptable, or a true barrel-**and**-USB-PD OR. |
 
 For a 5 V-only, low-current OR, TI **LM66100** (integrated ideal diode, SC-70) [ds](https://www.ti.com/lit/ds/symlink/lm66100.pdf)
 is the compact pick; ADI **LTC4359** only if the board must survive large negative/HV input faults.
-*(A BM1362 sibling shipped a reverse-polarity add for a missing block — `256foundation/emberone00-pcb#37`.)*
+*(An open board for a different ASIC, the BM1362, added reverse-polarity protection it lacked: [256foundation/emberone00-pcb#37](https://github.com/256foundation/emberone00-pcb/issues/37).)*
 
-## 3.2 Transient / ESD protection
+### 3.2 Transient / ESD protection
 
 Protect **power nodes and data lines** — hot-plug/cable-fault transients hit VBUS/VIN/CC, not just D±
-(leaving power nodes bare is the documented `emberone00-pcb#28/#31` miss). Pick a TVS whose reverse
+(leaving power nodes bare is the documented miss in [emberone00-pcb#28](https://github.com/256foundation/emberone00-pcb/issues/28) and [#31](https://github.com/256foundation/emberone00-pcb/issues/31)). Pick a TVS whose reverse
 standoff sits *above* the node's normal max and whose clamp stays under the downstream part's abs-max.
 
-- **5 V VBUS / positive rail:** Littelfuse **SMAJ5.0A** (5 V standoff, ~9.2 V clamp, 400 W) [ds](https://www.littelfuse.com/assetdocs/tvs-diodes-smaj-datasheet?assetguid=13c2a823-03b8-4d1f-9ddc-9b44670aed9d) — scale the `SMAJxxA` number to the rail (SMAJ12A for a 12 V barrel). *A BZM2 hashboard uses an SMAJ6.0A on VBUS.*
+- **5 V VBUS / positive rail:** Littelfuse **SMAJ5.0A** (5 V standoff, ~9.2 V clamp, 400 W) [ds](https://www.littelfuse.com/assetdocs/tvs-diodes-smaj-datasheet?assetguid=13c2a823-03b8-4d1f-9ddc-9b44670aed9d) — scale the `SMAJxxA` number to the rail (SMAJ12A for a 12 V barrel). *A BZM2 board in private development uses an SMAJ6.0A on VBUS.*
 - **USB-C CC1/CC2:** Nexperia **PESD5V0X1BT** (ultra-low cap, 9 kV) [ds](https://www.nexperia.com/product/PESD5V0X1BT) — one per CC pin.
 - **USB 2.0 D± + VBUS in one part:** ST **USBLC6-2SC6** (3.5 pF, IEC 61000-4-2 L4) [ds](https://www.st.com/resource/en/datasheet/usblc6-2.pdf).
 
-## 3.3 Rail supervision
+### 3.3 Rail supervision
 
 **Ecosystem survey:** *none* of the surveyed open BZM2 boards carry a dedicated voltage-supervisor or
 watchdog IC — rail health is inferred from the regulator **PGOOD** pin and host telemetry, which is exactly
-the host-polling-only gap `emberone00-pcb#56` illustrates. A proven, cheap hardening step adds independent
+the host-polling-only gap [emberone00-pcb#56](https://github.com/256foundation/emberone00-pcb/issues/56) illustrates. A proven, cheap hardening step adds independent
 hardware detection:
 
 - **PGOOD → host GPIO** — free baseline; always wire it out, don't leave it floating.
@@ -227,7 +232,7 @@ hardware detection:
 Wire supervisor/PGOOD outputs into (a) a host interrupt and (b) — for the core rail — the same hardware
 enable-gate used for `TRIP` (§3.4), so a collapsed rail can also drop the core.
 
-## 3.4 Thermal safety
+### 3.4 Thermal safety
 
 Two layers: **monitoring + fan control with tach/stall detection**, and a **hardware `TRIP` → enable-gate
 cut** so a fault contains the core rail even if firmware is hung.
@@ -235,14 +240,14 @@ cut** so a fault contains the core rail even if firmware is hung.
 **Temperature sense & fan control** — a proven approach leverages an SMBus fan controller with tach:
 Microchip **EMC2101** (PWM + tach + internal/external temp in one QFN-10) [ds](https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/EMC2101-Data-Sheet-DS20006703.pdf),
 or **EMC2302/2305** (RPM-based, explicit **stall alert**, 2/5 fans — *bitaxeBonanza uses the EMC2302,
-libreboard the EMC2305*) paired with a TI **TMP1075** temp sensor (±0.25 °C, ALERT pin — *EmberOne uses the TMP1075*) [ds](https://www.ti.com/lit/ds/symlink/tmp1075.pdf). The minimal path is a
+[libreboard](https://github.com/256foundation/libreboard) the EMC2305*) paired with a TI **TMP1075** temp sensor (±0.25 °C, ALERT pin — *EmberOne uses the TMP1075*) [ds](https://www.ti.com/lit/ds/symlink/tmp1075.pdf). The minimal path is a
 discrete tach level-shift (BSS138 + Zener) into a host counter — *what bitaxeBIRDS does*. Either way,
 **the tach must be wired**; prefer a hardware alert-on-stall over pure host polling.
 
 **Hardware TRIP interlock** — the reference-grade move makes `TRIP` (or a sensor ALERT, or a supervisor
 fault) **force the core-buck ENABLE low in hardware**:
 
-- **Logic AND into EN** — a 1.2 V-capable single AND gate (e.g. **SN74AXC1G08**, respecting the ≈1.5 V
+- **Logic AND into EN** — a 1.2 V-capable single AND gate (e.g. **SN74AXC1G08**, respecting the IO input
   ceiling): `EN = host_enable AND (NOT TRIP)`. Deterministic, sub-µs, keeps host control while adding a
   hardware veto. **The default interlock.**
 - **Comparator / SR-latch cut** — latches EN off until a deliberate clear, so a momentary over-temp stays
@@ -254,7 +259,7 @@ fault) **force the core-buck ENABLE low in hardware**:
 
 ---
 
-# Quick-pick summary
+## Quick-pick summary
 
 **A cost-conscious, hand-solderable single-ASIC board** (the Satoshi-Starter class):
 
@@ -269,7 +274,7 @@ fault) **force the core-buck ENABLE low in hardware**:
 | 1.2 V VDDIO | TPS7A20 or TLV757P (fixed 1.2 V) | Accurate reference under 1.3 V abs-max |
 | Input protection | 1 keyed input + B560C or AO3401A reverse-block | Structurally avoids reverse/back-feed |
 | ESD | SMAJ5.0A (VBUS) + USBLC6-2 (data) | Protect power nodes, not just data |
-| Supervision | PGOOD wired + TPS3839 (optional) | Independent rail detection — a gap in every open board |
+| Supervision | PGOOD wired + TPS3839 (optional) | Independent rail detection — absent from every surveyed open board |
 | Thermal | EMC2101 (temp+fan+tach) + AND-gate TRIP→EN | Stall detection + hardware fault cut |
 
 **Scale up for multi-ASIC / higher current:** stack TPS546D24A phases (or LTC3886 + bigger FETs);

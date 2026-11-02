@@ -2,12 +2,12 @@
 
 Worked examples of how boards arrange BZM2 ASICs **in series and in parallel on one rail**, and what each
 arrangement means for balancing and fault tolerance. The **RDS**, a production three-board system, is the
-primary example and is treated in depth. Published open designs follow as comparisons. This page fills the
-multi-ASIC gap noted in the [Integration Guide](blockscale-asic-integration-guide.md#core-rails-and-voltage-architecture)
-with examples. It makes no new claim about the silicon.
+primary example and is treated in depth. Published open designs follow as comparisons. This page extends the
+single-ASIC rail description in the [Integration Guide](blockscale-asic-integration-guide.md#core-rails-and-voltage-architecture)
+to multi-ASIC strings. It makes no new claim about the silicon.
 
-- **Read this with:** the single-ASIC rail/stack drawing
-  ([`single-asic-rail-stack.svg`](../drawings/rails/single-asic-rail-stack.svg)), the
+- **Read this with:** the single-ASIC rail and stack drawing
+  ([Rail and stack topology](blockscale-asic-integration-guide.md#rail-and-stack-topology-single-asic)), the
   [voltage sensor channels](blockscale-asic-integration-guide.md#voltage-sensor-channels) table, and the
   [Hardware Implementations Survey](bzm2-hardware-implementations.md).
 - **How to read this page:**
@@ -194,12 +194,12 @@ action is **on/off**.
 
 ### Not public (RDS)
 
-- measured rail, string current and per-level spread;
+- string current and the per-level spread, and how the spread varies with load (the board rails at one setpoint
+  and the domain-level deviation are in [RDS reference measurements](rds-measured-reference.md#rails-and-level-deviation));
 - the calibration range of the setpoint;
 - `VDD_HASH` absolute maximum and default trip thresholds;
 - whether the board has per-level bypass or bleed elements;
 - whether the four ASICs' midpoints are tied on the board;
-- the per-level spread and how it varies with load;
 - the map from UART chain position to series level;
 - the result of the continuity check.
 
@@ -292,7 +292,7 @@ carried by the partners at p/(p−1) of their share, and a short costs a whole l
 
 ## Comparison
 
-| | **RDS (25s4p)** | bitaxeBIRDS | bitaxeBonanza | HashBed |
+| property | **RDS (25s4p)** | bitaxeBIRDS | bitaxeBonanza | HashBed |
 | --- | --- | --- | --- | --- |
 | status | production system (structure only here) | published design; **untested prototype** (its README) | published design; **not known to have been built** (2026-09) | private development |
 | ASICs on the string | 100 per board; 3 boards on one rail | 4 | 8 | 16 |

@@ -148,7 +148,7 @@ Additional named rails described in the vendor material:
 - `VDD_HASH`: nominal `0.71 V`
 - `VDD_P75`: backup rail if the on-chip LDO path is unavailable
 
-### Rail / stack topology (single ASIC)
+### Rail and stack topology (single ASIC)
 
 ![BZM2 single-ASIC rail and stack topology](../drawings/rails/single-asic-rail-stack.svg)
 

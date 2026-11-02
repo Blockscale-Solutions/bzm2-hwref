@@ -18,7 +18,7 @@ Pad map drawn **to scale** from the land pattern below, with pad IDs and names f
 
 | Rail | Pads | Count | Notes |
 | --- | --- | --- | --- |
-| `VDD` (`VDD_HASH`) | `2-8`, `41-42`, `49-52`, `59-60` | `15` | `0.71 V` nominal; size for `~14 A` stock, `~27 A` maxed - roughly `1-2 A` per pad at the extremes |
+| `VDD` (`VDD_HASH`) | `2-8`, `41-42`, `49-52`, `59-60` | `15` | nominal voltage and stack current in the [Electrical Quick Reference](blockscale-asic-integration-guide.md#electrical-quick-reference-per-asic); spread over 15 pads that is roughly `1-2 A` per pad at the extremes |
 | `VSS` | `14`, `21-28`, `35`, `43-48`, `53-58` | `22` | ground return for everything |
 | `VDDIO` | `19`, `30` | `2` | `1.2 V` IO rail. Connect **both** pads: whether they are joined on-die is not documented in any public source, so this is a conservative default rather than a stated requirement - see the [Board Design Guide](bzm2-board-design-guide.md) |
 | `VDDINT_1` / `VDDINT_2` | `1`, `12` | `2` | internal stack midpoint (~`0.355 V`) brought out for reference/decoupling - **outputs**, not load rails |
@@ -111,7 +111,7 @@ The 60 lands sit on a **uniform 0.615 mm pitch**, the same on both axes. There i
 no stagger and no irregular spacing: the twelve N and S lands step eleven equal
 0.615 mm intervals, and the eight E and W lands step seven.
 
-| | lands | size (w x h) | placement |
+| group | lands | size (w x h) | placement (mm) |
 | --- | --- | --- | --- |
 | E / W columns | 8 each | `0.705 x 0.305 mm` | `x = +/-3.6975`, `y` spans `+/-2.1525` |
 | N / S rows | 12 each | `0.305 x 0.935 mm` | `y = +/-3.3325`, `x` spans `+/-3.3825` |
@@ -141,7 +141,7 @@ decimal places, where the values above are exact (`11 x 0.615 = 6.765`, so the r
 half-span is `3.3825` rather than a rounded `3.382` / `3.383`).
 
 A reference KiCad footprint is in the repository at
-`footprints/BZM2.pretty/BZM2-FCLGA60.kicad_mod`, generated from
+[`footprints/BZM2.pretty/BZM2-FCLGA60.kicad_mod`](https://github.com/Blockscale-Solutions/bzm2-hwref/blob/main/footprints/BZM2.pretty/BZM2-FCLGA60.kicad_mod), generated from
 [`bzm2-ballmap.csv`](bzm2-ballmap.csv) plus the table above. It carries each land's
 name and function from the CSV, which neither open-source footprint does. It is
 oriented to this document's top-view convention (E to the right), which is 180
@@ -153,7 +153,7 @@ difference.
 State these before using the figures. They are **nominal centres and sizes with
 no tolerance band**, because no tolerance is published in any public source.
 
-| | |
+| item | statement |
 | --- | --- |
 | **Nominal only** | No min/max, no tolerance class. Treat as target geometry, not as limits. |
 | **Land pattern, not package** | These are PCB lands. The vendor's own package land dimensions are **not stated in any public source**, and are not these numbers. |

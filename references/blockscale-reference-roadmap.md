@@ -21,7 +21,7 @@ Out of scope:
 
 - reproduction of vendor reference boards
 - carrier-specific MCU protocols
-- Gen1 telemetry
+- decoding of the first-generation four-byte `DTS_VS` sensor payload (the reference documents the eight-byte payload)
 - JTAG usage beyond what concrete protocol evidence supports
 
 ## What the reference covers today

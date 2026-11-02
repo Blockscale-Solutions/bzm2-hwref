@@ -251,8 +251,7 @@ The design's point of interest is that a failure would be **observable per level
 
 **Source:** [bitaxeorg/bitaxeBonanza](https://github.com/bitaxeorg/bitaxeBonanza) at
 [`51b31ad`](https://github.com/bitaxeorg/bitaxeBonanza/tree/51b31ad8e6962b76d652d8b956b0495d39725633)
-(branch `1001x`). **Status: a published design with no known assembled units.** To the maintainer's
-understanding, it is not known to have been built as of 2026-09. Its README also says the design "doesn't
+(branch `1001x`). **Status: a published design with no known assembled units** (none publicly reported as of 2026-09). Its README also says the design "doesn't
 work because issue #3 and might never work because issue #4" (the UART level-shifter and 9-bit issues, not
 the stack). It is included only as the public example of **parallel ASICs within a level**, and must not be
 read as proven hardware.

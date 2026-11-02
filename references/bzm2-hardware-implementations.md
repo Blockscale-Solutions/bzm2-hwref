@@ -1,4 +1,4 @@
-# BZM2 hardware implementations — ecosystem survey
+# BZM2 Hardware Implementations Survey
 
 A field guide to the known hardware built around the Intel BZM2 (Bonanza Mine 2) ASIC, for anyone
 evaluating design approaches. The boards below span a **maturity and availability spectrum** — from
@@ -13,7 +13,7 @@ boards still in private development are marked as such. This survey is a compani
 > implementations. Maturity notes reflect each project's own status at the time of writing — check the
 > repos for current state.
 
-## Maturity & availability tiers
+## Maturity and availability tiers
 
 - **Public OSHW** — fully open and navigable today; usable as a design reference now. Being public says
   nothing about whether a design has been built or works: see each entry's status.
@@ -27,7 +27,7 @@ boards still in private development are marked as such. This survey is a compani
 | Board | ASICs / topology | Host / UART bridge | Maturity & availability | Notes |
 |---|---|---|---|---|
 | **[bitaxeBIRDS](https://github.com/bitaxeorg/bitaxeBIRDS)** (bitaxe community) | **4**, series-stacked | **Raspberry Pi Pico 2W** (RP2350, PIO 9-bit UART) | **Public OSHW** · **untested prototype** per its own README ([line 5](https://github.com/bitaxeorg/bitaxeBIRDS/blob/11d188de8778dd4a394ca4740a7cc3f722619baf/README.md)) — the most complete open BZM2 hashboard design | Pico 2W (RP2350) bridge module; series voltage-stack ladder; native 1.2 V oscillator |
-| **[bitaxeBonanza](https://github.com/bitaxeorg/bitaxeBonanza)** (bitaxe community) | multi-ASIC, series-stacked | **ESP32-S3** | **Public OSHW** · work-in-progress (design issues documented); **not known to have been built** as of 2026-09 (maintainer's understanding) | Publicly documented the two classic BZM2 traps: a reversed UART level-shifter ([#3](https://github.com/bitaxeorg/bitaxeBonanza/issues/3)) and the ESP32's inability to do 9-bit UART natively ([#4](https://github.com/bitaxeorg/bitaxeBonanza/issues/4)). The board itself is a documented work-in-progress; the 9-bit UART is supplied by a **separate RP2040 bridge** ([bonanza-bridge-fw](https://github.com/bitaxeorg/bonanza-bridge-fw)), not a chip on this board — invaluable lessons either way |
+| **[bitaxeBonanza](https://github.com/bitaxeorg/bitaxeBonanza)** (bitaxe community) | multi-ASIC, series-stacked | **ESP32-S3** | **Public OSHW** · work-in-progress (design issues documented); **no assembled unit publicly reported** as of 2026-09 | Publicly documented the two classic BZM2 traps: a reversed UART level-shifter ([#3](https://github.com/bitaxeorg/bitaxeBonanza/issues/3)) and the ESP32's inability to do 9-bit UART natively ([#4](https://github.com/bitaxeorg/bitaxeBonanza/issues/4)). The board itself is a documented work-in-progress; the 9-bit UART is supplied by a **separate RP2040 bridge** ([bonanza-bridge-fw](https://github.com/bitaxeorg/bonanza-bridge-fw)), not a chip on this board — invaluable lessons either way |
 | **Satoshi Starter** (Reckless Systems) | **1** | **XR21V1414** — hardware native-9-bit USB-UART bridge | **Private — A0 hardware dev** (rev1 bring-up); full OSHW release planned, available by request | Single-ASIC student/STEM kit; USB-C PD + barrel input; hardware-bridge path (no MCU firmware for the UART). Repository private during development. |
 | **HashBed** | **16**, series-stacked "heatbed tile" | **RP2040** (PIO) | **Private during development** — A0 hardware dev (in progress) | Novel 3D-printer-heatbed form factor; per-bit level translation, PMBus controller-based core rail, native 1.2 V oscillator |
 | **[EmberOne01](https://github.com/256foundation/emberone01-pcb)** (256 Foundation) | multi-ASIC, series-stacked (inherited BM1362 layout) | *(not yet BZM2-adapted)* | **Maturity 0 (infancy)** — public repo, BZM2 design not yet started | The intended BZM2 variant of the EmberOne. Its schematic today is still the BM1362 EmberOne design with **no BZM2-specific changes yet**, so it's a candidate for a *future* reference — not usable as one now. |

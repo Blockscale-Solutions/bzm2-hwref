@@ -8,4 +8,4 @@ Header-only CSV templates for eventual measured RDS chart fills (issue #18).
 | `RDS-THR-CHART-01.csv` | Thermal |
 | `RDS-MIN-CHART-01.csv` | Performance |
 
-**No data rows.** Do not invent measurements. See `references/lab-chart-placeholders.md`.
+**No data rows.** Do not invent measurements. See [`../README.md`](../README.md).

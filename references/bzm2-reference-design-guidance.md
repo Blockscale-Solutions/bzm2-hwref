@@ -14,12 +14,10 @@ publicly-datasheeted commodity component; every "an open board does this" note p
 open-source design you can inspect. Pick the row that matches your cost, current, and hand-assembly
 constraints, then verify the exact values against the ASIC's own datasheet on your board.
 
-- **This is designer guidance, not a reference schematic.** No proprietary or vendor-confidential design
-  is reproduced here; the approaches are assembled from public component datasheets, the public open-source
-  BZM2 board ecosystem, and general mixed-signal practice.
+- **This is designer guidance, not a reference schematic.** The approaches come from public component
+  datasheets, the open-source BZM2 board ecosystem, and general mixed-signal practice.
 - **The electrical requirements** each section designs against come from the public
-  [Integration Guide](blockscale-asic-integration-guide.md) and [Board Design Guide](bzm2-board-design-guide.md)
-  in this repository.
+  [Integration Guide](blockscale-asic-integration-guide.md) and [Board Design Guide](bzm2-board-design-guide.md).
 - Where a value can't be confirmed from a public source it is marked *designer to verify against the ASIC
   datasheet.*
 
@@ -96,8 +94,7 @@ RP2040 bridge (`bonanza-bridge-fw`) supplies the 9-bit UART. Also out on speed/m
 | A **3.3 V oscillator + fast translator** | e.g. Epson **SG3225CAN 50 MHz** (1.6–3.63 V) [product](https://www.epsondevice.com/crystal/en/products/crystal-oscillator/sg3225can.html) or SiTime **SiT8008** → an AXC/AVC translator (§1.1) | XO runs at its native voltage; a 50 MHz-capable translator drops it to 1.2 V and unloads the oscillator | When you need a specific low-jitter/tight-ppm Western-brand XO only sold at ≥1.6 V, or already have a fast translator placed. **Satoshi Starter uses this branch (SG3225CAN + translate).** |
 | A **3.3 V oscillator + AC-couple + bias** | XO + series cap + bias to ~0.6 V | Re-centers the clock in the 1.2 V window passively; respect the ≈1.5 V ceiling in the bias network | Cost-down passive path, or reusing the multi-ASIC daisy-chain AC-couple network. |
 
-**Never** a resistor divider into the clock pad (breaches the ceiling, rounds the edge). **Availability
-honesty:** native 1.2 V MHz oscillators are a niche — the Western majors (SiTime, Epson, Kyocera) floor
+**Never** a resistor divider into the clock pad (breaches the ceiling, rounds the edge). **Availability:** native 1.2 V MHz oscillators are a niche — the Western majors (SiTime, Epson, Kyocera) floor
 above 1.2 V, so if second-sourcing a 1.2 V XO matters, plan the translator branch as the fallback.
 *Designer to verify current stock at order time.* **Multi-ASIC:** daisy-chain `REFCLKOUT → REFCLKIN`
 AC-coupled down the stack. *Open-board corroboration: bitaxeBIRDS ships the native 1.2 V
@@ -218,7 +215,7 @@ standoff sits *above* the node's normal max and whose clamp stays under the down
 
 ## 3.3 Rail supervision
 
-**Ecosystem finding:** *none* of the surveyed open BZM2 boards carry a dedicated voltage-supervisor or
+**Ecosystem survey:** *none* of the surveyed open BZM2 boards carry a dedicated voltage-supervisor or
 watchdog IC — rail health is inferred from the regulator **PGOOD** pin and host telemetry, which is exactly
 the host-polling-only gap `emberone00-pcb#56` illustrates. A proven, cheap hardening step adds independent
 hardware detection:
@@ -291,8 +288,6 @@ per-phase sensing for current.
 
 ---
 
-*Clean-room provenance: this guidance is assembled from public component datasheets (linked inline), the
-public open-source BZM2 board ecosystem (bitaxeBIRDS, bitaxeBonanza, EmberOne, libreboard,
-bonanza-bridge-fw), and general mixed-signal design practice. It reproduces no proprietary or
-vendor-confidential design, part selection, net name, or value. Every choice is a designer's starting
-point to adapt and verify against the ASIC's own datasheet, not a schematic to copy.*
+*Sources: public component datasheets (linked inline), the open-source BZM2 board ecosystem (bitaxeBIRDS,
+bitaxeBonanza, EmberOne, libreboard, bonanza-bridge-fw), and general mixed-signal design practice. Every
+choice is a starting point to adapt and verify against the ASIC's own datasheet, not a schematic to copy.*

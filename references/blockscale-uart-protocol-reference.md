@@ -20,7 +20,7 @@ It is written as a practical reference for:
 
 ![BZM2 UART 9-bit character frame](../drawings/uart/uart-9bit-character-frame.svg)
 
-Original diagram of one character: start → D0–D7 → 9th address flag → stop. Source: this section. Companion TDM frame / result-path SVG (opaque slot interior; four labeled gaps) under § TDM Overview.
+One character on the wire: start bit, data bits D0–D7, the 9th address flag, then stop. The TDM frame and result path are drawn under TDM Overview.
 
 This is the most important host-side fact about the link, and the one that
 disqualifies most off-the-shelf USB-UART bridges:
@@ -92,9 +92,9 @@ bits and the column sits above it: `engine_id = (col << 6) | row`. `[BZM2-ENG-00
 A device carries **236 addressable engine positions**. `[BZM2-ENG-003]` Each
 position contains **4 engines**, for **944 engines per ASIC**. `[BZM2-ENG-005]`
 
-The two rest on different evidence and should not be carried as one figure:
-**236** is demonstrated by public open-source firmware and independently
-corroborated by our own capture; the **x4** rests on vendor material alone. See
+The two figures rest on different evidence: **236** is used by public
+open-source firmware and corroborated by bench capture; the **x4** is
+vendor-stated. See
 `blockscale-asic-integration-guide.md` for the throughput estimate that uses the
 same figures.
 
@@ -213,16 +213,14 @@ byte-at-a-time discard by default.
 
 #### Opcodes `0x6` through `0xC` are unmapped
 
-Not "unused". We have no evidence about them at all. Treat the known set as a
+Not "unused": nothing is documented about them. Treat the known set as a
 **lower bound** on what the part may emit.
 
-#### What would close this
+#### Where `0x5` is documented
 
-Nothing available. The positive semantics exist only in vendor material, and a
-capture cannot substitute: no public implementation emits `0x5`, so a trace of
-any public host will never contain one. Only a trace of a legacy vendor stack
-would, and a fact recovered that way cannot enter this reference. This is
-recorded as a closed route rather than an open task, so it is not retried.
+The semantics of `0x5` appear only in vendor material that this reference does not
+reproduce. A capture from a public host cannot reveal them either: no public
+implementation emits `0x5`.
 
 ## Frame Structure
 
@@ -337,13 +335,12 @@ The trap has teeth because both spellings appear as named constants in
 reference software, two lines apart, for different purposes: one is the part
 identifier, the other is this reply. Check which one you are comparing against.
 
-> **Provenance.** `2ZB` is what three independent implementations compare
+> **Basis.** `2ZB` is what three independent implementations compare
 > against: two reference implementations and one third-party firmware port.
-> **We have not yet observed it on our own wire**, so this is agreement among
-> sources rather than a measurement. Those sources are not fully independent of
-> each other — the third-party port may well have read the same headers — so
-> treat this as well-attested, not as confirmed. It will be upgraded when we
-> measure it, and corrected if the measurement disagrees.
+> This is agreement among sources rather than a bench measurement, and the
+> sources are not fully independent of each other (the third-party port may
+> have read the same headers), so treat the reply as well-attested rather than
+> confirmed.
 >
 > One of those sources is public and can be named:
 > [`johnny9/ESP-Miner-Bonanza`](https://github.com/johnny9/ESP-Miner-Bonanza)
@@ -562,7 +559,7 @@ functional correctness problems.
 
 ![BZM2 TDM frame and result path — opaque slot](../drawings/uart/tdm-frame-and-result-path.svg)
 
-Original diagram: frame-level TDM transport + block-level result path. **Slot interior not exploded** (four labeled gaps: intra-slot order, NOOP by length only, delay-register timing picture, 0x0A×TDM interaction). Sources: this section, Result Aggregation, TX ctrl `0x0A`, plus public OSS control packing cited on the figure. Do not derive occupancy from `10 × 11 = 110` against the 100-bit-period constant. Issue #13.
+Frame-level TDM transport and the block-level result path. The interior of a slot is not drawn. Not documented: intra-slot order, NOOP (identified by length only), the delay-register timing picture, and how TX ctrl `0x0A` interacts with TDM. Do not derive slot occupancy from `10 × 11 = 110` against the 100-bit-period constant.
 
 
 TDM lets ASICs stream data back to the host in time slots associated with ASIC
@@ -763,8 +760,6 @@ That is also how the Mujina reference tooling is structured.
 Relevant follow-on references:
 
 - [ASIC Integration Guide](blockscale-asic-integration-guide.md)
-- [BZM2 UART Debug Guide](bzm2-uart-debug.md) and
-  [BZM2 Port Note](bzm2-port.md) - Mujina firmware port notes
 
 The Mujina debug CLI already exposes:
 

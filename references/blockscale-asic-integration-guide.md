@@ -33,14 +33,13 @@ clock, load, and protect it correctly.
 
 ## ASIC At A Glance
 
-ASIC-level properties, with their bases separated because they differ:
+ASIC-level properties:
 
-- `236` addressable engine positions per ASIC `[BZM2-ENG-003]` - demonstrated by
-  public open-source firmware and independently corroborated by our own capture
-- `4` engines per position `[BZM2-ENG-005]` - **vendor material only**, no public
-  or measured basis
-- `944` total engines per ASIC - follows from the two above, so it inherits the
-  weaker basis
+- `236` addressable engine positions per ASIC `[BZM2-ENG-003]` - used by public
+  open-source firmware and corroborated by bench capture
+- `4` engines per position `[BZM2-ENG-005]` - vendor-stated; not independently
+  measured
+- `944` total engines per ASIC - the product of the two figures above
 - `2` primary PLL domains, corresponding to the bottom and top engine stacks
 - on-die digital temperature sensing
 - on-die three-channel voltage sensing
@@ -161,7 +160,7 @@ Additional named rails described in the vendor material:
 
 ![BZM2 single-ASIC rail and stack topology](../drawings/rails/single-asic-rail-stack.svg)
 
-Original diagram from this section and the Electrical Quick Reference / pinout Rails table. Multi-ASIC series stacking is not drawn here: see [Voltage-Stack Topology Examples](bzm2-voltage-stack-examples.md) for the RDS (25 levels × 4 in parallel) and the published bitaxeBIRDS (4s1p) and bitaxeBonanza (4s2p) designs. No Product Brief tracing.
+Single-ASIC rail topology, using the figures in the Electrical Quick Reference below and the pinout Rails table. For multi-ASIC series stacking, see [Voltage-Stack Topology Examples](bzm2-voltage-stack-examples.md): the RDS (25 levels × 4 in parallel) and the published bitaxeBIRDS (4s1p) and bitaxeBonanza (4s2p) designs.
 
 ### Why voltage stacking matters
 
@@ -214,7 +213,7 @@ but do not assume the part acts on all three.
 
 ## Electrical Quick Reference (Per ASIC)
 
-Design-point numbers a board designer needs up front. The two operating points below are **publicly corroborated**: they match rows in
+Design-point numbers a board designer needs up front. The two operating points below match rows in
 [bitaxeorg/bitaxeBIRDS `doc/specs.md`](https://github.com/bitaxeorg/bitaxeBIRDS/blob/main/doc/specs.md),
 a published 25-point sweep on real hardware. Characterize on your own design
 before committing limits.
@@ -308,15 +307,14 @@ Do not reverse that order during live clock changes.
 
 ### Live clock changes on a hashing chain (measured)
 
-What follows was measured on the RDS (unit `bonanza`, three boards of 100 ASICs) under the Mujina reference
-firmware, in case MJ-TUNE-02, run `bonanza.MJ-TUNE-02.v17550b0.20261029T071354Z`. One chain had its ASICs' PLLs
-moved one ASIC at a time, in ramped steps, while the other two chains hashed at fixed clocks. `[BZM2-PLL-001]`
-`[BZM2-PLL-002]`
+What follows was measured on the RDS (three boards of 100 ASICs) under the Mujina reference firmware. On one chain,
+the ASICs' PLLs were moved one ASIC at a time in ramped steps, while the other two chains hashed at fixed clocks.
+`[BZM2-PLL-001]` `[BZM2-PLL-002]`
 
 - **A live move of the feedback divider alone re-locks.** Every one of the 753 sets in that run read back locked.
   Die temperature on the chain stayed flat (mean about 56 C), so the effect below is not thermal.
 - **One set costs the host about a second.** A separate run measured an upper bound of 1.06 s per set, including
-  the caller's own cadence (MJ-TUNE-03, run `bonanza.MJ-TUNE-03.p1.20261029T043249Z`).
+  the caller's own cadence.
 - **While sets run, the whole chain returns result frames with the nonce-valid status bit clear**, not only the ASIC
   being set. The reference firmware reads that bit as bit 3 (`0x08`) of the result status byte. In the run above
   the chain carrying the sets returned 38,000 to 130,000 such frames per 20 s poll for as long as the sets went on.
@@ -325,8 +323,7 @@ moved one ASIC at a time, in ramped steps, while the other two chains hashed at 
 - **The host was starving the chain.** In that firmware each set was issued from the same single writer that sends
   work to the chain, so for the length of every set no ASIC on the chain received new work, and a round of 100 sets
   held the chain for most of ten minutes. The frames line up with that hold. Whether the ASIC clears the bit
-  because its work ran out, or because of a PLL write elsewhere on the chain, is not separated by this run
-  ([#40](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/40)).
+  because its work ran out, or because of a PLL write elsewhere on the chain, is not separated by these measurements.
 - **One unexplained burst.** The two chains with no sets showed one short burst of such frames, at about 915 s into
   the run, with no set running anywhere. Its trigger was not measured.
 
@@ -335,14 +332,13 @@ What a host should take from this:
 - **A frame with the nonce-valid bit clear is not a result.** Count it on its own. Do not count it as a valid result
   or as a wrong one, and keep it out of any error ratio. Counted as wrong, it turned that run's start-frequency error
   figure into 72.7 %, when the chain's own steady-state wrong share with no sets running was 1.0 to 2.2 %.
-- **Do not measure a chain while its clocks are being moved, or just after.** Mujina now discards any measurement
-  interval that starts within a quiet period after the latest PLL set on the chain. It uses 45 s, which is that
-  run's 40 s tail plus a margin, not a measured property of every board.
+- **Do not measure a chain while its clocks are being moved, or just after.** The Mujina reference firmware discards any measurement
+  interval that starts within a quiet period after the latest PLL set on the chain. It uses 45 s, which is the
+  observed 40 s tail plus a margin; it is not a measured property of every board.
 - **Do not block work dispatch for a run of PLL sets.** Each set holds whatever path it is issued from. If that is
   the chain's only dispatch path, the whole chain idles for the whole sequence.
 
-Not yet established: whether these parts lock and run cleanly below 800 MHz in a hashing system
-([#41](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/41)).
+Not yet established: whether these parts lock and run cleanly below 800 MHz in a hashing system.
 
 ### DLL health
 
@@ -408,11 +404,10 @@ The documented enumeration flow is:
 6. the next ASIC becomes reachable
 7. repeat until the chain is assigned
 
-`NOOP` returning `2ZB` is the simplest chain-liveness check. The bytes are the
-part name reversed; comparing against `BZ2` matches nothing and reads as an
-empty bus. See the protocol reference for the provenance of those three bytes —
-they are attested by agreement among implementations, not yet by our own
-measurement.
+`NOOP` returning `2ZB` is the simplest chain-liveness check. The reply is three
+ASCII bytes, `2ZB`: the part name reversed. Comparing against `BZ2` matches
+nothing and reads as an empty bus. These bytes are attested by agreement among
+public implementations; see the protocol reference.
 
 ### Broadcast and multicast
 
@@ -444,7 +439,9 @@ for any custom board is:
 
 ![BZM2 power-up / bring-up flowchart](../drawings/bring-up/power-up-sequence.svg)
 
-Original flowchart (published source of truth): [power-up-sequence.svg](../drawings/bring-up/power-up-sequence.svg). Captures the Integration Guide bring-up sequence and Board Design Guide §7 / §9 fail-safes, including the post-#27 arm-protection gate with a **terminal STOP** if `thermal_enabled` / `voltage_enabled` are not confirmed before raising the stack. Caption: derived from published reference sequence; not a lab measurement. **NOOP reply:** `2ZB`, settled in #9. Editable Mermaid for redraws only: [power-up-sequence.mmd](../drawings/bring-up/power-up-sequence.mmd) — do not re-inline a second SoT here.
+The flowchart combines this guide's bring-up sequence with the hardware fail-safes in the [Board Design Guide](bzm2-board-design-guide.md) (§7, §9). The ASIC replies to `NOOP` with the three ASCII bytes `2ZB`.
+
+**Arm-protection gate.** Do not raise the stack voltage until thermal and voltage protection are confirmed enabled (`thermal_enabled` and `voltage_enabled` both reported by the device). Otherwise stop; do not raise the stack. See "Arm the on-die protection before raising the stack" above for why.
 
 ### Practical bring-up rules
 
@@ -471,7 +468,7 @@ power balancing, not merely a debug trick. In practice, dummy jobs help:
 
 ![BZM2 process walk — job → engines → result](../drawings/process/job-to-result-path.svg)
 
-Original process diagram: host job programming → engines (236 positions × 4; Integration Glance) → result aggregation → **TDM as one opaque stage** (inherits #13 slot-interior deferral). Labeled gap: devices per hashboard. No hashrate / nonce-rate. Issue #17.
+Job path: the host programs a job, 236 engine positions (4 engines each) execute it, results are aggregated, and the TDM stage returns them to the host. TDM is drawn as a single stage; the frame and slot layout are in the [UART and TDM Protocol Reference](blockscale-uart-protocol-reference.md). The number of ASICs per hashboard depends on the board design.
 
 
 ### Enhanced mode
@@ -547,7 +544,7 @@ Three different temperatures appear in the vendor material and they are not the 
    characterisation data adds that hash throughput falls off above `85 C` and recommends keeping the ASICs between `55`
    and `85 C`. This is a rating of the silicon, not a reading the software takes.
 2. **The on-die sensor reading** (the thermal tune code above, converted to Celsius). This is what the host and the trip
-   logic see. **No public or vendor source we hold gives the offset between the sensor reading and the junction
+   logic see. **No public or vendor source gives the offset between the sensor reading and the junction
    temperature**, so a junction rating must not be applied to a sensor reading as if they were one number.
 3. **The sensor trip level** a host programs into the ASIC (the trip described under Protection behavior).
 
@@ -559,19 +556,19 @@ The vendor software specification states staged thresholds on the sensor reading
 | high performance 1 | `90 C` | `100 C` | `110 C` |
 | high performance 2 | `95 C` | `105 C` | `115 C` |
 
-The same specification marks a working temperature of under `85 C` and says the thresholds were still to be settled. The
+The same specification marks a working temperature of under `85 C` and says the thresholds were still to be finalized. The
 legacy daemon's own compiled defaults differ below the highest strategy: a warning at `105 C`, a software shutdown at
 `110 C` (acted on only after the reading stays at or above it for more than ten consecutive polls) and a chip trip of
 `115 C`, with the trip adjustable up to `125 C`. Both agree on `115 C` for the chip trip, and a capture of the stock
-firmware at power-on shows it programming `115 C`. Which table a given daemon build applies is not settled by these
+firmware at power-on shows it programming `115 C`. Which table a given daemon build applies is not determined by these
 sources.
 
-Observed on the stock firmware (RDS-PROF-01, high-performance-2 holds, for example run `r7-20261022T210432Z`): the hottest
-board's hottest die printed `104 - 106 C` for about nineteen minutes without a shutdown, across four such holds of one hour.
-No damage rating on the sensor reading exists in the material we hold.
+Observed on the stock firmware in high-performance-2 holds: the hottest board's hottest die printed `104 - 106 C` for
+about nineteen minutes without a shutdown, across four such holds of one hour. No damage rating on the sensor reading
+is available.
 
-Open gaps in this section, each with how to close it safely: the sensor-to-junction offset (#36), which threshold table the
-stock daemon applies per strategy (#37), and damage or wear data on the sensor reading (#38).
+Open questions in this section: the sensor-to-junction offset, which threshold table the stock daemon applies per
+strategy, and damage or wear data on the sensor reading.
 
 ### Voltage sensing
 
@@ -634,7 +631,7 @@ numbers. The reusable sequence is:
 
 ### Measured: the error ratio at a fixed start
 
-The figures here were measured on the RDS (unit `bonanza`) under the Mujina reference firmware, case MJ-TUNE-02. In
+The figures here were measured on the RDS under the Mujina reference firmware. In
 each run every ASIC of one board started at a uniform `800 MHz`, with the shared supply set to `17,550 mV` (the three
 board rails read `17.46 - 17.83 V`). The **error ratio** is wrong results over valid plus wrong, where a wrong result
 is a nonce that does not meet the target. Frames with the nonce-valid bit clear are counted apart and left out (see
@@ -643,9 +640,9 @@ first dwell at the start. `[BZM2-CAL-001]` `[BZM2-CAL-002]` `[BZM2-CAL-003]`
 
 | run | board | board ratio (all ASICs pooled) | median ASIC | dispersion (chi-squared per degree of freedom) | board ratio without its high-error tail |
 |---|---|---|---|---|---|
-| `bonanza.MJ-TUNE-02.v17550b0.20261029T135804Z` | 0 | 1.0748 % | 0.5939 % | 11.13 | 0.6548 % |
-| `bonanza.MJ-TUNE-02.v17550b1.20261029T172540Z` | 1 | 0.5168 % | 0.2642 % | 7.92 | 0.3817 % |
-| `bonanza.MJ-TUNE-02.v17550b2.20261030T011051Z` | 2 | 1.1049 % | 0.6614 % | 11.08 | 0.7717 % |
+| first run | 0 | 1.0748 % | 0.5939 % | 11.13 | 0.6548 % |
+| first run | 1 | 0.5168 % | 0.2642 % | 7.92 | 0.3817 % |
+| first run | 2 | 1.1049 % | 0.6614 % | 11.08 | 0.7717 % |
 
 What the table and its reruns show:
 
@@ -657,17 +654,15 @@ What the table and its reruns show:
 - **Boards differ even without the tail.** With the high-error ASICs taken out, the boards still read 0.38, 0.65 and
   0.77 %. That is silicon variation between boards, at an identical start.
 - **Runs differ.** The same board at the same start gave about twice the figure on a later run: board 1 read 0.5168 %
-  and then 1.038 % (`bonanza.MJ-TUNE-02.v17550b1.20261030T035225Z`), and board 0 read 1.075 % and then 1.985 %
-  (`bonanza.MJ-TUNE-02.v17550b0.20261030T021147Z`). A single reading at a fixed threshold is not a property of the
+  and then 1.038 % on a later run, and board 0 read 1.075 % and then 1.985 %. A single reading at a fixed threshold is not a property of the
   board.
 - **A threshold taken from one board of one run does not transfer.** A start ceiling derived from one board's
   earlier figure failed two of these three boards.
-- **The stock firmware starts the same way.** Our capture of it (RDS-CAL-03, run `20261009T174718Z`) enables every
+- **The stock firmware starts the same way.** A capture of it enables every
   PLL at `800 MHz`, measures each board at that uniform point, and then moves the whole board up. All three boards
   went on from that point, at figures the stock firmware printed as 0.24 to 0.35 %. The two firmwares' ratios are not
   directly comparable: at the same board and start, the reference firmware's figure ran 2.15 to 3.25 times the stock
-  print, and board 1 was the lowest in both
-  ([#43](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/43)).
+  print, and board 1 was the lowest in both.
 
 What to take from this for a calibration design:
 
@@ -676,8 +671,7 @@ What to take from this for a calibration design:
 - Expect a tail. A few ASICs per board will sit well above the rest. Park them low and keep them hashing rather than
   failing the board.
 - Derive thresholds from several boards and several runs, and record which ones.
-- Whether a high-error ASIC improves at a lower clock is not yet known
-  ([#41](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/41)).
+- Whether a high-error ASIC improves at a lower clock is not yet known.
 
 ### Calibration inputs that should be board-specific
 
@@ -706,8 +700,8 @@ For example:
 - `100 ASICs`: first establish safe per-domain voltage and coarse clock, then
   apply per-ASIC final offsets
 
-That is also the model implemented in the Rust tuning planner in this
-repository.
+That is also the model implemented in the tuning planner of the Mujina
+reference firmware.
 
 ## Design Recommendations By System Size
 
@@ -791,6 +785,5 @@ Relevant follow-on documents:
 
 - [UART and TDM Reference](blockscale-uart-protocol-reference.md) - the
   protocol companion to this guide
-- [BZM2 Port Note](bzm2-port.md), [BZM2 UART Debug Guide](bzm2-uart-debug.md),
-  [BZM2 Tuning Planner Note](bzm2-pnp.md) - Mujina port engineering notes
-  (firmware-side history, slated to move to the firmware repository)
+- Firmware-side port notes (architecture, tuning planner, opcode details) are
+  kept with the Mujina source.

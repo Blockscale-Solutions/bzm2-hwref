@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This page holds what has been **measured** on an RDS (one unit, `bonanza`: three hashboards of 100 BZM2 ASICs on
+This page holds what has been **measured** on an RDS (one unit: three hashboards of 100 BZM2 ASICs on
 one shared supply rail), under the stock firmware and under the Mujina reference firmware. The structure and the
 failure reasoning for the RDS are in [Voltage-Stack Topology Examples](bzm2-voltage-stack-examples.md). The chip-level
 findings from the same runs are in the [Integration Guide](blockscale-asic-integration-guide.md).
@@ -34,7 +34,7 @@ settle it:
   combination). The median absolute difference is 0.00 C when the stock board number equals the bus's board number,
   and 1.00 to 3.00 C for every other pairing. The inlet sensors do not separate boards 1 and 2; the outlets do.
 - **The chain, by thermal fingerprint.** The pattern of a board's 100 per-ASIC die temperatures is a property of its
-  silicon and its place on the board, and it repeats from run to run. Stock run `r3-20261021T191033Z`'s settled
+  silicon and its place on the board, and it repeats from run to run. Stock run `r3-20261021T191033Z`'s steady-state
   pattern for each stock board was correlated with each Mujina chain in three MJ-TUNE-02 arms. Pearson r is 0.958 to
   0.998 when the numbers match and 0.455 to 0.673 when they do not, even with the matching chain held at a different
   clock. The hottest ASIC ids repeat as well: the stock firmware's hottest on board 2 are ASICs 37, 43 and 72, and
@@ -43,8 +43,7 @@ settle it:
 A per-ASIC thermal fingerprint is a cheap way to match one firmware's board numbering to another's without trusting
 either one's labels.
 
-**Not measured:** which chassis slot, label or airflow position each software index is
-([#42](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/42)).
+**Not measured:** which chassis slot, label or airflow position each software index is.
 
 ## Heat by board
 
@@ -114,8 +113,7 @@ Two further stock observations from the same holds:
   pairs) once its hottest die printed 105. Board 2's hottest die printed 104 to 106 for about nineteen minutes of
   `r7-20261022T210432Z` and nothing stopped.
 
-The stock firmware's die readings and Mujina's agree in pattern. An offset between them is not measured
-([#46](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/46)).
+The stock firmware's die readings and Mujina's agree in pattern. An offset between them is not measured.
 
 ## Rails and level deviation
 
@@ -161,14 +159,14 @@ After the 50 and 75 MHz moves the levels had not returned to their pre-move band
 and 149 s after the first write.
 
 Not yet established: whether a domain this far from its board's mean costs anything in errors, and the deviation at
-the stock firmware's higher profiles ([#44](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/44)).
+the stock firmware's higher profiles.
 
 ## Power feeds
 
 `[BZM2-RDS-006]` `[BZM2-RDS-007]`
 
 **Two supplies, both needed.** The RDS takes two power supplies, each on its own cord. They are not interchangeable:
-by the owner's observation on this unit (2026-10-20), supply A alone powers the control board but the machine does not
+as observed on this unit (2026-10-20), supply A alone powers the control board but the machine does not
 start, and supply B is needed for the hashboards. Measured at the two cords (each on its own inlet-metered PDU), the
 running load is shared about evenly between them: over the arm window of RDS-PROF-01 run `r1-20261021T063723Z`, cord
 A carried 1.76 kWh and cord B 1.84 kWh. Size each feed for the whole machine's share with margin, and gate on each
@@ -193,9 +191,8 @@ removed) divided by the supply's reported input power was:
 So the supply's report reads about 8 % above an independent AC meter at light load, and slightly below it at heavy
 load. Above the wall cannot be physical for an input meter, so treat the supply's figure as an instrument with an
 error that depends on load, and use a wall meter for any energy figure. (`r4-20261021T212909Z` is left out: its supply
-record covers only 82 % of its hold.) The supply's DC output fields, read at the scale and pairing we believe they have,
-give DC out over wall AC of 0.889 to 0.915 across the same holds; that pairing is not yet independently confirmed
-([#45](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/45)).
+record covers only 82 % of its hold.) The supply's DC output fields, read at the scale and pairing they are believed to have,
+give DC out over wall AC of 0.889 to 0.915 across the same holds; that pairing is not yet independently confirmed.
 
 **Power follows one board's clock.** Moving board 0 alone by whole-board steps, with the other two boards at their
 stored maps, changed the supply's AC input by +0.345 W per MHz of board 0's mean frequency (95 % interval 0.079 to

@@ -2,7 +2,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 860" role="img"
      aria-label="BZM2 process walk: host job programming to engines to TDM result path">
   <title>BZM2 job programming → engines → result path</title>
-  <desc>Original process diagram from Integration Guide Mining Programming Model / ASIC At A Glance and UART job/result/TDM sections. TDM drawn as one opaque stage. Engines: 236 positions × 4 (published). Devices/hashboard = labeled gap. No hashrate.</desc>
+  <desc>Process diagram: the host programs a job with register setup, four WRITEJOB commands and JOBCONTROL; 236 engine positions with four engines each execute it; results pass through the result FIFOs and the TDM stage back to the host. TDM is drawn as one stage.</desc>
   <defs>
     <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0 L10 5 L0 10 z" fill="#2dd4bf"/>
@@ -11,7 +11,7 @@
   <rect width="1000" height="860" fill="#12171c"/>
   <rect x="20" y="20" width="960" height="820" rx="10" fill="#1a2228" stroke="#3a4650" stroke-width="1.5"/>
   <text x="500" y="50" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="11" font-weight="600" letter-spacing="0.12em">BZM2 · PROCESS WALK — JOB → ENGINES → RESULT</text>
-  <text x="500" y="70" text-anchor="middle" fill="#2dd4bf" font-family="Ubuntu,sans-serif" font-size="11">Integration Glance + UART job/TDM · original diagram from public references · issue #17</text>
+  <text x="500" y="70" text-anchor="middle" fill="#2dd4bf" font-family="Ubuntu,sans-serif" font-size="11">Integration Guide (ASIC At A Glance, Mining Programming Model) · UART and TDM Protocol Reference</text>
 
   <!-- HOST column -->
   <rect x="40" y="90" width="280" height="420" rx="8" fill="#151a1f" stroke="#3a4650" stroke-width="1.2"/>
@@ -57,8 +57,8 @@
     <rect x="376" y="136" width="268" height="100" rx="6" fill="#1a3a36" stroke="#2dd4bf" stroke-width="1.4"/>
     <text x="510" y="160" text-anchor="middle" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="9">ENGINE POSITIONS</text>
     <text x="510" y="182" text-anchor="middle" fill="#d6dde3" font-family="JetBrains Mono,monospace">236 positions × 4 engines</text>
-    <text x="510" y="202" text-anchor="middle" fill="#7a8792" font-size="10">944 total (inherits weaker basis)</text>
-    <text x="510" y="220" text-anchor="middle" fill="#556069" font-size="10">IG At A Glance · ENG-003 / ENG-005</text>
+    <text x="510" y="202" text-anchor="middle" fill="#7a8792" font-size="10">944 engines total</text>
+    <text x="510" y="220" text-anchor="middle" fill="#556069" font-size="10">Integration Guide · ASIC At A Glance</text>
 
     <line x1="510" y1="236" x2="510" y2="254" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr2)"/>
 
@@ -78,8 +78,8 @@
     <text x="510" y="426" text-anchor="middle" fill="#d6dde3">ASIC / notch FIFO · 16-deep</text>
     <text x="510" y="444" text-anchor="middle" fill="#7a8792" font-size="10">aggregate before TDM</text>
   </g>
-  <text x="510" y="490" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="10">×4 engines/position = vendor-only (ENG-005)</text>
-  <text x="510" y="506" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="10">236 = third-party + measured (ENG-003)</text>
+  <text x="510" y="490" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="10">4 engines per position: vendor-stated</text>
+  <text x="510" y="506" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="10">236 positions: third-party and bench-observed</text>
 
   <!-- Arrow ASIC -> TDM/host return -->
   <line x1="660" y1="360" x2="700" y2="360" stroke="#2dd4bf" stroke-width="1.6" marker-end="url(#arr2)"/>
@@ -94,7 +94,7 @@
     <text x="830" y="204" text-anchor="middle" fill="#d6dde3">slot matches ASIC_ID</text>
     <text x="830" y="224" text-anchor="middle" fill="#d6dde3">TX after programmed delay</text>
     <text x="830" y="244" text-anchor="middle" fill="#7a8792" font-size="10">class enables from reg 0x0A</text>
-    <text x="830" y="258" text-anchor="middle" fill="#556069" font-size="9">slot interior not exploded (#13)</text>
+    <text x="830" y="258" text-anchor="middle" fill="#556069" font-size="9">slot layout: see TDM frame figure</text>
 
     <line x1="830" y1="270" x2="830" y2="300" stroke="#2dd4bf" stroke-width="1.4" marker-end="url(#arr2)"/>
 
@@ -109,15 +109,14 @@
 
   <!-- Gaps and anti notes -->
   <rect x="40" y="540" width="920" height="100" rx="6" fill="#2a1818" stroke="#E86A2B" stroke-width="1.2" stroke-dasharray="4 3"/>
-  <text x="56" y="566" fill="#E86A2B" font-family="Orbitron,sans-serif" font-size="9" letter-spacing="0.08em">LABELED GAP · DEVICES PER HASHBOARD</text>
-  <text x="56" y="590" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Not published in this repo’s references. The 100-device measurement lives in #4 / private records.</text>
-  <text x="56" y="612" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="12">Series-string inference (17,500 / 350 = 50) stays off this diagram. Addressing unit: one nonce window per position [ENG-002].</text>
+  <text x="56" y="566" fill="#E86A2B" font-family="Orbitron,sans-serif" font-size="9" letter-spacing="0.08em">DEVICES PER HASHBOARD</text>
+  <text x="56" y="590" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Set by the board design; this figure follows the path through a single ASIC.</text>
+  <text x="56" y="612" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="12">The RDS hashboard arrangement is described in Voltage-Stack Topology Examples.</text>
 
   <rect x="40" y="656" width="920" height="88" rx="6" fill="#151a1f" stroke="#3a4650" stroke-width="1.2"/>
-  <text x="56" y="682" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="9" letter-spacing="0.08em">CORRECTION VS STALE PREMISE</text>
-  <text x="56" y="706" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Engines-per-device is published here: Integration Guide At A Glance lines for 236 × 4 — do not draw “unknown”.</text>
-  <text x="56" y="726" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="12">No hashrate, nonce-rate, or timing budget on this figure. TDM inherits #13 deferral (opaque stage only).</text>
+  <text x="56" y="682" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="9" letter-spacing="0.08em">READING THIS FIGURE</text>
+  <text x="56" y="706" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="12">Engines per device: 236 positions × 4 engines (Integration Guide, ASIC At A Glance).</text>
+  <text x="56" y="726" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="12">TDM is drawn as a single stage; the frame and slot layout are in the UART and TDM Protocol Reference.</text>
 
-  <text x="500" y="780" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Caption: Integration Guide § Mining Programming Model / ASIC At A Glance; UART § Enhanced-Mode / Job Control / Result Aggregation / TDM. Issue #17.</text>
-  <text x="500" y="800" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="9">Original diagram from public references. Cite Integration Glance for tile/engine counts; ×4 basis = vendor-only.</text>
+  <text x="500" y="780" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Sources: Integration Guide, Mining Programming Model and ASIC At A Glance; UART reference, Enhanced-Mode, Job Control, Result Aggregation and TDM.</text>
 </svg>

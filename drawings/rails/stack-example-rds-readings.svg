@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" role="img" aria-label="RDS stack wiring: 25 levels of 4 in parallel; 2s2p ruled out">
-  <title>RDS hashboard stack wiring: 25s4p settled by analysis; 2s2p ruled out</title>
-  <desc>Structure-only diagram of the two readings of how the 4 ASICs in each of 25 stacks are wired on an RDS hashboard. 25 ASIC levels of 4 in parallel (50 voltage domains), settled by analysis; physical confirmation is an unpowered continuity check. 2s2p (2 in series by 2 in parallel per stack) is ruled out: it would put each ASIC near 0.35 V, below its operating window. No RDS measurements; arithmetic on the published nominal per-ASIC voltage.</desc>
+  <title>RDS hashboard stack wiring: 25s4p determined by analysis; 2s2p ruled out</title>
+  <desc>Structure-only diagram of the two readings of how the 4 ASICs in each of 25 stacks are wired on an RDS hashboard. 25 ASIC levels of 4 in parallel (50 voltage domains), determined by analysis; physical confirmation is an unpowered continuity check. 2s2p (2 in series by 2 in parallel per stack) is ruled out: it would put each ASIC near 0.35 V, below its operating window. Voltages are arithmetic on the nominal per-ASIC voltage.</desc>
   <rect width="900" height="700" fill="#12171c"/>
   <rect x="20" y="20" width="860" height="660" rx="10" fill="#1a2228" stroke="#3a4650" stroke-width="1.5"/>
   <text x="450.0" y="50" text-anchor="middle" fill="#7a8792" font-family="Orbitron,sans-serif" font-size="11" font-weight="600" letter-spacing="0.1em">RDS · PRIMARY EXAMPLE · HASHBOARD STACK WIRING</text>
   <text x="450.0" y="70" text-anchor="middle" fill="#2dd4bf" font-family="Ubuntu,sans-serif" font-size="11">Structure only · 3 boards on one shared rail · 100 ASICs per board shown by the vendor as 25 stacks × 4</text>
-  <text x="240" y="100" text-anchor="middle" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="10" font-weight="600" letter-spacing="0.1em">25S4P · SETTLED BY ANALYSIS</text>
+  <text x="240" y="100" text-anchor="middle" fill="#2dd4bf" font-family="Orbitron,sans-serif" font-size="10" font-weight="600" letter-spacing="0.1em">25S4P · DETERMINED BY ANALYSIS</text>
   <text x="240" y="116" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">physical confirmation: unpowered continuity check</text>
   <text x="660" y="100" text-anchor="middle" fill="#E86A2B" font-family="Orbitron,sans-serif" font-size="10" font-weight="600" letter-spacing="0.1em">RULED OUT · 25 × (2S2P)</text>
   <text x="660" y="116" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">shown for comparison only</text>
@@ -63,5 +63,5 @@
   <text x="660" y="498" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="10">short: failed ASIC carries ≈ the string current (hot spot); partners ≈ 0</text>
   <text x="660" y="514" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="10">others +4.2 % on average, worst level more (levels uneven)</text>
   <text x="660" y="530" text-anchor="middle" fill="#d6dde3" font-family="Ubuntu,sans-serif" font-size="10">open: 3 partners carry the level, up to +33 % each (upper bound)</text>
-  <text x="450.0" y="664" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Caption: structure and reasoning only; no RDS measurements. Voltages are arithmetic on the Integration Guide's nominal 0.71 V per ASIC. Issue #31.</text>
+  <text x="450.0" y="664" text-anchor="middle" fill="#7a8792" font-family="Ubuntu,sans-serif" font-size="10">Structure and reasoning only. Voltages are arithmetic on the Integration Guide's nominal 0.71 V per ASIC.</text>
 </svg>

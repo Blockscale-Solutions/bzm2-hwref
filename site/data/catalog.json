@@ -106,15 +106,6 @@
       "tasks": [
         "roadmap"
       ]
-    },
-    {
-      "id": "lab",
-      "title": "Lab chart placeholders (RDS schemas)",
-      "file": "lab-chart-placeholders.md",
-      "summary": "Empty power / thermal / performance chart frames and capture schemas. Needs measured RDS data \u2014 no invented series.",
-      "tasks": [
-        "lab"
-      ]
     }
   ],
   "tasks": [
@@ -137,7 +128,7 @@
       "id": "uart",
       "label": "UART / TDM",
       "tone": "cool",
-      "blurb": "9-bit character frame, TDM frame (opaque slot), opcodes, job programming, sensors.",
+      "blurb": "9-bit character frame, TDM frame, opcodes, job programming, sensors.",
       "href": "doc.html?doc=uart",
       "diagram": "drawings/uart/uart-9bit-character-frame.svg"
     },
@@ -145,7 +136,7 @@
       "id": "pinout",
       "label": "Pinout & rails",
       "tone": "warm",
-      "blurb": "60-pad schematic map (from ballmap CSV), rail counts, PINSEL group, straps.",
+      "blurb": "60-pad map, rail counts, PINSEL group, straps.",
       "href": "doc.html?doc=pinout",
       "diagram": "drawings/pinout/bzm2-padmap.svg"
     },
@@ -173,11 +164,10 @@
     },
     {
       "id": "lab",
-      "label": "Lab charts",
+      "label": "RDS measurements",
       "tone": "warm",
-      "blurb": "Power / thermal / performance placeholders \u2014 needs measured RDS data. Schema CSVs only.",
-      "href": "doc.html?doc=lab",
-      "diagram": "drawings/lab/rds-min-chart-placeholder.svg"
+      "blurb": "Measured data from an RDS unit: board identity, heat by board and profile, rails, power feeds.",
+      "href": "doc.html?doc=rds-measured"
     }
   ]
 }

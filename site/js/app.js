@@ -351,7 +351,7 @@
         if (doc.kind === "csv" || /\.csv$/i.test(doc.file)) {
           body.innerHTML = csvToHtml(text);
           if (toc) {
-            toc.innerHTML = '<div class="toc-label">Ball map</div><p style="margin:0;font-size:0.8rem;color:var(--muted)">CSV rendered as a table from the public pad map. No invented pin assignments.</p>';
+            toc.innerHTML = '<div class="toc-label">Ball map</div><p style="margin:0;font-size:0.8rem;color:var(--muted)">CSV rendered as a table from the public pad map.</p>';
             setTocAvailable(true);
             setTocOpen(false);
           }
@@ -377,7 +377,7 @@
         body.innerHTML =
           '<div class="doc-error">Failed to load <code>' + escapeHtml(doc.file) +
           "</code>: " + escapeHtml(String(err.message || err)) +
-          ". Ensure the Pages workflow copied <code>references/</code> into <code>site/references/</code>.</div>";
+          ". Reload the page, or read the document on GitHub.</div>";
       });
   }
 

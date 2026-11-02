@@ -1,7 +1,7 @@
 # bzm2-hwref
 Hardware Reference Documentation for the Bonanza Mine 2 ASIC (Intel® Blockscale™ 1000 series, "BZM2").
 
-**Site:** [https://blockscale-solutions.github.io/bzm2-hwref/](https://blockscale-solutions.github.io/bzm2-hwref/) — task-oriented hub (Bring-up · Board design · UART/TDM · Pinout & rails · Architecture · Implementations · Roadmap). Renders the markdown below; edit `references/`, not HTML copies.
+**Site:** [https://blockscale-solutions.github.io/bzm2-hwref/](https://blockscale-solutions.github.io/bzm2-hwref/) — task-oriented hub (Bring-up · Board design · UART/TDM · Pinout & rails · Architecture · Implementations · Roadmap). Contributors: see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Documentation
 
@@ -43,18 +43,16 @@ Hardware Reference Documentation for the Bonanza Mine 2 ASIC (Intel® Blockscale
 - [Product Brief](Product%20Brief%20v012623.pdf)
 
 **Firmware port notes:** driver-specific engineering notes (port architecture, tuning
-planner, opcode grounding) live in the firmware tree with the code they describe —
-[256foundation/mujina#71](https://github.com/256foundation/mujina/pull/71). This repository
-is the canonical home for hardware reference material; firmware trees link here.
+planner, opcode details) live in the firmware tree with the code they describe, in the
+[Mujina](https://github.com/256foundation/mujina) project. This repository holds the
+hardware reference material; firmware trees link here.
 
 ## License
 This documentation is licensed under [CC-BY-SA-4.0](LICENSE)
 (Creative Commons Attribution-ShareAlike 4.0 International).
 
-## Claims and provenance
+## Claims
 
 Factual claims carry an opaque id such as `[BZM2-ENG-002]`, listed in
-[`CLAIMS.md`](CLAIMS.md). Each id resolves to real source material in an internal
-ledger. Some of that material is under NDA and is not published, so the public
-half records the claim and the kind of evidence behind it rather than the source
-itself. A claim with no id is a claim nobody has stood behind yet — challenge it.
+[`CLAIMS.md`](CLAIMS.md) with the kind of evidence behind each one. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for how claims are tracked.

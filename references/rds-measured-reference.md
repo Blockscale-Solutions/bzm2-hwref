@@ -239,3 +239,38 @@ give DC out over wall AC of 0.889 to 0.915 across the same holds; that pairing i
 **Power follows one board's clock.** Moving board 0 alone by whole-board steps, with the other two boards at their
 stored maps, changed the supply's AC input by +0.345 W per MHz of board 0's mean frequency (95 % interval 0.079 to
 0.612, four holds) in MJ-TUNE-03 (analysis `bonanza.MJ-TUNE-03.p1.20261029T043249Z`).
+
+## Operational guidance: close order and kernel fault
+
+`[BZM2-RDS-009]`
+
+The stock image's driver for the chain UART ttys (`/dev/tty9bit00`, `10`, `20`, kernel 4.9.78) can fault the kernel when
+a chain tty is closed for the last time. This is a property of the platform, not of any one program, and it is tracked as
+[#54](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/54), which holds the full description and the way to
+close the gap. In short:
+
+- **How often.** Three faults in 266 boots' kernel logs: the stock mining daemon exiting (MJ-HASH-07, 2026-09-24), the
+  Mujina miner at a normal stop (MJ-TUNE-03 arm `p0`, 2026-10-28) and the Mujina miner at its stop in
+  `bonanza.MJ-TUNE-02.v17550s2.20261030T195256Z` (2026-10-30). Different chains, two different programs, different builds.
+  The timing and traffic before the close match the closes that passed.
+- **Why it hurts.** The faulting thread dies holding a kernel-wide tty lock, so any later final close of a chain tty
+  blocks for good in uninterruptible sleep. The closing process cannot exit, and TERM and KILL do nothing. Only a reboot
+  or power cycle clears it.
+- **What it did to a stop.** In the 2026-10-30 run the miner released its chain ports before powering the boards off, so
+  the fault in the first close left boards 1 and 2 powered. They went dark only through the board controllers' own
+  loss-of-heartbeat shutdown, about 88 s after their last heartbeat. The process stayed alive past KILL.
+
+Guidance, ours:
+
+1. **Power the boards off, and verify them dark, before closing the chain ports.** Never the other way round. The
+   Mujina reference firmware's stop now does this, with a bounded wait for each board and for each port release. That
+   change has not been exercised against a fault.
+2. **Do not block a stop on a close returning.** Bound each wait, log which port and thread a close was on, and go on.
+3. **A process that survives KILL after closing these ports is a kernel fault, not a live power owner.** Treat the
+   tty lock as held and the unit as needing a power cycle; do not keep sending it TERM and KILL, and do not read it as
+   proof the boards are still being driven. Prove dark from the supply and the board controllers instead.
+4. **Reboot between sessions that open and close the chain ports,** and before the next run after any such fault check
+   that the kernel is untainted and no chain tty is held.
+
+Not established: the fault rate per close, and the behaviour once the driver is fixed
+([#54](https://github.com/Blockscale-Solutions/bzm2-hwref/issues/54)).

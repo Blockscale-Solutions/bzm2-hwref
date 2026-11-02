@@ -15,8 +15,8 @@ Hardware Reference Documentation for the Bonanza Mine 2 ASIC (Intel® Blockscale
 - [Pinout and Ball Map Reference](references/bzm2-pinout-reference.md) — all 60 pads:
   rails with pin counts, clocks, the PINSEL-muxed UART/reset/trip group, straps, JTAG
   ([machine-readable CSV](references/bzm2-ballmap.csv))
-- [Reference Implementation Roadmap](references/blockscale-reference-roadmap.md) — the
-  reference software/firmware landscape for the BZM2 and how the pieces relate
+- [Hardware Reference Roadmap](references/blockscale-reference-roadmap.md) — what the
+  reference covers for integrators today and what it plans to cover next
 - [Board Design Guide](references/bzm2-board-design-guide.md) — effective design patterns
   and common pitfalls for building a working BZM2 board (level translation, clocking,
   VCORE control, power/protection, sequencing, 9-bit UART, bring-up checklist), synthesized
@@ -35,17 +35,18 @@ Hardware Reference Documentation for the Bonanza Mine 2 ASIC (Intel® Blockscale
   bonanza-bridge-fw, Mujina) across a maturity/availability spectrum — from fully public OSHW to
   boards still in private hardware development — with topologies, controller/bridge choices, and status
 
-- [RDS Measured Reference](references/rds-measured-reference.md) — what has been measured on an RDS,
-  each figure tied to the run it came from: which software board is which hashboard, heat by board
-  across the stock profiles, rail and level-deviation readings, and the power feeds
+- [RDS Reference Measurements](references/rds-measured-reference.md) — observed data from one RDS
+  unit, kept apart from the specification: which software board is which hashboard, heat by board
+  across the stock profiles, rail and level-deviation readings, the power feeds, live clock changes
+  and the error ratio at a fixed start
 
 **Product collateral:**
 - [Product Brief](Product%20Brief%20v012623.pdf)
 
-**Firmware port notes:** driver-specific engineering notes (port architecture, tuning
-planner, opcode details) live in the firmware tree with the code they describe, in the
-[Mujina](https://github.com/256foundation/mujina) project. This repository holds the
-hardware reference material; firmware trees link here.
+**Firmware:** driver-specific engineering notes live in the firmware tree with the code they
+describe. For the current state of BZM2 support in the [Mujina](https://github.com/256foundation/mujina)
+miner firmware, see the [Hardware Implementations Survey](references/bzm2-hardware-implementations.md).
+This repository holds the hardware reference material; firmware trees link here.
 
 ## License
 This documentation is licensed under [CC-BY-SA-4.0](LICENSE)

@@ -40,6 +40,14 @@ Documents and figures are specifications for integrators. Write them in plain sp
 
 Factual claims carry an opaque id such as `[BZM2-ENG-002]`, listed in [`CLAIMS.md`](CLAIMS.md). Each id resolves to source material in an internal ledger; some of that material is under NDA, so the public half records the claim and the kind of evidence behind it, not the source. A claim with no id is a claim nobody has stood behind yet.
 
+- Tags stay in the markdown source, next to the claim they cover. The published site strips them when it renders (`stripClaimTags` in `site/js/app.js`), so readers never see them. To find where an id is used, search the source: `rg 'BZM2-ENG-003' references/`.
+- Run `python3 scripts/check_claims.py` to confirm that every tag in `references/` has a row in `CLAIMS.md` and that every row is used.
+
+## Spec text and observed data
+
+- Specification text (what the ASIC requires and how to design for it) lives in the guides and references. Observed data from the RDS lives only in `references/rds-measured-reference.md`, which opens with a banner saying so.
+- In that page, prose refers to runs by a short label (for example *hp2-1*). Full run ids appear only in the run tables and the figure tables. Do not put run ids, case ids or process notes in the spec documents; state what a host should do and link to the observation.
+
 ## Drawings
 
 - Figures are original, editable SVGs (charcoal and teal). See [`docs/drawings.md`](docs/drawings.md) for the index of figures, their sources and the issues that introduced them.

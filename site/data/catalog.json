@@ -72,7 +72,7 @@
       "id": "implementations",
       "title": "Hardware Implementations Survey",
       "file": "bzm2-hardware-implementations.md",
-      "summary": "Known BZM2 boards and firmware across maturity / availability tiers.",
+      "summary": "Known BZM2 boards and firmware across maturity and availability tiers, with the current Mujina BZM2 status.",
       "tasks": [
         "implementations"
       ]
@@ -90,9 +90,9 @@
     },
     {
       "id": "rds-measured",
-      "title": "RDS Measured Reference",
+      "title": "RDS Reference Measurements",
       "file": "rds-measured-reference.md",
-      "summary": "What has been measured on an RDS, each figure tied to its run: board identity, heat by board and profile, rails and level deviation, power feeds.",
+      "summary": "Observed data from one RDS unit, kept apart from the specification: board identity, heat by board and profile, rails and level deviation, power feeds, live clock changes, error ratio at a fixed start.",
       "tasks": [
         "lab",
         "architecture"
@@ -100,9 +100,9 @@
     },
     {
       "id": "roadmap",
-      "title": "Reference Implementation Roadmap",
+      "title": "Hardware Reference Roadmap",
       "file": "blockscale-reference-roadmap.md",
-      "summary": "Reference software/firmware landscape and phased bring-up plan.",
+      "summary": "What the reference covers for integrators today, and what it plans to cover next.",
       "tasks": [
         "roadmap"
       ]
@@ -159,14 +159,14 @@
       "id": "roadmap",
       "label": "Roadmap",
       "tone": "cool",
-      "blurb": "Phased reference bring-up from discovery through calibration.",
+      "blurb": "What the reference covers for integrators, and what comes next.",
       "href": "doc.html?doc=roadmap"
     },
     {
       "id": "lab",
       "label": "RDS measurements",
       "tone": "warm",
-      "blurb": "Measured data from an RDS unit: board identity, heat by board and profile, rails, power feeds.",
+      "blurb": "Observed data from one RDS unit, separate from the spec: board identity, heat, rails, power feeds, clock changes.",
       "href": "doc.html?doc=rds-measured"
     }
   ]

@@ -305,36 +305,20 @@ When both divider classes are changed, the documented programming rule is:
 
 Do not reverse that order during live clock changes.
 
-### Live clock changes on a hashing chain (measured)
+### Live clock changes on a hashing chain
 
-What follows was measured on the RDS (three boards of 100 ASICs) under the Mujina reference firmware. On one chain,
-the ASICs' PLLs were moved one ASIC at a time in ramped steps, while the other two chains hashed at fixed clocks.
-`[BZM2-PLL-001]` `[BZM2-PLL-002]`
+Observations from live PLL moves on an RDS chain are in
+[RDS reference measurements](rds-measured-reference.md#live-clock-changes-on-a-hashing-chain). What a host should take
+from them:
 
-- **A live move of the feedback divider alone re-locks.** Every one of the 753 sets in that run read back locked.
-  Die temperature on the chain stayed flat (mean about 56 C), so the effect below is not thermal.
-- **One set costs the host about a second.** A separate run measured an upper bound of 1.06 s per set, including
-  the caller's own cadence.
-- **While sets run, the whole chain returns result frames with the nonce-valid status bit clear**, not only the ASIC
-  being set. The reference firmware reads that bit as bit 3 (`0x08`) of the result status byte. In the run above
-  the chain carrying the sets returned 38,000 to 130,000 such frames per 20 s poll for as long as the sets went on.
-  The two chains with no sets returned about none. The frames stopped on every ASIC of the chain together, about
-  40 s after the last set.
-- **The host was starving the chain.** In that firmware each set was issued from the same single writer that sends
-  work to the chain, so for the length of every set no ASIC on the chain received new work, and a round of 100 sets
-  held the chain for most of ten minutes. The frames line up with that hold. Whether the ASIC clears the bit
-  because its work ran out, or because of a PLL write elsewhere on the chain, is not separated by these measurements.
-- **One unexplained burst.** The two chains with no sets showed one short burst of such frames, at about 915 s into
-  the run, with no set running anywhere. Its trigger was not measured.
-
-What a host should take from this:
-
-- **A frame with the nonce-valid bit clear is not a result.** Count it on its own. Do not count it as a valid result
-  or as a wrong one, and keep it out of any error ratio. Counted as wrong, it turned that run's start-frequency error
-  figure into 72.7 %, when the chain's own steady-state wrong share with no sets running was 1.0 to 2.2 %.
-- **Do not measure a chain while its clocks are being moved, or just after.** The Mujina reference firmware discards any measurement
-  interval that starts within a quiet period after the latest PLL set on the chain. It uses 45 s, which is the
-  observed 40 s tail plus a margin; it is not a measured property of every board.
+- **A live move of the feedback divider alone re-locks.** Read lock back after each set.
+- **Budget about one second of host time per set.**
+- **A frame with the nonce-valid bit clear is not a result.** While PLL sets run on a chain, every ASIC on it can return
+  result frames with that bit clear. The reference firmware reads it as bit 3 (`0x08`) of the result status byte. Count
+  such frames on their own. Do not count them as valid results or as wrong ones, and keep them out of any error ratio.
+- **Do not measure a chain while its clocks are being moved, or just after.** The Mujina BZM2 reference firmware discards
+  any measurement interval that starts within a 45 s quiet period after the latest PLL set on the chain. Treat that as
+  a margin to be set per board.
 - **Do not block work dispatch for a run of PLL sets.** Each set holds whatever path it is issued from. If that is
   the chain's only dispatch path, the whole chain idles for the whole sequence.
 
@@ -563,9 +547,9 @@ legacy daemon's own compiled defaults differ below the highest strategy: a warni
 firmware at power-on shows it programming `115 C`. Which table a given daemon build applies is not determined by these
 sources.
 
-Observed on the stock firmware in high-performance-2 holds: the hottest board's hottest die printed `104 - 106 C` for
-about nineteen minutes without a shutdown, across four such holds of one hour. No damage rating on the sensor reading
-is available.
+Observed on the stock firmware at its highest strategy: the hottest die printed `104 - 106 C` for about nineteen
+minutes without a shutdown (see [RDS reference measurements](rds-measured-reference.md#heat-by-board)). No damage
+rating on the sensor reading is available.
 
 Open questions in this section: the sensor-to-junction offset, which threshold table the stock daemon applies per
 strategy, and damage or wear data on the sensor reading.
@@ -629,42 +613,12 @@ numbers. The reusable sequence is:
    in smaller steps, for example `6.25 MHz`
 10. persist the resulting operating point for restart reuse
 
-### Measured: the error ratio at a fixed start
+### Start-frequency calibration
 
-The figures here were measured on the RDS under the Mujina reference firmware. In
-each run every ASIC of one board started at a uniform `800 MHz`, with the shared supply set to `17,550 mV` (the three
-board rails read `17.46 - 17.83 V`). The **error ratio** is wrong results over valid plus wrong, where a wrong result
-is a nonce that does not meet the target. Frames with the nonce-valid bit clear are counted apart and left out (see
-[Live clock changes on a hashing chain](#live-clock-changes-on-a-hashing-chain-measured)). Each ASIC's figure is its
-first dwell at the start. `[BZM2-CAL-001]` `[BZM2-CAL-002]` `[BZM2-CAL-003]`
-
-| run | board | board ratio (all ASICs pooled) | median ASIC | dispersion (chi-squared per degree of freedom) | board ratio without its high-error tail |
-|---|---|---|---|---|---|
-| first run | 0 | 1.0748 % | 0.5939 % | 11.13 | 0.6548 % |
-| first run | 1 | 0.5168 % | 0.2642 % | 7.92 | 0.3817 % |
-| first run | 2 | 1.1049 % | 0.6614 % | 11.08 | 0.7717 % |
-
-What the table and its reruns show:
-
-- **ASICs on one board do not share one error rate.** A dispersion of 8 to 11 is far above the 1 that a common rate
-  would give. The median ASIC on every board is under 0.7 %, while the worst ASICs read 4 to 7 % at the same clock:
-  on board 0, ASIC 20 read 6.60 % and ASIC 98 read 5.28 %; on board 2, ASIC 87 read 6.96 % and ASIC 43 read 6.04 %.
-- **A board's pooled figure is carried by its tail.** A handful of high-error ASICs set the board number, so a board
-  pass or fail at one clock is mostly a statement about those few ASICs.
-- **Boards differ even without the tail.** With the high-error ASICs taken out, the boards still read 0.38, 0.65 and
-  0.77 %. That is silicon variation between boards, at an identical start.
-- **Runs differ.** The same board at the same start gave about twice the figure on a later run: board 1 read 0.5168 %
-  and then 1.038 % on a later run, and board 0 read 1.075 % and then 1.985 %. A single reading at a fixed threshold is not a property of the
-  board.
-- **A threshold taken from one board of one run does not transfer.** A start ceiling derived from one board's
-  earlier figure failed two of these three boards.
-- **The stock firmware starts the same way.** A capture of it enables every
-  PLL at `800 MHz`, measures each board at that uniform point, and then moves the whole board up. All three boards
-  went on from that point, at figures the stock firmware printed as 0.24 to 0.35 %. The two firmwares' ratios are not
-  directly comparable: at the same board and start, the reference firmware's figure ran 2.15 to 3.25 times the stock
-  print, and board 1 was the lowest in both.
-
-What to take from this for a calibration design:
+Error ratios at a uniform `800 MHz` start, measured on an RDS, are in
+[RDS reference measurements](rds-measured-reference.md#error-ratio-at-a-fixed-start). They show a few high-error ASICs
+on each board, boards that differ even without them, and a ratio that differs between runs of the same board. What to
+take from this for a calibration design:
 
 - Make the **ASIC** the unit that a start-frequency decision acts on. Keep the board's pooled figure as a record and a
   reference for that board, not as a gate.
@@ -700,8 +654,7 @@ For example:
 - `100 ASICs`: first establish safe per-domain voltage and coarse clock, then
   apply per-ASIC final offsets
 
-That is also the model implemented in the tuning planner of the Mujina
-reference firmware.
+The Mujina BZM2 reference firmware's tuning planner follows the same model.
 
 ## Design Recommendations By System Size
 
@@ -770,20 +723,25 @@ Before calling a hardware platform ready, verify:
 
 ## Relationship To The Mujina Reference Firmware
 
-The **Mujina** miner project carries a practical Rust implementation of the
-core ASIC behavior discussed above:
+**Mujina** is the open-source miner firmware (256 Foundation) that the firmware-side examples in this reference
+follow. As of 2026-11-01, its default branch has no BZM2 driver. BZM2 support is proposed in open pull requests against
+[256foundation/mujina](https://github.com/256foundation/mujina), none of them merged, and the same branches are public in
+a [reference fork](https://github.com/recklessnode/mujinabzm2). The proposal is split into:
 
-- UART opcode support
-- TDM parsing
-- PLL and DLL diagnostics
-- DTS/VS telemetry
-- on-demand sensor query support
-- startup tuning and saved operating-point replay
-- silicon-validation CLI flows
+- an ASIC and UART protocol driver ([#117](https://github.com/256foundation/mujina/pull/117)): frame codec, UART
+  controller and enumeration, on-die sensor streaming, engine discovery over TDM, PLL and DLL clock control, a
+  calibration planner, a thermal interlock, work dispatch and result decoding, and UART diagnostics
+- general fixes found along the way ([#120](https://github.com/256foundation/mujina/pull/120))
+- an RDS platform layer ([#121](https://github.com/256foundation/mujina/pull/121)): the hashboard controller, rail
+  sequencing and bring-up, fan control, run-time calibration and replay of a saved operating point
+
+Mujina describes itself as a developer preview, so check the repository for current state before relying on any of
+this. See the [Hardware Implementations Survey](bzm2-hardware-implementations.md) for how it sits among the other
+projects.
 
 Relevant follow-on documents:
 
 - [UART and TDM Reference](blockscale-uart-protocol-reference.md) - the
   protocol companion to this guide
-- Firmware-side port notes (architecture, tuning planner, opcode details) are
-  kept with the Mujina source.
+- [RDS Reference Measurements](rds-measured-reference.md) - observed data from one RDS unit, kept apart from this
+  specification

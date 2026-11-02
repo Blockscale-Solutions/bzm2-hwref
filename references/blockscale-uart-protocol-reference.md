@@ -400,7 +400,7 @@ consume the full response length even when no valid result is present.
 The same holds for result frames in the TDM stream: a frame whose nonce-valid status bit is clear is not a
 result, valid or wrong, and belongs in its own count. A chain can return such frames in large numbers while its
 clocks are being changed; see the Integration Guide,
-[Live clock changes on a hashing chain (measured)](blockscale-asic-integration-guide.md#live-clock-changes-on-a-hashing-chain-measured).
+[Live clock changes on a hashing chain](blockscale-asic-integration-guide.md#live-clock-changes-on-a-hashing-chain).
 
 ### `WRITEREG`
 
@@ -605,8 +605,7 @@ operation.
 `DTS_VS` can also be used as a direct query opcode when explicit on-demand
 sensor retrieval is needed.
 
-This is the model exposed in the Mujina reference firmware's debug CLI and
-HTTP API.
+The Mujina BZM2 reference firmware's debug CLI and HTTP API follow the same model.
 
 ### TX control register: which packets the ASIC sends
 
@@ -753,7 +752,7 @@ For production-capable software, a good division of labor is:
 - use direct `READREG`, `READRESULT`, `NOOP`, `LOOPBACK`, and `DTS_VS` for
   debug and validation
 
-That is also how the Mujina reference tooling is structured.
+The Mujina BZM2 reference tooling is structured the same way.
 
 ## Practical Validation Tooling
 
@@ -761,7 +760,7 @@ Relevant follow-on references:
 
 - [ASIC Integration Guide](blockscale-asic-integration-guide.md)
 
-The Mujina debug CLI already exposes:
+The Mujina BZM2 debug CLI exposes:
 
 - `NOOP` scans
 - loopback scans

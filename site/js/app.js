@@ -17,6 +17,18 @@
       .replace(/\s+/g, "-");
   }
 
+  // Claim tags such as `[BZM2-ENG-003]` stay in the markdown source (CLAIMS.md
+  // resolves them) and are removed here, before rendering and before indexing.
+  var CLAIM_LINE_START = /^`?\[BZM2-[A-Z0-9]+-\d{3}\]`?[ \t]*/gm;
+  var CLAIM_INLINE = /[ \t]*`?\[BZM2-[A-Z0-9]+-\d{3}\]`?/g;
+  function stripClaimTags(md) {
+    return String(md || "")
+      .replace(CLAIM_LINE_START, "")
+      .replace(CLAIM_INLINE, "")
+      .replace(/[ \t]+$/gm, "")
+      .replace(/\n{3,}/g, "\n\n");
+  }
+
   function docHref(doc, hash) {
     var h = "doc.html?doc=" + encodeURIComponent(doc.id);
     if (hash) h += "#" + hash;
@@ -358,11 +370,11 @@
           return;
         }
         if (typeof marked === "undefined") {
-          body.innerHTML = '<pre class="prose">' + escapeHtml(text) + "</pre>";
+          body.innerHTML = '<pre class="prose">' + escapeHtml(stripClaimTags(text)) + "</pre>";
           return;
         }
         marked.setOptions({ gfm: true, breaks: false });
-        body.innerHTML = marked.parse(text);
+        body.innerHTML = marked.parse(stripClaimTags(text));
         enhanceMarkdownHtml(body);
         buildToc(body, toc);
         if (location.hash) {
@@ -394,7 +406,7 @@
               title: d.title,
               file: d.file,
               summary: d.summary || "",
-              text: text,
+              text: stripClaimTags(text),
               href: docHref(d)
             };
           })

@@ -1,327 +1,61 @@
-# Blockscale / BZM2 Reference Implementation Roadmap
+# Blockscale / BZM2 Hardware Reference Roadmap
 
-## Goal
+## Purpose
 
-Close the remaining gap between:
-
-- the mujina BZM2 driver (the `bzm2/pr1`-`pr4` branch series): a strong
-  ASIC-facing Rust port with solid debug tooling
-
-and
-
-- a comprehensive, reusable reference implementation for custom Blockscale /
-  BZM2 hardware.
-
-This roadmap is ordered by dependency and practical value.
+This reference is written for people designing boards and host software around the BZM2 ASIC. This page lists what
+the reference covers today and what it plans to cover next, so an integrator can see where the documentation is
+complete and where it is still thin. Planned items are intentions, not commitments, and carry no dates.
 
 ## Scope
 
 In scope:
 
-- generic ASIC bring-up
-- generic chain discovery
-- reusable domain-aware power and tuning control
-- board/API diagnostics
-- runtime retune
-
-Out of scope for this plan:
-
-- vendor reference-board reproduction
-- carrier-specific MCU protocols unless a target board actually needs them
-- Gen1 telemetry completion
-- speculative JTAG implementation not grounded in concrete protocol evidence
-
-## Current Gap Summary
-
-The mujina BZM2 driver already has:
-
-- UART opcode support
-- TDM parsing
-- mining dispatch and result handling
-- PLL and DLL diagnostics
-- DTS/VS telemetry and query tooling
-- startup tuning planning and saved operating-point replay
-- diagnostic coverage exposed through the board API endpoints
-
-The biggest missing pieces are:
-
-1. runtime engine/topology discovery instead of fixed assumptions
-2. closed-loop calibration and retune
-3. board/API diagnostics parity with the legacy validation tooling
-
-## Phase 1: Discoverable Bring-Up
-
-Objective:
-
-- eliminate the assumption that ASIC count and identity are fully preconfigured
-
-Deliverables:
-
-1. Add low-level UART helpers for:
-   - writing `ASIC_ID`
-   - enumerating a chain starting from default `0xFA`
-   - verifying assigned IDs with `NOOP`
-2. Expose chain enumeration and ID-assignment validation through supported
-   surfaces: env-gated startup auto-enumeration and the
-   `GET /api/v0/boards/{name}/bzm2/chain-summary` endpoint
-3. Add optional board startup enumeration mode so `Bzm2Board` can populate bus
-   layout from hardware rather than only from `MUJINA_BZM2_ASICS_PER_BUS`
-
-Status:
-
-- completed: low-level default-`ASIC_ID` enumeration helpers
-- completed: chain enumeration exposed through env-gated startup
-  auto-enumeration and the `GET /api/v0/boards/{name}/bzm2/chain-summary`
-  endpoint
-- completed: opt-in `Bzm2Board` startup enumeration with fallback to
-  configured topology when no default-id ASICs are present
-- next: Phase 2, applied rail and reset control
-
-Exit criteria:
-
-- a powered chain can be discovered from software with no hard-coded ASIC count
-- the discovered count can seed board topology and saved operating-point
-  compatibility checks
-
-## Phase 2: Applied Rail And Reset Control
-
-Objective:
-
-- move the existing control abstractions from library-only status into real
-  board startup and shutdown flows
-
-Deliverables:
-
-1. Wire `VoltageStackBringupPlan` into `Bzm2Board`
-2. Add a concrete board-facing rail bundle abstraction:
-   - one or more rails
-   - optional reset line
-   - optional rail telemetry
-3. Apply safe startup and shutdown sequencing through the board runtime
-4. Expose rail telemetry into board state where available
-
-Status:
-
-- completed: `VoltageStackBringupPlan` is now wired into `Bzm2Board` startup and
-  shutdown through generic file-backed rail and reset adapters
-- completed: optional file-backed rail telemetry now flows into `BoardTelemetry`
-- next: map planned domain voltages onto those startup/shutdown hooks
-
-Exit criteria:
-
-- board startup can perform reset and rail sequencing without external manual
-  steps
-- board shutdown returns the hardware to a safe state
-
-## Phase 3: Domain Voltage Application
-
-Objective:
-
-- make the tuning planner’s voltage-domain outputs real rather than advisory
-
-Deliverables:
-
-1. Map planned domain voltages onto configured rails
-2. Apply coarse domain voltages before clock ramp
-3. Use rail telemetry and ASIC `DTS_VS` readings to verify applied state
-4. Persist replay metadata that distinguishes:
-   - clock-only replay
-   - full voltage-plus-clock replay
-
-Exit criteria:
-
-- `Bzm2Board` can apply multi-domain operating points, not just PLL maps
-
-Status:
-
-- completed: planner-generated per-domain voltages are now mapped onto the
-  configured rail-control path before PLL ramp
-- completed: saved operating-point replay now reapplies persisted per-domain
-  voltages before clock replay
-- completed: live calibration persists per-domain rail targets for restart
-  replay
-- next: Phase 4, topology and defect discovery
-
-## Phase 4: Topology And Defect Discovery
-
-Objective:
-
-- stop assuming the default logical engine map is always the real map
-
-Deliverables:
-
-1. Add engine/topology probing helpers
-2. Detect unavailable or disabled engines per ASIC
-3. Feed the discovered engine map into:
-   - work dispatch
-   - validation helpers
-   - tuning calculations
-
-Exit criteria:
-
-- systems with missing or disabled engines do not need a code rebuild or static
-  exclusion map edit
-
-Status:
-
-- completed: TDM-sync engine probe helpers now detect physical engine presence
-  by reading `ENGINE_REG_END_NONCE`, matching the historical C detection path
-- completed: engine probing is exposed through
-  `Bzm2UartController::discover_engine_map` and
-  `POST /api/v0/boards/{name}/bzm2/discover-engines`
-- completed: discovered per-ASIC engine maps can now be pushed into live
-  `BoardTelemetry.asics` through:
-  - `Bzm2Board` command handling
-  - the live BZM2 thread actor
-  - `POST /api/v0/boards/{name}/bzm2/discover-engines`
-- completed: successful discovery scans now update the live BZM2 runtime engine
-  layout used by:
-  - work dispatch fanout
-  - result reconstruction
-  - share validation helpers
-- completed: calibration input now consumes active-engine counts and missing
-  coordinates through:
-  - live pre-calibration engine discovery when enabled
-  - saved operating-point topology replay
-  - default-map fallback when no topology data exists
-- completed: saved operating-point reuse and planned hashrate estimation now
-  normalize against real engine capacity instead of assuming every ASIC has the
-  default full map
-- next: Phase 5, closed-loop calibration and retune
-
-## Phase 5: Closed-Loop Calibration And Retune
-
-Objective:
-
-- turn the startup planner into a true operating-point controller
-
-Deliverables:
-
-1. Measure and store real:
-   - pass rate
-   - throughput
-   - per-PLL behavior
-   - per-domain power
-2. Feed those measurements back into the tuning planner
-3. Add runtime retune triggers for:
-   - throughput regression
-   - thermal drift
-   - persistent voltage imbalance
-4. Revalidate or invalidate saved operating points automatically
-
-Exit criteria:
-
-- tuning decisions are based on measured runtime behavior, not just startup
-  heuristics and persisted estimates
-
-Status:
-
-- completed: live BZM2 threads now maintain work-based runtime throughput
-  estimators for:
-  - whole-thread throughput
-  - per-ASIC throughput
-  - per-PLL throughput using the documented row 0-9 / row 10-19 stack split
-- completed: `Bzm2Board` now samples and stores runtime tuning measurements
-  into live board state and an internal cache, including:
-  - board throughput
-  - per-ASIC throughput
-  - per-ASIC average pass rate
-  - per-PLL pass rate and throughput
-  - per-domain measured voltage and power
-- completed: the board runtime now feeds those live measurements back into the
-  existing tuning planner and publishes the current planner decision through
-  board state, including:
-  - reuse-saved-operating-point decision
-  - needs-retune decision
-  - desired voltage / clock / accept-ratio targets
-  - planner notes
-- completed: runtime retune triggers are now promoted only after configurable
-  persistence across monitor polls for:
-  - throughput regression
-  - thermal drift
-  - persistent voltage imbalance
-- completed: saved operating point profiles now carry runtime validation state
-  and are automatically:
-  - marked `validated` after clean runtime sampling
-  - marked `invalidated` when persistent retune triggers fire
-  - excluded from direct replay and planner seeding on later restarts once
-    invalidated
-- next: Phase 6, diagnostics and API parity
-
-## Phase 6: Diagnostics And API Parity
-
-Objective:
-
-- expose the most useful silicon-validation operations through the board API,
-  without requiring raw serial tooling
-
-Deliverables:
-
-1. Board/API commands for:
-   - `NOOP`
-   - loopback
-   - register read/write
-   - clock report
-   - chain enumeration summary
-2. Board-state visibility for:
-   - discovered ASIC count
-   - discovered engine count / disabled-engine map
-   - saved operating-point replay path
-   - current calibration and safety status
-
-Status:
-
-- completed: board/API parity now covers live BZM2 thread-routed commands for:
-  - `NOOP`
-  - loopback
-  - register read/write
-- completed: those diagnostics are exposed through HTTP endpoints that preserve
-  UART ownership by routing through the live BZM2 thread actor
-- completed: the board/API surface now exposes `clock-report` parity through
-  the same live thread actor, so operators can inspect PLL/DLL lock state and
-  clock-control registers without raw serial tooling
-- completed: the board/API surface now exposes a chain-summary view with:
-  - current per-bus serial path
-  - global ASIC ranges
-  - total discovered/configured ASIC count
-  - the startup path that produced the active operating point
-  - saved operating point validation state
-- completed: Phase 6 exit criteria are now met for the planned board/API
-  diagnostics slice
-- next:
-  - surface more of the same diagnostics through board state where useful
-  - only add broader manufacturing parity if there is a clear operator need
-
-Exit criteria:
-
-- operators can perform high-value diagnostics through the board/API surface
-  without dropping to raw serial tooling
-
-## Phase 7: JTAG, Only If Grounded
-
-Objective:
-
-- add JTAG only if enough packet-level evidence exists to do it correctly
-
-Deliverables:
-
-1. protocol-evidence review
-2. minimal IR/DR helpers only if grounded
-3. debug-only tooling for validated use cases
-
-Exit criteria:
-
-- no guessed JTAG semantics enter the codebase
-
-## Current Execution Status
-
-- Phases 1-6 are complete; the per-phase status blocks above record the
-  delivered work, and the Phase 6 board/API diagnostics exit criteria are met
-- Phase 7 (JTAG) is pending its protocol-evidence review
-
-Reason the original execution order led with enumeration:
-
-- enumeration removes a major assumption from the current board runtime
-- it is ASIC-generic
-- it is directly grounded in documented and legacy UART behavior
-
+- generic ASIC bring-up and chain discovery
+- rail, reset and voltage-stack design, including domain-aware power and tuning control
+- the 9-bit UART and TDM interface
+- board design patterns, pitfalls and parts choices
+- diagnostics a host or board should expose
+- observed data from reference hardware, kept apart from the specification
+
+Out of scope:
+
+- reproduction of vendor reference boards
+- carrier-specific MCU protocols
+- Gen1 telemetry
+- JTAG usage beyond what concrete protocol evidence supports
+
+## What the reference covers today
+
+| Topic | Where |
+|---|---|
+| ASIC overview, rails and voltage stacking, clocking, bring-up sequence, telemetry and protection, calibration method, validation checklist | [Integration Guide](blockscale-asic-integration-guide.md) |
+| 9-bit multidrop framing, opcodes, job programming, TDM, sensors | [UART and TDM Protocol Reference](blockscale-uart-protocol-reference.md) |
+| All 60 pads, straps, PINSEL muxing, machine-readable ball map | [Pinout and Ball Map](bzm2-pinout-reference.md) |
+| Patterns and pitfalls: level translation, clocking, VCORE, sequencing, 9-bit UART, checklist | [Board Design Guide](bzm2-board-design-guide.md) |
+| Parts and approaches for translators, UART bridges, clock, VCORE control, protection, thermal | [Reference Design Guidance](bzm2-reference-design-guidance.md) |
+| Worked voltage-stack topologies and their failure reasoning | [Voltage-Stack Topology Examples](bzm2-voltage-stack-examples.md) |
+| Known boards and firmware, by maturity | [Hardware Implementations Survey](bzm2-hardware-implementations.md) |
+| Observed data from one RDS unit | [RDS Reference Measurements](rds-measured-reference.md) |
+
+## Host capabilities the reference describes
+
+Ordered by dependency: each capability builds on the ones before it.
+
+| # | Capability | What an integrator needs from it | Covered in | Planned |
+|---|---|---|---|---|
+| 1 | Discoverable bring-up | Find the chain from software with no fixed ASIC count: enumerate from default ID `0xFA`, assign IDs, verify each with `NOOP`. | Integration Guide (enumeration model), UART Reference (enumeration rule) | — |
+| 2 | Rail and reset control | Sequence control rails, reference clock, reset and stack voltage; return to a safe state on shutdown; read rail telemetry. | Integration Guide (power-up sequence, protection), Board Design Guide | — |
+| 3 | Domain voltage application | Apply coarse per-domain voltages before the clock ramp, verify them with rail telemetry and the ASIC's `DTS_VS` readings, and keep the operating point for restart reuse. | Integration Guide (voltage sensing, calibration) | A step-by-step domain-voltage procedure |
+| 4 | Topology and defect discovery | Do not assume the default engine map is the real one; detect missing or disabled engines per ASIC. | Integration Guide (failure modes) | How a host probes engine presence |
+| 5 | Closed-loop calibration and retune | Measure pass rate, throughput, per-PLL behaviour and per-domain power; retune on throughput regression, thermal drift or persistent voltage imbalance; revalidate saved operating points. | Integration Guide (calibration methodology) | Behaviour below 800 MHz; per-board threshold guidance |
+| 6 | Diagnostics | Expose `NOOP`, loopback, register read/write, a clock report and a chain summary without raw serial tooling. | UART Reference (synchronous diagnostics, loopback) | — |
+| 7 | JTAG | Only where enough packet-level evidence exists to do it correctly. | Pinout Reference (pads) | Held until the evidence exists |
+
+## Planned coverage
+
+- **Thermal and protection detail:** the offset between the on-die sensor reading and junction temperature, and
+  temperature thresholds an integrator can adopt.
+- **Clocking:** PLL lock and error behaviour below 800 MHz.
+- **Opcode coverage:** the `BLOCK_HDR` opcode (`0x5`), whose direction, payload and response are not yet documented.
+- **RDS observations:** the physical slot for each software board index.
+- **Charts:** measured charts for the RDS observations, published once the long characterization run is complete.

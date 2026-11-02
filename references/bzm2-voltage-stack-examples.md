@@ -11,7 +11,7 @@ with examples. It makes no new claim about the silicon.
   [voltage sensor channels](blockscale-asic-integration-guide.md#voltage-sensor-channels) table, and the
   [Hardware Implementations Survey](bzm2-hardware-implementations.md).
 - **How to read this page:**
-  - the RDS section covers topology and reasoning; measured values are in the [RDS Measured Reference](rds-measured-reference.md);
+  - the RDS section covers topology and reasoning; observed values are in the [RDS reference measurements](rds-measured-reference.md);
   - every statement about an open-source board is cited to a repository, a commit and a file;
   - anything that cannot be read from a public source is marked **unconfirmed** or **not public**;
   - failure behaviour is circuit reasoning, not a measurement, and is marked **inferred**;
@@ -54,7 +54,7 @@ the division follows the load. That is why a stacked board has to keep every lev
 
 ## Primary example: RDS (production system; 3 boards on one rail)
 
-**Basis:** structure and reasoning. Values measured on an RDS are in the [RDS Measured Reference](rds-measured-reference.md).
+**Basis:** structure and reasoning. Values observed on an RDS are in the [RDS reference measurements](rds-measured-reference.md).
 
 ### Structure
 

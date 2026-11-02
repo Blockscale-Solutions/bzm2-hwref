@@ -13,6 +13,9 @@ It is written as a practical reference for:
 - validation engineers
 - host software developers
 
+Terms and abbreviations (TCE, notch, DTS/VS, TDM, enhanced mode) are defined in the Integration Guide under
+[Terms Used In This Reference](blockscale-asic-integration-guide.md#terms-used-in-this-reference).
+
 ## Physical Layer And Link Characteristics
 
 ### Fixed 9-bit multidrop framing
@@ -40,7 +43,7 @@ disqualifies most off-the-shelf USB-UART bridges:
 ### Baud and signaling
 
 - supported baud range: `2.5` to `10 Mbps` with a `50 MHz` reference clock
-- the documented bring-up convention (and the rate legacy host software uses)
+- the documented bring-up convention (and the rate the stock firmware uses)
   is `5 Mbps`
 - `1.2 V` IO signaling on the UART-related pads - level shifting is required
   against almost any host
@@ -53,18 +56,15 @@ Practical recommendation:
 ### Host bridge selection
 
 The combination of `5 Mbps` and true 9-bit framing rules out most common
-USB-UART bridges. Verified guidance for host hardware:
+USB-UART bridges. A host needs either a bridge with a native 9-bit (multidrop)
+mode at `5 Mbps` or above, or an MCU or SoC UART (or PIO) that does 9-bit
+framing in hardware. Emulating the 9th bit by flipping MARK/SPACE parity on an
+8-bit UART does not keep up at these rates: the parity setting has to change
+per byte.
 
-- **works:** MaxLinear `XR21V1410` (single channel) / `XR21V1414` (quad) -
-  native 9-bit address-match (multidrop) mode at up to `12 Mbps`
-- **does not work:** `CH340`-family (tops out near `2 Mbps`) and `FT231X`
-  (`3 Mbps` max) cannot reach `5 Mbps`, and neither offers usable per-byte
-  9th-bit control at speed
-- emulating the 9th bit with MARK/SPACE parity flipping on an 8-bit UART is
-  technically possible but impractical at these rates - per-byte parity
-  reconfiguration cannot keep up at `5 Mbps`
-- SoC/MCU UARTs with hardware 9-bit multidrop support (common on many MCUs)
-  are also suitable as direct hosts
+Specific bridges and MCUs, with their published rate limits and the open boards
+that use them, are compared in the
+[Reference Design Guidance, 9-bit UART host bridge](bzm2-reference-design-guidance.md#12-9-bit-uart-host-bridge).
 
 ## Addressing Model
 
@@ -81,8 +81,8 @@ The documented system addressing model allocates:
 - top `0xFxx` engine-ID region for non-engine / local functions such as PLLs,
   sensors, and internal controller blocks
 
-Do not assume engine IDs are contiguous or fully populated. The vendor material
-explicitly allows holes due to disabled or missing engines.
+Do not assume engine IDs are contiguous or fully populated. Vendor-stated: the
+map can have holes where engines are disabled or missing.
 
 ### Engine identifier layout
 
@@ -94,9 +94,8 @@ position contains **4 engines**, for **944 engines per ASIC**. `[BZM2-ENG-005]`
 
 The two figures rest on different evidence: **236** is used by public
 open-source firmware and corroborated by bench capture; the **x4** is
-vendor-stated. See
-`blockscale-asic-integration-guide.md` for the throughput estimate that uses the
-same figures.
+vendor-stated. The throughput estimate that uses the same figures is in the
+Integration Guide, [ASIC At A Glance](blockscale-asic-integration-guide.md#asic-at-a-glance).
 
 The distinction matters whenever a number is used as a denominator:
 
@@ -183,7 +182,7 @@ what an implementer actually needs.
 Its **entire** command surface is three transmit encoders and four receive
 frame types:
 
-| | |
+| direction | encoders and frame types |
 | --- | --- |
 | transmit | `bzm_transport_encode_write` (`0x2`), `bzm_transport_encode_read` (`0x3`), `bzm_transport_encode_noop` (`0xF`) - declared at `components/asic/include/bzm_transport.h:98-102`, opcode nibbles visible as `0x020` / `0x030` / `0x0f0` at `components/asic/bzm_transport.c:164`, `:187`, `:202` |
 | receive | `RESULT 0x01`, `REGISTER 0x03`, `TELEMETRY 0x0d`, `NOOP 0x0f` - `components/asic/include/bzm_frame_parser.h:20-23` |
@@ -218,16 +217,30 @@ Not "unused": nothing is documented about them. Treat the known set as a
 
 #### Where `0x5` is documented
 
-The semantics of `0x5` appear only in vendor material that this reference does not
-reproduce. A capture from a public host cannot reveal them either: no public
-implementation emits `0x5`.
+The semantics of `0x5` are not public. A capture from a public host cannot
+reveal them either: no public implementation emits `0x5`.
 
 ## Frame Structure
 
-### The 9-bit word on the wire
+### Two host-side encodings of one wire format
 
-Every character is a **9-bit word sent as two bytes**: the low eight bits first,
-then the ninth bit on its own.
+On the wire every character is one 9-bit UART character (figure above). Hosts
+hand those characters to the link in one of two forms, and byte counts quoted
+for a command depend on which one is meant:
+
+- **Raw 9-bit word stream**, for a host that drives the 9-bit characters itself
+  (a bridge in 9-bit mode, an MCU UART or PIO). Each character is a 9-bit word,
+  carried in the host's byte stream as **two bytes**: the low eight bits first,
+  then the ninth bit on its own. The frames under *Command frames* below are in
+  this form.
+- **Length-prefixed packet**, for a host that writes through a 9-bit tty driver
+  (as on the RDS). Each command is one packet: a 2-byte little-endian total
+  length that counts itself, a big-endian header, then the payload. The driver
+  sends the header's first byte, the ASIC ID, as the address character
+  (inferred: it is the only byte that can match). The packet sizes are listed
+  under [Length-prefixed packet sizes](#length-prefixed-packet-sizes).
+
+### The 9-bit word
 
 **Bit 8 is the address flag.** It is set on the first word of a frame and clear
 on every word after it. That is the whole multidrop mechanism - a part watches
@@ -238,11 +251,14 @@ character.
 **A frame therefore opens with the address character, not with a length.** A
 transmitter that puts a length byte first lands the address flag on the wrong
 character, no part matches, and the command is discarded silently - which on the
-wire is indistinguishable from an absent chain.
+wire is indistinguishable from an absent chain. The length prefix of the
+packet form is for the driver; on the wire the address character still comes
+first.
 
 ### Command frames
 
-Words below are 9-bit; each costs two bytes on the wire.
+Raw word-stream form. Words below are 9-bit; each costs two bytes in the host's
+stream.
 
 ```text
 NOOP                                  2 words
@@ -271,6 +287,26 @@ Two details that are easy to get wrong: the length field carries **length minus
 one**, and `NOOP` is **two words**, not the five-word shape the register frames
 use. Deriving a `NOOP` from a `WRITEREG` produces a frame the part will not
 answer.
+
+### Length-prefixed packet sizes
+
+The same commands in the packet form a 9-bit tty driver takes. Register and job
+commands carry a 32-bit header,
+`(asic_id << 24) | (opcode << 20) | (engine_id << 8) | offset`; `NOOP`,
+`READRESULT` and `LOOPBACK` carry a 16-bit header,
+`(asic_id << 8) | (opcode << 4)`.
+
+| command | packet bytes | layout after the 2-byte length |
+| --- | --- | --- |
+| `WRITEREG`, `MULTICAST_WRITE` | `7 + count` | 4-byte header, `count - 1`, `count` data bytes |
+| `READREG` | `8` | 4-byte header, `count - 1`, one trailing byte |
+| `WRITEJOB` | `48` | 4-byte header whose low byte is `41` (42 job bytes, minus one), 32-byte midstate, 4-byte merkle residue, 4-byte timestamp, sequence ID, job control |
+| `READRESULT`, `NOOP` | `4` | 2-byte header |
+| `LOOPBACK` | `5 + count` | 2-byte header, `count - 1`, `count` data bytes |
+
+Basis: the encoders of the Mujina BZM2 reference fork,
+[`mujina-miner/src/asic/bzm2/protocol.rs`](https://github.com/recklessnode/mujinabzm2/blob/c7f8e03a4006356e090e184a2fa73a057df73a80/mujina-miner/src/asic/bzm2/protocol.rs#L477-L568)
+at `c7f8e03`, which drive the RDS chain ports.
 
 ### Reaching the ASIC's own registers
 
@@ -331,9 +367,9 @@ reply against `BZ2` gets no match, concludes there is no device at that
 address, and stops the chain walk at zero — which is indistinguishable from an
 empty bus. Nothing about the failure points at the comparison.
 
-The trap has teeth because both spellings appear as named constants in
-reference software, two lines apart, for different purposes: one is the part
-identifier, the other is this reply. Check which one you are comparing against.
+Both spellings occur in software for this part, for different purposes: one
+is the part identifier, the other is this reply. Check which one you are
+comparing against.
 
 > **Basis.** `2ZB` is what three independent implementations compare
 > against: two reference implementations and one third-party firmware port.
@@ -364,7 +400,8 @@ Purpose:
 Documented behavior:
 
 - writes `42` consecutive bytes of job state
-- typical transmit length is `48` bytes including framing
+- in the length-prefixed packet form the command is `48` bytes (see
+  [Length-prefixed packet sizes](#length-prefixed-packet-sizes))
 
 Payload content includes:
 
@@ -374,11 +411,14 @@ Payload content includes:
 - sequence ID
 - job control
 
-Header construction described in the opcode notes:
+Header in the length-prefixed packet form:
 
 ```text
 header = (asic << 24) | (WRITEJOB << 20) | (engine << 8) | 41
 ```
+
+`WRITEJOB` is not needed to mine the part: the public implementation described
+under opcode `0x5` programs work through register writes only.
 
 ### `READRESULT`
 
@@ -410,8 +450,9 @@ Purpose:
 
 Documented behavior:
 
-- length is `7 + count`
-- payload uses a byte count field encoded as `count - 1`
+- the payload carries a byte count encoded as `count - 1`
+- the command is `6 + count` words in the raw word stream (see *Command frames*)
+  and `7 + count` bytes as a length-prefixed packet
 
 Common uses:
 
@@ -524,7 +565,7 @@ Practical guidance:
 
 ## Partial, Incomplete, And Invalid Programming
 
-The hardware documentation is explicit that bad sequences are not harmless.
+Vendor-stated: bad sequences are not harmless.
 
 ### Dummy jobs
 
@@ -559,7 +600,7 @@ functional correctness problems.
 
 ![BZM2 TDM frame and result path — opaque slot](../drawings/uart/tdm-frame-and-result-path.svg)
 
-Frame-level TDM transport and the block-level result path. The interior of a slot is not drawn. Not documented: intra-slot order, NOOP (identified by length only), the delay-register timing picture, and how TX ctrl `0x0A` interacts with TDM. Do not derive slot occupancy from `10 × 11 = 110` against the 100-bit-period constant.
+Frame-level TDM transport and the block-level result path. The interior of a slot is not drawn. Not documented: the order of packets inside a slot, the `NOOP` packet's layout (identified by its length only), the timing of the delay register, and how the TX control register `0x0A` interacts with TDM. Slot occupancy (how many bit times a packet uses inside its slot) is not documented either, so do not compute it from packet length times bit times per character.
 
 
 TDM lets ASICs stream data back to the host in time slots associated with ASIC
@@ -572,18 +613,23 @@ TDM behavior:
 - TDM can carry multiple response classes including register responses, results,
   `NOOP`, and thermal / voltage data
 
-The software guide gives a practical example:
+Vendor-stated example: with slots of `128` bit times at `5 Mbps`, a TDM frame
+lasts about `2.5 ms`. The slot count behind that figure is not stated; `100`
+slots of `128` bit times at `5 Mbps` is `2.56 ms` (arithmetic). The public
+[`johnny9/ESP-Miner-Bonanza`](https://github.com/johnny9/ESP-Miner-Bonanza)
+implementation programs `100` slots, a slot bit-count field of `0x7F` and a
+delay of `1`; whether that field holds the bit count or the bit count minus one
+is not documented.
 
-- with `128` bit-time slots at `5 MHz`, a TDM frame is approximately `2.5 ms`
-
-That matters because it bounds result and telemetry latency across a long chain.
+The frame length matters because it bounds result and telemetry latency across a
+long chain.
 
 ## Result Aggregation Model
 
-The software guide describes a two-stage buffering model:
+Vendor-stated two-stage buffering model:
 
 - each engine tile has an `8`-deep local result FIFO
-- the ASIC notch block has a `16`-deep ASIC-level result FIFO
+- the ASIC-level controller block (notch) has a `16`-deep result FIFO
 
 Host-visible implications:
 
@@ -596,9 +642,8 @@ Host-visible implications:
 
 ### TDM sensor behavior
 
-The datasheet describes thermal and voltage telemetry as a TDM payload source.
-The voltage / thermal packet is described as the fourth packet class in TDM
-operation.
+Vendor-stated: thermal and voltage telemetry is a TDM payload source, the fourth
+packet class in TDM operation.
 
 ### Direct query behavior
 
@@ -677,25 +722,9 @@ register write that set them.
 
 ### Voltage channels
 
-| channel | measures | healthy | trips the ASIC? |
-| --- | --- | --- | --- |
-| `ch0` | differential across the **bottom** stack | `~355 mV` | **yes** |
-| `ch1` | differential across the **top** stack | `~355 mV` | **yes** |
-| `ch2` | top-stack return against bottom-stack supply - the **midpoint error** | small, near zero at idle, grows with load | **no** |
-
-Both stack channels read the differential across their **own** stack, not an
-absolute node voltage, so both sit near `355 mV` and are directly comparable.
-`ch2` is **not** `ch1 − ch0`. It is the gap between the bottom domain's top and
-the top domain's bottom: near zero on a healthy part at light load, but it grows
-with load current (it behaves like a resistive drop across the internal midpoint
-path). Bound it by **absolute magnitude** with a **current-scaled** limit - a
-fixed near-zero alarm false-trips healthy parts at full load - not by proximity
-to `355 mV`. The per-ASIC span is `ch0 + ch2 + ch1`. `[BZM2-VS-001]`
-
-**Only `ch0` and `ch1` feed the ASIC's own shutdown.** The voltage-sensor control
-register carries a threshold field for each of those and none for `ch2`, so the
-part takes no action on a midpoint fault however large. `ch2` is the one channel
-where a host response is the whole protection rather than a backstop.
+What `ch0`, `ch1` and `ch2` measure, their healthy readings, and which of them can trip the ASIC are in the
+Integration Guide under [Voltage sensor channels](blockscale-asic-integration-guide.md#voltage-sensor-channels).
+Only `ch0` and `ch1` feed the ASIC's own shutdown; a `ch2` fault needs a host or board response.
 
 ## Sensor Conversion Equations
 
@@ -713,6 +742,8 @@ Where:
 - `Y = 631.8`
 - `K = -293.8`
 
+Example: at 12-bit resolution, a raw code near `2084` maps to about `27.6 C`.
+
 ### Voltage
 
 ```text
@@ -726,6 +757,7 @@ Where:
 - `R` = resolution, **`14`** for this conversion - it is not the `12` used by the
   temperature equation above, and the two codes are genuinely different widths
 - `VREF = 0.7067`
+- the result is an uncalibrated voltage
 
 ## `NOOP` Timing Caution
 
@@ -735,10 +767,10 @@ A specific transport rule applies to `NOOP`:
 - in non-TDM mode, maintain at least a three-byte gap between consecutive
   `NOOP`s
 
-Byte-count note to avoid off-by-a-layer confusion: at the wire-packet level a
-`NOOP` request is `2` bytes with a `5`-byte response; at the host framing
-level the transmitted frame is `4` bytes (length prefix + header) and the
-`2ZB` payload is the `3` data bytes inside that response.
+Byte counts at each layer: on the wire a `NOOP` request is `2` characters and
+its response `5` bytes (ASIC ID, frame type, and the three bytes `2ZB`); as a
+length-prefixed packet the request is `4` bytes (2-byte length, 2-byte header).
+See [Two host-side encodings of one wire format](#two-host-side-encodings-of-one-wire-format).
 
 Treat this as a real transport rule during low-level validation.
 
@@ -754,13 +786,11 @@ For production-capable software, a good division of labor is:
 
 The Mujina BZM2 reference tooling is structured the same way.
 
-## Practical Validation Tooling
+## Related Tooling
 
-Relevant follow-on references:
-
-- [ASIC Integration Guide](blockscale-asic-integration-guide.md)
-
-The Mujina BZM2 debug CLI exposes:
+The debug CLI on the Mujina BZM2 branches (see the Integration Guide,
+[Relationship To The Mujina Reference Firmware](blockscale-asic-integration-guide.md#relationship-to-the-mujina-reference-firmware))
+exposes:
 
 - `NOOP` scans
 - loopback scans

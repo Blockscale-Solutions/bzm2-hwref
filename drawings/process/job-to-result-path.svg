@@ -43,7 +43,7 @@
     <text x="180" y="418" text-anchor="middle" fill="#d6dde3">opcodes on wire</text>
     <text x="180" y="436" text-anchor="middle" fill="#7a8792" font-size="10" font-family="JetBrains Mono,monospace">WRITEJOB · READRESULT · DTS_VS · …</text>
   </g>
-  <text x="180" y="480" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="10">header packing: (asic≪24)|(op≪20)|(engine≪8)|41</text>
+  <text x="180" y="480" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="10">WRITEJOB packet header: (asic≪24)|(op≪20)|(engine≪8)|41</text>
   <text x="180" y="496" text-anchor="middle" fill="#556069" font-family="Ubuntu,sans-serif" font-size="10">UART § WRITEJOB / Enhanced-Mode</text>
 
   <!-- Arrow host -> ASIC -->

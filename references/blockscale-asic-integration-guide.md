@@ -31,6 +31,26 @@ The core constraint does not change with board size: every ASIC contains an
 internal dual-stack engine arrangement and expects the host system to sequence,
 clock, load, and protect it correctly.
 
+## Terms Used In This Reference
+
+| term | meaning |
+| --- | --- |
+| BZM2 | the Intel Blockscale 1000-series bitcoin mining ASIC (Bonanza Mine 2) |
+| RDS | the vendor's reference mining system for the BZM2: three hashboards of 100 ASICs on one shared supply rail. The observed data in this reference come from one RDS unit |
+| stock firmware | the vendor's own host software as shipped on the RDS, including its mining daemon |
+| Mujina | open-source miner firmware; its BZM2 support is described under [Relationship To The Mujina Reference Firmware](#relationship-to-the-mujina-reference-firmware) |
+| bottom stack, top stack | the two internal voltage domains of one ASIC, in series: bottom `0` to `~0.355 V`, top `~0.355` to `~0.71 V` |
+| engine position (tile) | the unit an engine identifier addresses: `236` per ASIC, each holding four engines |
+| TCE | the vendor's name for one hashing engine; the four engines at a position are its four lanes |
+| enhanced mode | the default engine programming mode: four job writes per position, one per engine |
+| notch | the vendor's name for the ASIC-level controller block; it holds the ASIC result FIFO, and its local registers are reached with engine identifier `0xFFF` |
+| PLL, DLL | phase-locked loop (two per ASIC, one per stack) and delay-locked loop |
+| DTS, VS | the on-die digital temperature sensor and voltage sensor; `DTS_VS` is the opcode and packet that carry both |
+| TDM | the time-division multiplexed return stream: each ASIC transmits in the time slot that matches its ID |
+| TRIP | the ASIC's over-temperature / over-voltage output, once the sensors are armed |
+| FCLGA | flip-chip land grid array, the package type |
+| PDN | power distribution network |
+
 ## ASIC At A Glance
 
 ASIC-level properties:
@@ -64,8 +84,9 @@ Example:
 1.2 GHz * (236 * 4 / 3) * 1.0 = 377.6 gigahash per second
 ```
 
-That formula is useful for sizing cooling, PSU headroom, calibration targets,
-and per-domain operating points.
+The example is arithmetic on the formula, not a measured rate. The formula is
+useful for sizing cooling, PSU headroom, calibration targets, and per-domain
+operating points.
 
 ## Recommended System Partitioning
 
@@ -80,39 +101,9 @@ overall system provide the following functions:
 - telemetry collection and protection logic
 - work generation and result collection
 
-**Arm the on-die protection before raising the stack, and confirm it took.**
-Out of reset both sensors are powered down, so the trip output cannot assert at
-any temperature or voltage. A stack ramp before arming runs with no on-die
-protection at exactly the point where voltage and frequency are being raised.
-
-The step does not need the stack: **VDDIO is a separate rail**, so an ASIC is
-reachable over UART and its sensors are armable while the core stack does not
-yet exist. This holds on any topology that follows the rail ordering above.
-
-**Confirm from the device's own sensor stream, not by reading the registers
-back.** A readback travels the same synchronous path that wrote them, so it
-proves the path works rather than that the arming took. The part reports
-`thermal_enabled` and `voltage_enabled` asynchronously and unprompted; that is a
-witness. On a chain, record **which** device confirmed - a broadcast write is
-acknowledged by the bus, not by every part on it.
-
-**Anything that reads die temperature before this point gets no reading.** A
-calibration or tuning pass that silently falls back to an ambient or board-level
-proxy will choose operating points against the wrong temperature, and will do so
-without erroring.
-
-```mermaid
-flowchart LR
-    Host["Host SoC / MCU / FPGA"] --> UART["UART Master"]
-    Host --> Power["Power / PMBus / Regulators"]
-    Host --> Cooling["Fan / Pump / Thermal Control"]
-    Host --> API["Control API / UI"]
-    UART --> Chain["ASIC Chain"]
-    Power --> Chain
-    Cooling --> Chain
-    Chain --> Sensors["DTS / VS / TRIP"]
-    Sensors --> Host
-```
+The host connects to the ASIC chain through the UART master (control, work and results), the power path
+(regulators, often over PMBus) and the cooling control (fans or pumps). The chain reports back through its
+sensor stream (`DTS_VS`) and its `TRIP` output.
 
 The exact split is your design choice:
 
@@ -128,9 +119,10 @@ Package and mechanical envelope:
 
 - package size: `7.5 x 7 mm`
 - package type: exposed-die molded `FCLGA`
-- `60` SLI pads and `60` LGA pads
-- operating junction temperature range: `50 C` to `85 C`
-- absolute maximum junction temperature: `115 C`
+- `60` lands: `40` peripheral plus a `20`-land inner field (see the
+  [Pinout and Ball Map Reference](bzm2-pinout-reference.md))
+- junction temperature limits: see the
+  [Electrical Quick Reference](#electrical-quick-reference-per-asic)
 
 Design implications:
 
@@ -227,8 +219,8 @@ before committing limits.
 | Stack current, maximum tuned point | `~27 A` | roughly `22 W`; plan copper for `~30 A` headroom. A public sweep's top row is `27.1 A / 21.95 W` at `0.810 V, 1.85 GHz` |
 | Efficiency | best at a low clock, worsening as the clock rises | A public sweep puts the best efficiency near `0.60-0.75 GHz` and the worst at the maximum tuned point. Chasing best efficiency costs hashrate, and a single efficiency number is meaningless without the clock it was measured at |
 | Reference clock | up to `50 MHz` on `REFCLKIN` | `50 MHz` is the standard choice |
-| UART baud range | `2.5` to `10 Mbps` (50 MHz refclk) | bring-up convention is `5 Mbps` |
-| Junction temperature | `50 - 85 C` operating, `115 C` abs max | plan top-side thermal extraction |
+| UART baud | see [Baud and signaling](blockscale-uart-protocol-reference.md#baud-and-signaling) | |
+| Junction temperature | `50 - 85 C` operating, `115 C` abs max `[BZM2-THM-001]` | a rating of the silicon, not the on-die sensor reading (see [Temperature thresholds](#temperature-thresholds)); plan top-side thermal extraction |
 
 PDN guidance that follows directly from those numbers:
 
@@ -326,8 +318,8 @@ Not yet established: whether these parts lock and run cleanly below 800 MHz in a
 
 ### DLL health
 
-The legacy software also validates DLL state using `coarsecon` and `fincon`
-status. That is not strictly required to boot the ASIC, but it is useful for:
+The stock firmware also checks DLL state using its `coarsecon` and `fincon`
+status fields. That is not strictly required to boot the ASIC, but it is useful for:
 
 - manufacturing validation
 - marginal-clock debug
@@ -353,8 +345,8 @@ UART is the primary host interface for:
   important host-side constraint; see the physical-layer section of the
   [UART and TDM Reference](blockscale-uart-protocol-reference.md) for the
   framing details and host bridge selection guidance
-- supported baud range is `2.5` to `10 Mbps` with a `50 MHz` reference clock;
-  the documented bring-up convention is `5 Mbps`
+- the supported baud range and the bring-up rate are in
+  [Baud and signaling](blockscale-uart-protocol-reference.md#baud-and-signaling)
 - the internal `notch` controller block runs from the `50 MHz` clock during
   bring-up
 
@@ -388,10 +380,8 @@ The documented enumeration flow is:
 6. the next ASIC becomes reachable
 7. repeat until the chain is assigned
 
-`NOOP` returning `2ZB` is the simplest chain-liveness check. The reply is three
-ASCII bytes, `2ZB`: the part name reversed. Comparing against `BZ2` matches
-nothing and reads as an empty bus. These bytes are attested by agreement among
-public implementations; see the protocol reference.
+`NOOP` is the simplest chain-liveness check. Its reply, and the spelling trap
+in it, are in the protocol reference under [`NOOP`](blockscale-uart-protocol-reference.md#noop).
 
 ### Broadcast and multicast
 
@@ -417,15 +407,36 @@ Reserve unicast for:
 
 ## Power-Up And Bring-Up Sequence
 
-The vendor documents describe a specific reference flow, but the reusable logic
-for any custom board is:
-
+The sequence below is the part of the vendor's reference flow that applies to any
+board:
 
 ![BZM2 power-up / bring-up flowchart](../drawings/bring-up/power-up-sequence.svg)
 
-The flowchart combines this guide's bring-up sequence with the hardware fail-safes in the [Board Design Guide](bzm2-board-design-guide.md) (§7, §9). The ASIC replies to `NOOP` with the three ASCII bytes `2ZB`.
+The flowchart combines this guide's bring-up sequence with the hardware fail-safes in the [Board Design Guide](bzm2-board-design-guide.md) (§7, §9).
 
-**Arm-protection gate.** Do not raise the stack voltage until thermal and voltage protection are confirmed enabled (`thermal_enabled` and `voltage_enabled` both reported by the device). Otherwise stop; do not raise the stack. See "Arm the on-die protection before raising the stack" above for why.
+### Arm the on-die protection before raising the stack, and confirm it took
+
+**Arm-protection gate.** Do not raise the stack voltage until thermal and voltage protection are confirmed enabled (`thermal_enabled` and `voltage_enabled` both reported by the device). Otherwise stop; do not raise the stack.
+
+Out of reset both sensors are powered down, so the trip output cannot assert at
+any temperature or voltage. A stack ramp before arming runs with no on-die
+protection at exactly the point where voltage and frequency are being raised.
+
+The step does not need the stack: **VDDIO is a separate rail**, so an ASIC is
+reachable over UART and its sensors are armable while the core stack does not
+yet exist. This holds on any topology that brings the control rails up before the stack, as the sequence above does.
+
+**Confirm from the device's own sensor stream, not by reading the registers
+back.** A readback travels the same synchronous path that wrote them, so it
+proves the path works rather than that the arming took. The part reports
+`thermal_enabled` and `voltage_enabled` asynchronously and unprompted; that is a
+witness. On a chain, record **which** device confirmed - a broadcast write is
+acknowledged by the bus, not by every part on it.
+
+**Anything that reads die temperature before this point gets no reading.** A
+calibration or tuning pass that silently falls back to an ambient or board-level
+proxy will choose operating points against the wrong temperature, and will do so
+without erroring.
 
 ### Practical bring-up rules
 
@@ -440,8 +451,8 @@ The flowchart combines this guide's bring-up sequence with the hardware fail-saf
 
 ### Dummy-job use is not optional in stacked systems
 
-The software guide and calibration material both treat dummy jobs as part of
-power balancing, not merely a debug trick. In practice, dummy jobs help:
+Vendor guidance treats dummy jobs as part of power balancing, not merely a debug
+aid. In practice, dummy jobs help:
 
 - keep engines drawing current
 - maintain stack balance during ramp-up
@@ -454,79 +465,32 @@ power balancing, not merely a debug trick. In practice, dummy jobs help:
 
 Job path: the host programs a job, 236 engine positions (4 engines each) execute it, results are aggregated, and the TDM stage returns them to the host. TDM is drawn as a single stage; the frame and slot layout are in the [UART and TDM Protocol Reference](blockscale-uart-protocol-reference.md). The number of ASICs per hashboard depends on the board design.
 
+The programming contract lives in the protocol reference:
 
-### Enhanced mode
+- [Enhanced-Mode Job Programming](blockscale-uart-protocol-reference.md#enhanced-mode-job-programming): register
+  setup, the four-write sequence, and why only the fourth write may launch work
+- [Job Control Semantics](blockscale-uart-protocol-reference.md#job-control-semantics): the `JobControl` values, and
+  the cancel path that recovers from invalid or stale engine state
+- [Partial, Incomplete, And Invalid Programming](blockscale-uart-protocol-reference.md#partial-incomplete-and-invalid-programming):
+  what malformed sequences do. The ASIC does not sanitize them.
 
-Enhanced mode is the default engine programming mode. The documented sequence
-for a valid four-lane engine-tile submission is:
-
-1. enable TCE clocks
-2. program nonce bounds and target
-3. load the four midstates
-4. program four write-job sequences
-5. only the fourth write enables execution
-
-The four logical writes share:
-
-- merkle root residue
-- start timestamp
-
-They differ by:
-
-- midstate
-- sequence ID
-
-### Job control behavior
-
-The documented `JobControl` modes matter operationally:
-
-- `0x1`: mark pending job ready
-- `0x2`: cancel current and pending job, return to idle
-- `0x3`: abort current job and immediately launch pending job
-
-That cancel path is essential for recovery from invalid or stale engine state.
-
-### Partial and invalid programming
-
-The hardware documents are explicit about failure behavior:
-
-- partial programming can consume bytes from a following write and create
-  unintended nonces
-- launching before the fourth write can cause incomplete jobs to execute
-- disabled TCE lanes still require software to maintain correct sequencing
-- unused TCE lanes should be flushed with zeroed dummy content
-
-Do not assume the ASIC silently sanitizes malformed software behavior.
 
 ## Telemetry And Protection
 
 ### Temperature sensing
 
-The ASIC exposes a digital temperature sensor. The developer guide and legacy
-software both use the same conversion family:
-
-```text
-T = K + Y * (N - 2^11 / 2^R) / 2^12
-```
-
-Where:
-
-- `T` = temperature in Celsius
-- `N` = raw thermal tune code
-- `R` = sensor resolution, typically `12`
-- `Y = 631.8`
-- `K = -293.8`
-
-At default 12-bit resolution, a raw code near `2084` maps to approximately
-`27.6 C`.
+The ASIC exposes a digital temperature sensor, read through the `DTS_VS` packet. The conversion from raw code to
+Celsius, with a worked example, is in the protocol reference under
+[Sensor Conversion Equations](blockscale-uart-protocol-reference.md#sensor-conversion-equations).
 
 ### Temperature thresholds
 
 Three different temperatures appear in the vendor material and they are not the same quantity. Keep them apart.
 
-1. **Junction temperature**, a datasheet figure: `0 - 85 C` operating range (typical `70 C`), `115 C` absolute maximum. The
-   characterisation data adds that hash throughput falls off above `85 C` and recommends keeping the ASICs between `55`
-   and `85 C`. This is a rating of the silicon, not a reading the software takes.
+1. **Junction temperature**, a rating of the silicon: the operating range and absolute maximum are in the
+   [Electrical Quick Reference](#electrical-quick-reference-per-asic). Vendor characterisation data adds that hash
+   throughput falls off above `85 C`, and recommends keeping the junction between `55` and `85 C`. This is a rating,
+   not a reading the software takes.
 2. **The on-die sensor reading** (the thermal tune code above, converted to Celsius). This is what the host and the trip
    logic see. **No public or vendor source gives the offset between the sensor reading and the junction
    temperature**, so a junction rating must not be applied to a sensor reading as if they were one number.
@@ -541,33 +505,26 @@ The vendor software specification states staged thresholds on the sensor reading
 | high performance 2 | `95 C` | `105 C` | `115 C` |
 
 The same specification marks a working temperature of under `85 C` and says the thresholds were still to be finalized. The
-legacy daemon's own compiled defaults differ below the highest strategy: a warning at `105 C`, a software shutdown at
+stock daemon's own compiled defaults differ below the highest strategy: a warning at `105 C`, a software shutdown at
 `110 C` (acted on only after the reading stays at or above it for more than ten consecutive polls) and a chip trip of
 `115 C`, with the trip adjustable up to `125 C`. Both agree on `115 C` for the chip trip, and a capture of the stock
 firmware at power-on shows it programming `115 C`. Which table a given daemon build applies is not determined by these
 sources.
 
-Observed on the stock firmware at its highest strategy: the hottest die printed `104 - 106 C` for about nineteen
-minutes without a shutdown (see [RDS reference measurements](rds-measured-reference.md#heat-by-board)). No damage
-rating on the sensor reading is available.
+On an RDS at the stock firmware's highest strategy, the hottest sensor reading stayed above that strategy's software
+shutdown level for many minutes without a shutdown; the readings are in
+[RDS reference measurements](rds-measured-reference.md#heat-by-board). No damage rating on the sensor reading is
+available.
 
 Open questions in this section: the sensor-to-junction offset, which threshold table the stock daemon applies per
 strategy, and damage or wear data on the sensor reading.
 
 ### Voltage sensing
 
-The voltage conversion used by the vendor guide and legacy implementation is:
-
-```text
-V = 1000 * (2 / 5) * VREF * (6 * N / 2^14 - 3 / 2^R - 1)
-```
-
-Where:
-
-- `V` = uncalibrated voltage in mV
-- `N` = raw sensor code
-- `R` = voltage-sensor resolution
-- `VREF = 0.7067`
+The three voltage channels and what each one means electrically are under
+[Voltage sensor channels](#voltage-sensor-channels). The conversion from raw code to millivolts is in
+[Sensor Conversion Equations](blockscale-uart-protocol-reference.md#sensor-conversion-equations); it gives an
+uncalibrated voltage, so allow for the sensor's accuracy when setting a bound.
 
 ### Protection behavior
 

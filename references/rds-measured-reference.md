@@ -39,6 +39,10 @@ Eleven clean holds, each about an hour at the stock firmware's own operating poi
 | tune-b2 | 2 | `bonanza.MJ-TUNE-02.v17550b2.20261030T011051Z` |
 | board-step-1 | 0 | `bonanza.MJ-TUNE-03.p0.20261028T231202Z` |
 | board-step-2 | 0 | `bonanza.MJ-TUNE-03.p1.20261029T043249Z` |
+| repeat-1 | 2 | `bonanza.MJ-TUNE-02.v17550r2.20261030T112640Z` |
+| repeat-2 | 2 | `bonanza.MJ-TUNE-02.v17550r2.20261030T160549Z` |
+| repeat-3 | 2 | `bonanza.MJ-TUNE-02.v17550r2.20261030T174010Z` |
+| repeat-4 | 2 | `bonanza.MJ-TUNE-02.v17550s2.20261030T195256Z` |
 
 ## Board identity
 
@@ -450,3 +454,38 @@ The calibration guidance that follows from these observations is in the Integrat
 [Start-frequency calibration](blockscale-asic-integration-guide.md#start-frequency-calibration).
 
 Not yet established: whether a high-error ASIC improves at a lower clock.
+
+### Error ratio across repeats on one board
+
+`[BZM2-CAL-004]` `[BZM2-CAL-005]`
+
+The table above pools every ASIC of a board into one number. These runs show how far that number can be trusted as a
+measurement: four repeats of one start-frequency search on board 2 (*repeat-1* to *repeat-3* with one configuration,
+*repeat-4* with its successor), from the same start as above (every ASIC at `800 MHz`, `17,550 mV`). The search's upper
+error edge in these runs is `2.671 %`. The interval is the pooled figure's 95 % Wilson interval. An ASIC is individually
+over the edge when the lower bound of its own first dwell is above the edge.
+
+| run | board ratio (pooled) | interval | ASICs in the pool | ASICs individually over the edge | what the pooled rule decided |
+|---|---|---|---|---|---|
+| `bonanza.MJ-TUNE-02.v17550r2.20261030T112640Z` | 2.248 % | 2.144 to 2.357 % | 98 | 14 | under the edge: measured, climb ran |
+| `bonanza.MJ-TUNE-02.v17550r2.20261030T160549Z` | 2.870 % | 2.752 to 2.994 % | 97 | 12 | lower bound over the edge: board stopped, no ASIC raised |
+| `bonanza.MJ-TUNE-02.v17550r2.20261030T174010Z` | 2.342 % | 2.236 to 2.453 % | 99 | 15 to 18 (two counts in one record differ; not traced) | under the edge: measured, climb ran |
+| `bonanza.MJ-TUNE-02.v17550s2.20261030T195256Z` | 2.0546 % | 1.9555 to 2.1585 % | 99 | 14 | under the edge: measured, climb ran |
+
+Board 2 read lower in *tune-b2*, 1.1049 % in the table above. The two configurations are not compared here and the
+difference is not explained.
+
+- **The pooled figure repeats badly, and the edge sat between two repeats.** *repeat-1* read 2.248 % and *repeat-2*
+  2.870 %, a ratio of 1.28 with disjoint intervals, and `2.671 %` lay between them. One repeat flipped the board from
+  measured to stopped. *repeat-3* and *repeat-4* read 2.342 % and 2.0546 %.
+- **A few ASICs carry the pool, and they are the same ASICs.** About an eighth of the board was over the edge in every
+  run (12 to 18 of 97 to 99), and the board stop in *repeat-2* was decided by those 12. The per-ASIC ranking agrees
+  from run to run (Spearman 0.83 to 0.88 between *repeat-1*, *repeat-2* and *repeat-3*), and ASIC 87 read over 10 % in
+  all three. The median ASIC read 1.518 %, 1.316 % and 1.318 % in those three runs, far under the edge each time.
+- **The median-ASIC rule against the pooled rule.** Judging each ASIC on its own first dwell and stopping the board
+  only when more than half of its ASICs are individually over the edge reproduces the pooled rule's call for
+  *repeat-1* (measured) and disagrees with it for *repeat-2* (the pooled rule stopped the board; the median rule
+  measures it). *repeat-4* ran under the median rule, which measured the board with 14 of 99 over the edge.
+
+The calibration guidance that follows from these runs is in the Integration Guide,
+[How far a pooled error ratio can be trusted](blockscale-asic-integration-guide.md#how-far-a-pooled-error-ratio-can-be-trusted).

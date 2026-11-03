@@ -140,6 +140,23 @@ Use broadcast when you need:
 - coarse frequency ramps
 - fast deployment of common work or dummy work
 
+#### A broadcast read is answered by every device, under its own ID
+
+`[BZM2-UART-001]`
+
+`0xFF` addresses the request; it does not appear in any reply. A broadcast register read is answered by the devices on
+the chain one by one, and each answer carries that device's own `ASIC_ID` in the ID field, not `0xFF`. On a 100-device
+RDS chain, one broadcast register read drew 99 replies in the capture, each under a distinct ID and none under `0xFF`
+(MJ-OBS-01, run `20260921T144604Z`).
+
+The opposite assumption fails silently. A host that broadcasts a read and waits for a reply whose ID equals `0xFF`
+times out while the chain is answering correctly, with no error and no malformed frame to show the request was wrong.
+Because the ID that arrives first varies with timing, the failure can look like line noise. For a host:
+
+- match a broadcast reply on any responder ID (the opcode still has to match), not on the broadcast ID
+- expect up to N replies to one broadcast read on an N-device chain, and drain them before the next request, or they
+  arrive as unsolicited traffic inside the next transaction
+
 ### Multicast
 
 Use multicast when you need:
@@ -623,6 +640,29 @@ is not documented.
 
 The frame length matters because it bounds result and telemetry latency across a
 long chain.
+
+#### Measured cycle on a 100-device chain
+
+`[BZM2-UART-002]`
+
+The `2.56 ms` arithmetic counts slot bit times only. With the thermal and voltage stream at the fastest gap setting
+used, one RDS chain of 100 devices at `5 Mbaud` delivered a strict round robin, one frame per device per cycle in
+ascending ID order, of fixed 10-byte frames (MJ-OBS-01, run `20260921T145704Z`, 542,900 frames over 27.78 s):
+
+| quantity | measured |
+|---|---|
+| frame rate | 19,543 frames/s |
+| full cycle over 100 devices | `5.117 ms` |
+| slot period (cycle / 100) | `51.17 us` |
+
+- **Budget latency against the measured cycle, about twice the arithmetic figure.** This is the fastest cycle observed;
+  every other gap setting tried was slower.
+- **The gap setting does not scale the rate in proportion.** In the same sweep a setting of 100 gave about 1,000
+  frames/s and a setting of 2000 about 2,260 frames/s (runs `20260921T150701Z` and `20260921T151652Z`): a hundredfold
+  change bought about nineteenfold, and the rate was not monotonic in the setting.
+
+Not established: how the slot period divides between transmission and idle time, whether `5.117 ms` is the TDM frame
+period itself or a floor the gap setting imposes, and what happens to the cycle when a device is absent.
 
 ## Result Aggregation Model
 

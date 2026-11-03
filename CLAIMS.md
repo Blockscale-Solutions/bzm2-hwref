@@ -31,6 +31,8 @@ that evidence is:
 | `BZM2-ENG-004` | Both nonce window endpoints must be even. | `vendor-stated` |
 | `BZM2-ENG-005` | Each addressable position contains **4 engines**, for 944 engines per ASIC. | `vendor-stated` |
 | `BZM2-THM-001` | The BZM2's operating junction temperature range is 50 C to 85 C, with a 115 C absolute maximum. | `vendor-stated` |
+| `BZM2-UART-001` | A broadcast register read is answered by each device under its own `ASIC_ID`, never under `0xFF`: on a 100-device RDS chain one broadcast read drew 99 replies, each under a distinct ID (MJ-OBS-01, run `20260921T144604Z`). | `measured` |
+| `BZM2-UART-002` | With the sensor stream at the fastest gap setting used, a 100-device RDS chain at 5 Mbaud cycled in strict ascending round robin at 19,543 frames/s: 5.117 ms per cycle, 51.17 us per slot; gap settings of 100 and 2000 gave about 1,000 and 2,260 frames/s (MJ-OBS-01, runs `20260921T145704Z`, `20260921T150701Z`, `20260921T151652Z`). | `measured` |
 | `BZM2-VS-001` | On a healthy part, `ch2` (midpoint error) is near zero at light load and grows with load current as an IR drop across the internal midpoint path; a `ch2` bound must scale with current. It is not `ch1 − ch0`; the per-ASIC span is `ch0 + ch2 + ch1`. | `our-inference` |
 | `BZM2-PLL-001` | A live PLL move that changes the feedback divider alone re-locks: 753 of 753 sets read back locked (MJ-TUNE-02, run `bonanza.MJ-TUNE-02.v17550b0.20261029T071354Z`). | `measured` |
 | `BZM2-PLL-002` | While PLL sets run on a chain whose only dispatch path they hold, every ASIC on that chain returns result frames with the nonce-valid bit clear; they stop about 40 s after the last set; chains with no sets return about none (same run). | `measured` |

@@ -224,7 +224,7 @@ before committing limits.
 | Efficiency | best at a low clock, worsening as the clock rises | A public sweep puts the best efficiency near `0.60-0.75 GHz` and the worst at the maximum tuned point. Chasing best efficiency costs hashrate, and a single efficiency number is meaningless without the clock it was measured at and the basis it was counted on ([What a J/TH figure counts](#what-a-jth-figure-counts)) |
 | Reference clock | up to `50 MHz` on `REFCLKIN` | `50 MHz` is the standard choice |
 | UART baud | see [Baud and signaling](blockscale-uart-protocol-reference.md#baud-and-signaling) | |
-| Junction temperature | `50 - 85 C` operating, `115 C` abs max `[BZM2-THM-001]` | a rating of the silicon, not the on-die sensor reading (see [Temperature thresholds](#temperature-thresholds)); plan top-side thermal extraction |
+| Junction temperature | `50 - 85 C` or `55 - 85 C` operating (the sources disagree: `50 C` in one place, `55 C` in another), `115 C` abs max `[BZM2-THM-001]` | a rating of the silicon, not the on-die sensor reading (see [Temperature thresholds](#temperature-thresholds)); plan top-side thermal extraction |
 
 PDN guidance that follows directly from those numbers:
 
@@ -653,26 +653,36 @@ throughput formula predicts (see
 ### Hashes per clock
 
 The throughput estimate's `236 * 4 * PLL_Frequency / 3` says that an addressable position completes **four header hashes
-every three PLL clocks**, both SHA-256 passes counted. `[BZM2-HASH-002]` The vendor gives the same product for the
-whole part, `236 * 4 / 3`, about `314.67` hashes per PLL clock. `[BZM2-HASH-006]`
+every three PLL clocks**, both SHA-256 passes counted. `[BZM2-HASH-002]` The vendor's theoretical maximum for the
+whole part, `314.66` per clock, is the same product, `236 * 4 / 3` (`314.666...`), cut to two decimals.
+`[BZM2-HASH-006]`
 
 How a position gets there:
 
 - **One candidate per engine cycle.** Each engine is a fully unrolled pipeline: all 128 rounds of the two compressions
-  in [What an engine hashes](#what-an-engine-hashes) exist as separate hardware stages, so a new nonce enters every
-  cycle and, once the pipeline is full, one finished double hash leaves every cycle. In the second block's compression,
-  the message words used before the nonce's own word arrives (merkle residue, time, `nBits`) hold still while the
+  in [What an engine hashes](#what-an-engine-hashes) exist as separate hardware stages, and the nonce steps by one
+  every cycle, so once the pipeline is full one finished double hash leaves every cycle. In the second block's
+  compression, the message words used before the nonce's own word arrives (merkle residue, time, `nBits`) hold still while the
   nonce counts, so the engine works those opening rounds once per job instead of once per candidate. `[BZM2-HASH-006]`
-- **One engine cycle is three PLL clocks.** The PLL's output is not the engine's working clock. Each engine builds its
-  own three-phase clocking from it, and one pipeline step takes a full turn of the three phases. An engine therefore
-  steps at a third of the PLL frequency. `[BZM2-HASH-006]`
-- **Four engines per position, one per job slot.** The four engines of a position share one message scheduler for the
-  header's second block and each has its own digest path and its own second-pass scheduler. Job slot `k` (sequence
-  ID `k`) runs on engine `k`, and each engine walks the whole window from `StartNonce` to `EndNonce` on its own; the
-  four do not split the window between them. `[BZM2-ENG-005]` `[BZM2-HASH-007]` The sharing follows from the header
-  layout: the four midstates differ only in the version field, which lies in the first 64 bytes, so the second block
-  (merkle residue, time, `nBits`, nonce) is the same for all four at every step, while the second pass hashes each
-  engine's own first-pass digest.
+- **The engine clock runs at a fraction of its source.** What the vendor states: the engines are clocked at one third
+  and one sixth of a source clock, and the clocking is drawn as three non-overlapping phases made from a clock at
+  twice the rate, each phase coming round once in three cycles of that clock. `[BZM2-HASH-006]`
+- **One engine cycle is three PLL clocks: our inference.** `[BZM2-HASH-009]` No passage says in words which clock is
+  divided or that one engine cycle spans three PLL clocks. We take it from three things that fit together: a stated
+  rate of `314.66` per clock is `236 * 4 / 3`, which with one nonce per engine cycle and four engines per position
+  requires three clocks per cycle; the clocking above repeats every three source cycles; and the measured result rate
+  follows the frequency read back from the PLL (below). Not settled by the vendor material: which clock the
+  three-phase figure starts from, and where the phases are made. The figure makes them locally from a distributed
+  clock, while the enhanced-mode text says a central scheme replaced per-engine clock generators.
+- **Four engines per position, one per job slot.** The four engines of a position share one message scheduler, the
+  one for the first compression after the midstate, and each engine has one scheduler of its own. Job slot `k`
+  (sequence ID `k`) runs on engine `k`, and each engine walks the whole window from `StartNonce` to `EndNonce` on its
+  own; the four do not split the window between them. `[BZM2-ENG-005]` `[BZM2-HASH-007]`
+- **Which block each scheduler serves: our inference.** `[BZM2-HASH-010]` The shared one serves the header's second
+  block and each engine's own one the second pass. The inputs the vendor lists for that first compression are the
+  merkle residue, time, `nBits` and nonce, which is the second block; the four midstates differ only in the version
+  field, which lies in the first 64 bytes, so that block is the same for all four at every step, while the second
+  pass hashes each engine's own first-pass digest and cannot be shared.
 
 So a position does four engines x one hash per three PLL clocks, which is the `4 / 3`. Worked on a round, synthetic
 clock: at `1.2 GHz` an engine steps at `400 MHz`, and one engine takes `2^32 / 400e6`, about `10.7 s`, to walk a full
@@ -690,8 +700,9 @@ What is established, and on what basis:
   of one another, each within two standard deviations of their mean on counting statistics (run *tune-b0-2*, see
   [RDS reference measurements](rds-measured-reference.md#result-rate-against-the-hashes-per-clock-model)).
   `[BZM2-HASH-008]` That is what four equal engines, one per slot, would show.
-- **The per-engine structure is vendor-stated.** The unrolled pipeline, the three-phase engine clock and the
-  one-engine-per-slot mapping come from the vendor's documentation, not from a measurement here. A result count tests
+- **The per-engine structure comes from the vendor, partly by inference.** The unrolled pipeline, the third-rate
+  engine clocks and the one-engine-per-slot mapping are stated in the vendor's documentation; that one engine cycle is
+  three PLL clocks is our inference from them `[BZM2-HASH-009]`. None of it is a measurement here. A result count tests
   the product and the per-slot share; it cannot tell four engines at a third of the clock from one engine at four
   thirds working the slots in turn. No measurement in this reference separates the two.
 
@@ -781,19 +792,24 @@ A trip involves three parties. Each acts on its own signal and has its own clear
 
 | party | what it acts on | what it does | what clears it |
 | --- | --- | --- | --- |
-| the ASIC | its own sensor reading against the trip level the host programmed ([Temperature thresholds](#temperature-thresholds)), over a run of consecutive conversions | latches a trip status, reports it in its thermal and voltage stream, drives the chain's trip line, and is specified to halve its engine clock | only the host: turning the thermal sensor off, or resetting the sensor's conversion state machine (a power cycle also returns it to clear). Cooling does not |
+| the ASIC | its own sensor reading against the trip level the host programmed ([Temperature thresholds](#temperature-thresholds)), over a run of consecutive conversions | latches a trip status, reports it in its thermal and voltage stream, drives the chain's trip line, and is specified to halve its engine clock | only the host: turning the thermal sensor off, or resetting the sensor's conversion state machine (a power cycle also returns it to clear). Cooling does not, on our reading of the stated clears (below) |
 | the board's protection | the chain's trip line, wired to it | whatever the board is built to do: gate the core-rail enable, latch a fault, cut power | the board's own design |
 | the host | the trip bit in the sensor stream, its own limits on the sensor readings, and the board's fault status | stops work, and powers the board down if the condition persists | the host's policy |
 
-**The ASIC's trip is a latch with a debounce, not a comparator with hysteresis.** `[BZM2-THM-004]` The sensor
-block re-measures the die continuously, each measurement a successive-approximation search taking a few
-milliseconds. Every result is compared with the trip level in the tune-code register, and a counter keeps the number
-of consecutive results above it. One result at or below the level returns that counter to zero, and so does turning
-the sensor off. Only when the counter reaches the threshold count the host programmed does the trip status (local
-register `0x31`, bit 0, and the stream's trip bit) go to 1. From then on the status stays at 1 however far the
-reading falls. Two writes clear it: bit 0 of the tune-code register (`0x30`) to 0, which also disarms the sensor, or
-1 to bit 0 of the sensor state-reset register (`0x35`). The register resets to 0, so a power cycle clears it too. The
-consecutive-count is the only filter; there is no hysteresis band. Clearing by disarming leaves the part unprotected,
+**What the vendor states about the ASIC's trip.** `[BZM2-THM-004]` The sensor block re-measures the die
+continuously, each measurement a successive-approximation search taking a few milliseconds. Every result is compared
+with the trip level in the tune-code register. The trip status (local register `0x31`, bit 0, and the stream's trip
+bit) is set when the result exceeds that level. A counter rises by one for each result above the level, and goes back
+to zero on a result below it or when the sensor is turned off; a threshold count the host programs is used to
+generate the trip. Two writes clear the status: bit 0 of the tune-code register (`0x30`) to 0, which also disarms the
+sensor, or 1 to bit 0 of the sensor state-reset register (`0x35`). The register resets to 0, so a power cycle clears it
+too.
+
+**Our reading: a latch with a debounce, not a comparator with hysteresis.** `[BZM2-THM-009]` This is inferred, not
+stated. The clears listed are both host actions and a falling reading is not among them, so we take the status to stay
+at 1 however far the reading falls. The threshold count is described only as feeding the trip, so we take a trip to
+need that many consecutive results above the level. No hysteresis band is described anywhere, so the count is the only
+filter. What a result exactly at the level does to the count is not stated. Clearing by disarming leaves the part unprotected,
 so a host that clears a trip this way must re-arm and confirm by readback
 ([Arm the on-die protection](#arm-the-on-die-protection-before-raising-the-stack-and-confirm-it-took)).
 

@@ -153,7 +153,7 @@ Enumeration rule:
 ### A single device and the default ID
 
 `[BZM2-UART-004]` `[BZM2-UART-005]` `[BZM2-UART-006]` `[BZM2-UART-007]` `[BZM2-UART-008]` `[BZM2-UART-009]`
-`[BZM2-UART-010]`
+`[BZM2-UART-010]` `[BZM2-UART-011]`
 
 **Assign an ID on a one-device board, exactly as on a chain.** The device does not demand it: `0xFA` is only the
 reset value of its ID register, and a lone device left there is addressed at `0xFA` and answers at `0xFA`. The reasons
@@ -165,9 +165,11 @@ How the device uses its ID:
 - **The ID register.** `ASIC_ID` is local register `0x0B`. Bits 7:0 hold the ID and read `0xFA` after reset. Any write
   to the register also sets bit 8, which lets the device pass host traffic on to the next device; nothing but a reset
   clears it (vendor-stated). On a one-device board there is no next device, so that bit has no effect.
-- **Without TDM.** The TDM enable is bit 0 of local register `0x07` and is clear after reset. While it is clear a
-  device sends nothing unprompted: it answers each `READREG`, `READRESULT` or `DTS_VS` addressed to its ID. The vendor
-  describes this mode as enough for a single device. Vendor-stated.
+- **Without TDM.** The TDM enable is bit 0 of local register `0x07` and is clear after reset. The vendor describes
+  TDM as unneeded for a setup of one device, and `READREG`, `READRESULT` and loopback work only while it is clear.
+  Vendor-stated. That a device then sends nothing unprompted, and only answers a `READREG`, `READRESULT`, `DTS_VS` or
+  `NOOP` addressed to its ID, is our inference: results are fetched with a read that exists only without TDM, and the
+  vendor's host routines for the reads wait for a reply, but no passage says the device stays silent otherwise.
 - **With TDM.** The same register holds the slot length in bit periods (bits 16:9) and the slot count (bits 8:1). The
   device counts bit periods into slots and slots into a frame, wrapping at the slot count, and transmits in the slot
   whose number equals its ID. The slot count is an 8-bit field (vendor-stated), so a frame has at most 255 slots.

@@ -466,7 +466,8 @@ ratio, less whatever the host dropped.
   arrived, so they could not be checked. No frame in the run had the nonce-valid bit clear, and none came from an
   unknown position.
 - **What the count cannot show.** It tests positions x `4 / 3` x clock as one product. The reason for the factor, four
-  engines per position each stepping once every three PLL clocks, is vendor-stated and set out in
+  engines per position each stepping once every three PLL clocks, rests on vendor statements and our inference from
+  them, set out in
   [Hashes per clock](blockscale-asic-integration-guide.md#hashes-per-clock); this run agrees with it but does not
   separate the four engines of a position.
 - **The four job slots return at one rate.** `[BZM2-HASH-008]` In run *tune-b0-2* (table under

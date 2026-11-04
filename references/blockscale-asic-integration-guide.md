@@ -346,14 +346,97 @@ Bring-up implications:
 
 - both PLLs are disabled by default
 - software must enable them explicitly
-- software must wait for lock before releasing dependent logic
+- software must wait for lock before releasing dependent logic. The part does the same internally: it keeps its
+  engine tiles in reset until their PLL reports lock. `[BZM2-PLL-008]`
 
-When both divider classes are changed, the documented programming rule is:
+### PLL registers
+
+`[BZM2-PLL-003]` Each PLL has its own group of five local registers. The two groups are laid out alike:
+
+| register | `PLL0` | `PLL1` | fields | after reset |
+| --- | --- | --- | --- | --- |
+| control | `0x0F` | `0x19` | bit 0 turns the VCO-rate output on; bits 2:1 the VCO band, shown read-only in the map; bit 3 lets bits 6:4 override the loop bandwidth | `0x36`: bandwidth setting 3, override off, band 3, VCO-rate output off |
+| `POSTDIV` | `0x10` | `0x1A` | bits 5:0 the reference divider (1 to 63); bits 8:6 the first and bits 11:9 the second post divider, three bits each; bit 12 switches the post-divided output on; bits 31:13 reserved, read 0 | each divider field 1, bit 12 clear: `0x241` |
+| `FBDIV` | `0x11` | `0x1B` | bits 11:0 the feedback divider, which the map limits to 16 to 320; bits 31:12 reserved | 16 |
+| enable | `0x12` | `0x1C` | bit 0 runs the PLL; bit 1 bypasses it; bit 2, read-only, is set while the PLL is locked | `0x0` |
+| misc | `0x13` | `0x1D` | trims of the loop's analogue circuits (charge-pump current and skew, hold voltage) and the controls of its offset calibration | trims at their defaults |
+
+Local register `0x0E`, bit 0, chooses what clocks the engines: 0, the reset value, takes the PLLs; 1 takes an external
+clock instead.
+
+**The enable register.** Bit 0 is the PLL's own run control; clear, the PLL is off. Bit 1 hands the PLL's output the
+reference itself instead of the synthesised clock, so a part in bypass runs its engines at the reference frequency.
+Bit 2 is the lock flag, which the host cannot write. A host writes `0x1` to start a PLL and should read back `0x5`
+(running and locked); `0x1` read back means running but not locked. `[BZM2-PLL-003]` `[BZM2-PLL-007]` The
+post-divided output also has its own switch, bit 12 of `POSTDIV`. With it clear the PLL can lock and still deliver no
+clock, since the block holds that output low, so every `POSTDIV` word a host writes should carry bit 12. `[BZM2-PLL-007]`
+
+**How the clock follows from the dividers.** `[BZM2-PLL-004]` The PLL multiplies the reference by the feedback divider
+and divides it by the reference divider and by both post dividers, each post divider counted as its field plus one:
+
+```text
+f_pll = f_ref * FBDIV / (REFDIV * (POST1 + 1) * (POST2 + 1))
+```
+
+The plus one is new in this part; the previous generation divided by the post-divider fields as written. On the PLL
+block, a post-divider field of n divides by n + 1, so the three-bit fields give 1 to 8 each and 1 to 64 together, with
+the first at least as large as the second. `[BZM2-PLL-007]`
+
+On an RDS the parts run on the word the stock bring-up leaves in `POSTDIV`, `0x1242`: output on, reference divider 2,
+both post dividers 1. With a `50 MHz` reference that is `50 * FBDIV / (2 * 2 * 2)`, so **one count of `FBDIV` is
+`6.25 MHz`**: 188 gives `1175 MHz`, 180 gives `1125 MHz`, 128 gives `800 MHz`. `[BZM2-PLL-005]` Over four MJ-TUNE-05
+runs every `POSTDIV` read returned `0x1242`, and in each of 4,411 live clock moves the feedback divider read back was
+the one written, over 148 to 208 (`925` to `1300 MHz`) (runs `bonanza.MJ-TUNE-05.l1b1.20261103T225014Z`,
+`bonanza.MJ-TUNE-05.l1b1.20261104T025737Z`, `bonanza.MJ-TUNE-05.l1b0.20261104T181916Z`,
+`bonanza.MJ-TUNE-05.l1b2.20261104T194826Z`). A readback shows only what the registers hold; that the engines then run at
+`FBDIV * 6.25 MHz` is checked on its own by the result rate, which matches the clock this formula gives
+`[BZM2-HASH-002]`.
+
+**Programming order.** `[BZM2-PLL-004]` A divider written to `FBDIV` does not reach the PLL until `POSTDIV` is next
+written. So:
 
 1. write `FBDIV`
-2. write `POSTDIV`
+2. write `POSTDIV`: its new value, or, when only the feedback divider changes, the value it already holds
 
-Do not reverse that order during live clock changes.
+Do not reverse that order during live clock changes. A host that writes `FBDIV` and stops has moved nothing, although
+reading `FBDIV` back shows the new number. `[BZM2-PLL-009]` The Mujina reference firmware moves a live clock as two
+writes, `FBDIV` then the held `POSTDIV`, and refuses a held word whose reserved bits are set, whose bit 12 is clear, or
+whose dividers lie outside their fields' stated limits.
+
+**Lock after a divider write.** `[BZM2-PLL-007]` The PLL block raises its lock output once 128 comparison cycles in a
+row pass with no cycle slip; the output frequency is within 2 % of its target after typically 250 and at most 500 of
+those cycles, and one cycle lasts the reference divider over the reference frequency. `[BZM2-PLL-009]` With reference
+divider 2 on `50 MHz` a cycle is `40 ns`, so lock should follow a divider write within about `10` to `20 us`, far less
+than one register read over the UART takes. `[BZM2-PLL-006]` On the RDS no read has caught a PLL unlocked after a
+move: in every one of 4,413 live moves the first enable read after the two writes already returned `0x5`, though that
+reply came as early as 5.6 ms (median 40 ms) after the last reply before the writes; and all 26,469 enable reads in
+those runs returned `0x5` (same four runs). Two further replies carried another register's value and were refused by
+the firmware as misattributed.
+
+**The documented range.** `[BZM2-PLL-008]` The vendor characterises the PLLs from about `800 MHz` to about
+`1.45 GHz`. Values outside that can be written but are not guaranteed. The vendor's own bring-up starts every PLL at
+`800 MHz`, waits for lock, and trims single parts later in `6.25 MHz` steps.
+
+**Where the documents disagree.** `[BZM2-PLL-007]` `[BZM2-PLL-009]` The PLL block's own specification puts its VCO at
+`1600` to `3200 MHz` in two bands (band 3 is `2400` to `3200 MHz`), accepts a feedback divider of 8 to 1066 (11
+excluded), and needs the divided reference to stay at or below a sixteenth of the VCO. The register map's limits (a
+feedback divider of 16 to 320, post dividers of 1 to 7) match the previous generation's PLL, whose post dividers count
+as written. Read at face value, the VCO runs at `f_ref * FBDIV / REFDIV`, which on `0x1242` is `25 MHz` per count of
+`FBDIV`: `3700` to `5200 MHz` over the measured 148 to 208, above the block's ceiling, yet the parts lock there and hash at the predicted rate at
+`1081` to `1300 MHz` `[BZM2-HASH-002]`.
+
+Not established:
+
+- where the VCO actually runs on the RDS's `0x1242` packing, and so which packing of the reference and post dividers
+  keeps it in band: the formula and the block's VCO limits cannot both describe these parts as the stock firmware
+  programs them;
+- which feedback-divider limits apply, the register map's 16 to 320 or the block's 8 to 1066, and whether a post-divider
+  field of 0 is usable;
+- whether the lock flag drops during a feedback-only move, and for how long: host reads are milliseconds apart, the
+  expected relock tens of microseconds;
+- whether the engines see a disturbed clock while the PLL relocks, and whether that is what produces the nonce-valid-clear
+  frames of [Live clock changes on a hashing chain](#live-clock-changes-on-a-hashing-chain);
+- what the control and misc trims change on these parts. Leave them at their reset values.
 
 ### Live clock changes on a hashing chain
 

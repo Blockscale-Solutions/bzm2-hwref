@@ -45,6 +45,10 @@ that evidence is:
 | `BZM2-PWR-002` | On a series stack one current flows through every level, so the rail's voltage times its current is the sum of every ASIC's core power plus the distribution loss; without a current measurement per level the per-ASIC core power is not readable from the rail. | `our-inference` |
 | `BZM2-PLL-001` | A live PLL move that changes the feedback divider alone re-locks: 753 of 753 sets read back locked (MJ-TUNE-02, run `bonanza.MJ-TUNE-02.v17550b0.20261029T071354Z`). | `measured` |
 | `BZM2-PLL-002` | While PLL sets run on a chain whose only dispatch path they hold, every ASIC on that chain returns result frames with the nonce-valid bit clear; they stop about 40 s after the last set; chains with no sets return about none (same run). | `measured` |
+| `BZM2-POOL-001` | The 80-byte block header splits across SHA-256's 64-byte blocks so that version, previous-block hash and the first 28 bytes of the merkle root fall in the first block, and the merkle root's last 4 bytes, ntime, nBits and nonce in the second. | `third-party` |
+| `BZM2-POOL-002` | Four writes per engine address, each with its own midstate (base version `0x20000000`, then `0x20004000`, `0x20008000`, `0x20010000`) and one shared merkle residue and ntime, residue, ntime and nBits sent with their header bytes reversed and midstate words least significant byte first, gave pool-accepted shares from every one of the four writes: 15, 14, 14 and 10 of the 53 accepted from one 100-device chain (MJ-TUNE-02, run `20261029T071354Z`). | `measured` |
+| `BZM2-POOL-003` | The pool used assigned a 4-byte `extranonce1`, an 8-byte `extranonce2` and the version-rolling mask `0x1fffe000` (MJ-TUNE-02, run `20261029T071354Z`). | `measured` |
+| `BZM2-POOL-004` | Each of those 53 accepted shares had exactly one result frame in its chain's receive record; nonce = byte-reverse(nonce field − `0x4c`), the sequence ID's low two bits named the write and its upper six bits the dispatch, and ntime = dispatched ntime + (60 − time field), with offsets of 0 to 22 s among the accepted shares (same run). | `measured` |
 | `BZM2-CAL-001` | At a uniform 800 MHz start the ASICs on one RDS board do not share one error rate: dispersion 7.9 to 11.1, median ASIC under 0.7 %, worst ASICs 4 to 7 % (MJ-TUNE-02 runs `20261029T135804Z`, `20261029T172540Z`, `20261030T011051Z`). | `measured` |
 | `BZM2-CAL-002` | The same RDS board at the same start gave about twice the error ratio on a later run (MJ-TUNE-02 runs `20261029T172540Z` and `20261030T035225Z`; `20261029T135804Z` and `20261030T021147Z`). | `measured` |
 | `BZM2-CAL-003` | The stock RDS firmware enables every PLL at 800 MHz, measures each board there, then moves the whole board up (RDS-CAL-03, run `20261009T174718Z`). | `measured` |
@@ -93,3 +97,6 @@ there - 236 positions x 4 **ASICs on a board**, not 236 positions x 4 engines on
 one ASIC. Citing it for the ASIC-internal x4 would be wrong by construction while
 every individual number looked right.
 
+`BZM2-POOL-001` resolves to public standards: the Bitcoin block header layout
+([developer reference](https://developer.bitcoin.org/reference/block_chain.html#block-headers))
+and SHA-256's 512-bit message blocks (FIPS 180-4, section 5.2).

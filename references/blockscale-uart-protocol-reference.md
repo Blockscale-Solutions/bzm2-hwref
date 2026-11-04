@@ -620,6 +620,114 @@ Key rule:
 If `JobControl` is asserted too early, the job can be launched in an incomplete
 state.
 
+### From a pool job to the four writes
+
+The four writes carry one Stratum v1 job, split along the SHA-256 block
+boundary of the 80-byte block header. The header is version (4 bytes),
+previous-block hash (32), merkle root (32), ntime (4), nBits (4) and nonce (4).
+SHA-256 consumes it in 64-byte blocks, so the first block holds the version, the
+previous-block hash and the first 28 bytes of the merkle root, and the second
+block holds the merkle root's last 4 bytes, ntime, nBits and the nonce.
+`[BZM2-POOL-001]` The host hashes the first block itself and sends the
+resulting state (the midstate); the engine finishes the second block for each
+nonce it tries. The **merkle residue** is the merkle root's last 4 bytes.
+
+Each Stratum field therefore lands in one place:
+
+| Stratum v1 source | Role | Where it reaches the ASIC |
+| --- | --- | --- |
+| `mining.subscribe` reply: `extranonce1` | Fixed for the connection; the pool's part of the coinbase | Inside the merkle root only: never sent |
+| `mining.subscribe` reply: `extranonce2_size` | Size of the host's own coinbase counter | Inside the merkle root only: never sent |
+| `mining.configure` (BIP 310): version-rolling mask | Which version bits the host may change | Through the four midstates |
+| `mining.set_difficulty` | Share target | Through the result threshold the host writes (below), and the host's own share check |
+| `mining.notify`: `job_id` | Names the job in the submit | Never sent; the host keeps it against the sequence ID |
+| `mining.notify`: `prevhash`, `coinb1`, `coinb2`, `merkle_branch` | Previous-block hash and the coinbase parts | First-block content: in the midstate |
+| `mining.notify`: `version` | Base version | First-block content: one midstate per version |
+| `mining.notify`: `nbits` | Network target encoding | Second block: written to `Target` (`0x44`) before the four writes |
+| `mining.notify`: `ntime` | Header time | Second block: the start timestamp in all four writes |
+| `mining.notify`: `clean_jobs` | Whether earlier jobs are dead | Host-side: decides which earlier sequence IDs a result may still be credited to |
+
+The previous-block hash arrives in Stratum's own order (each 4-byte word of the
+internal byte order reversed) and must be restored before hashing. Mining
+protocol sources: the Bitcoin
+[block header and merkle tree](https://developer.bitcoin.org/reference/block_chain.html)
+definitions,
+[BIP 310](https://github.com/bitcoin/bips/blob/master/bip-0310.mediawiki)
+(`mining.configure`, version-rolling extension),
+[BIP 320](https://github.com/bitcoin/bips/blob/master/bip-0320.mediawiki)
+(version bits 13 to 28 reserved for general-purpose use, mask `0x1fffe000`) and
+the public [Stratum v1 message definitions](https://braiins.com/stratum-v1/docs).
+
+#### What the host computes for one engine address
+
+This is the sequence the Mujina reference firmware runs on each dispatch,
+which has produced pool-accepted shares on an RDS:
+
+1. Pick an `extranonce2` value. Each engine address in a dispatch gets its own,
+   so each has its own merkle root; nonce windows separate everything that
+   shares one (see [Enhanced-Mode Job Programming](#enhanced-mode-job-programming)).
+2. Build the coinbase transaction as `coinb1 || extranonce1 || extranonce2 ||
+   coinb2`, double-SHA256 it, and fold the merkle branch over it
+   (`root = dSHA256(root || branch[i])`, in order) to get the merkle root.
+3. Make four versions: the base version with four different values in the
+   general-purpose bits the pool's mask allows.
+4. For each version, hash the header's first 64 bytes with SHA-256 and keep the
+   state: four midstates that differ only in the version.
+5. Write, broadcast to every ASIC at that engine address: a result threshold
+   derived from the share target (or from an easier floor the host sets, so
+   that results arrive often enough to measure), a time count, `Target` = nBits, then
+   `WriteJob_0` to `WriteJob_3`. Write *k* carries midstate *k*, the merkle
+   residue, ntime and sequence ID `(tag << 2) | k`; job control is `0x0` on the
+   first three and `0x3` on the fourth.
+
+The residue, ntime and nBits words are sent with their four header bytes in
+reverse order, and each 32-bit word of a midstate is sent least significant
+byte first. With that encoding, and the base version `0x20000000`, the four
+writes of each dispatch carried versions `0x20000000`, `0x20004000`,
+`0x20008000` and `0x20010000`, and the pool accepted shares from every one of
+the four writes (MJ-TUNE-02, run `20261029T071354Z`). `[BZM2-POOL-002]` The pool
+assigned a 4-byte `extranonce1`, an 8-byte `extranonce2` and the full BIP 320
+mask in the same run. `[BZM2-POOL-003]`
+
+Why the split falls where it does: the version is in the first block, so every
+version needs its own midstate, and the four writes are where the four
+versions go. ntime is in the second block, so the engine can advance it without
+a new midstate. The extranonce values never reach the chip; a new
+`extranonce2` is a new merkle root, a new residue and four new midstates.
+
+### From a result frame back to a share
+
+A result frame names the reporting ASIC and engine, and returns the sequence ID,
+a nonce field and a time field. The host turns it back into the header the
+pool will check:
+
+- the sequence ID's upper six bits name the dispatch, so the job, the
+  `extranonce2` and the merkle root it was built from; its low two bits name
+  the write, so the version;
+- ntime is the dispatched ntime plus (time count − time field);
+- the nonce is the nonce field less `0x4c`, byte-reversed.
+
+Each of the 53 pool-accepted shares from one 100-device chain had exactly one
+matching result frame in that chain's receive record, and each frame decoded
+this way to the nonce that was submitted; with a time count of 60, the
+accepted shares' ntime offsets ranged from 0 to 22 s (same run). `[BZM2-POOL-004]` The host
+then checks the rebuilt header's double SHA-256 against the share target and
+submits `job_id`, `extranonce2`, ntime, nonce and, when rolling is
+authorized, the version bits under the mask.
+
+#### Not established for the job path
+
+- What the engine does with the result threshold and `Target` beyond the
+  results observed: which comparison decides that a nonce is reported.
+- How an engine walks its nonce window and its time count (order, stride), and
+  whether the time field counts down in steps of one second of ntime in every
+  case. The rebuild rule above is the one that matched every accepted share
+  cited; it is not a statement about the silicon's internals.
+- Whether `0x1` on the fourth write behaves like `0x3` for this use. Only
+  `0x3` is used in the runs cited.
+- Whether the four writes may legally carry different residues or timestamps.
+  The cited runs always write the same values, as the table above requires.
+
 ## Job Control Semantics
 
 The documented values are:

@@ -28,6 +28,9 @@ Eleven clean holds, each about an hour at the stock firmware's own operating poi
 | high (high performance) | high-1: `r5-20261022T023030Z`, high-2: `r5-20261022T140005Z`, high-3: `r6-20261022T160430Z` |
 | hp2 (high performance 2) | hp2-1: `r7-20261022T210432Z`, hp2-2: `r7-20261023T035144Z`, hp2-3: `r7-20261026T015213Z`, hp2-4: `r8-20261026T042113Z` |
 
+One passive capture of the stock firmware's chain traffic while it mined, *stock-capture*:
+`bonanza.MJ-OBS-01.20260916T052158Z`.
+
 ### Mujina reference-firmware runs
 
 | label | board | run id |
@@ -46,6 +49,7 @@ Eleven clean holds, each about an hour at the stock firmware's own operating poi
 | record-b1 | 1 | `bonanza.MJ-TUNE-02.v17550r1.20261030T144115Z` |
 | tune-b0-later | 0 | `20261030T021147Z` |
 | tune-b1-later | 1 | `20261030T035225Z` |
+| cal-a0-2 | 0, 1, 2 | `bonanza.MJ-CAL-01.20261016T042220Z` |
 
 ### Stock-firmware wire capture
 
@@ -429,6 +433,73 @@ fan law's exponent, the control board's draw apart from the supply's fixed loss,
 current sensor, and the supply's DC output pairing.
 No stock run held a clock at a second voltage, so none of the above says what the overhead does at a clock off the four
 stock maps.
+
+## Result rate and nonce windows
+
+What the chips returned, set against the hashing model in the Integration Guide
+([What an engine hashes](blockscale-asic-integration-guide.md#what-an-engine-hashes),
+[Hashes per clock](blockscale-asic-integration-guide.md#hashes-per-clock)) and the window rules in the protocol
+reference ([Nonce windows across ASICs, tiles and lanes](blockscale-uart-protocol-reference.md#nonce-windows-across-asics-tiles-and-lanes)).
+
+### Result rate against the hashes-per-clock model
+
+`[BZM2-HASH-001]` `[BZM2-HASH-002]`
+
+Run *cal-a0-2*, under the Mujina reference firmware: all three boards hashing, each PLL at the clock the stock
+firmware's stored calibration had set (`1,081` to `1,300 MHz`), read back from the PLL. `ZerosToFind` was `4`, a
+threshold of 36 leading zero bits. The count is over 37 windows of 60 s.
+
+For each board, the expected count is active positions x `4 / 3` x clock x time / `2^36`, summed over the board's
+PLLs. A valid result is one whose header, rebuilt from the job and the result frame, hashes to at least the threshold.
+If the model is right, valid results over expected results should sit at `1 - e`, where `e` is the board's own error
+ratio, less whatever the host dropped.
+
+| board | valid over expected, less (1 - e) | results dropped, share of expected | after counting the dropped results |
+|---|---|---|---|
+| 0 | -1.062 % | 1.061 % | -0.077 % |
+| 1 | -1.060 % | 1.116 % | -0.002 % |
+| 2 | -0.818 % | 0.824 % | -0.034 % |
+
+- **The model holds to within `0.08 %`.** Every board's residual, once the dropped results are counted at the board's
+  valid share, is inside the run's counting band of about `0.27 %` (three standard deviations).
+- **The dropped results are the whole shortfall.** They are results whose job the host no longer held when they
+  arrived, so they could not be checked. No frame in the run had the nonce-valid bit clear, and none came from an
+  unknown position.
+- **What the count cannot show.** It tests positions x `4 / 3` x clock as one product. It does not separate the four
+  engines of a position, and it says nothing of why an engine takes three clocks per hash.
+
+### Nonce windows and job slots
+
+`[BZM2-HASH-003]`
+
+Run *tune-b0-2*: each ASIC was given one hundredth of the 32-bit counter space as its window, the same window on every
+position of the ASIC, written unicast. The result frames of all three chains were decoded from the wire capture, with
+the frame's nonce less `0x4c` read as the counter.
+
+- **Results stay in their ASIC's window.** Of `1,923,193` frames flagged valid, `1,922,730` carried a counter inside
+  their own ASIC's window: all but `0.024 %`. Read as header nonces (the counter byte-reversed), the same results
+  spread over the whole 32-bit space, so the window bounds the counter.
+- **The four job slots share the whole window.** Each slot's results fell in all four quarters of the window:
+
+| job slot | 1st quarter | 2nd quarter | 3rd quarter | 4th quarter |
+|---|---|---|---|---|
+| 0 | 123,882 | 121,818 | 119,011 | 116,048 |
+| 1 | 123,662 | 121,419 | 118,288 | 115,988 |
+| 2 | 124,450 | 121,450 | 118,835 | 116,422 |
+| 3 | 124,227 | 121,699 | 119,099 | 116,432 |
+
+- **Odd and even counters alike.** Within each slot the odd and even counts differ by under `0.3 %`, although both
+  window endpoints are even.
+- **Not explained:** the counts fall by about 6 % from the first quarter to the last, the same in every slot. The walk
+  order inside a window was not measured.
+
+### Identical work from different ASICs
+
+`[BZM2-HASH-004]`
+
+In *stock-capture*, `119,597` result frames flagged valid made `42,648` distinct results (counter, sequence ID and
+reported time). `7,800` of those were reported by more than one ASIC. The stock firmware's work reached several ASICs
+unchanged, and each returned the same nonces for it: neither the chip ID nor the position alters the search.
 
 ## Live clock changes on a hashing chain
 

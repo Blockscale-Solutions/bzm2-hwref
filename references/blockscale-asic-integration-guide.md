@@ -76,7 +76,8 @@ Throughput (GH/s) = 236 * 4 * PLL_Frequency / 3 * Pass_Rate
 Where:
 
 - `PLL_Frequency` is in GHz
-- `Pass_Rate` is `0.0` to `1.0`
+- `Pass_Rate` is `0.0` to `1.0`: the fraction of the hashes that come back as valid results (see
+  [Pass rate](#pass-rate))
 
 Example:
 
@@ -87,6 +88,9 @@ Example:
 The example is arithmetic on the formula, not a measured rate. The formula is
 useful for sizing cooling, PSU headroom, calibration targets, and per-domain
 operating points.
+
+Where the factor `4 / 3` comes from, and what of it is measured, is in
+[Hashes per clock](#hashes-per-clock).
 
 ## Recommended System Partitioning
 
@@ -531,6 +535,57 @@ The programming contract lives in the protocol reference:
 - [Partial, Incomplete, And Invalid Programming](blockscale-uart-protocol-reference.md#partial-incomplete-and-invalid-programming):
   what malformed sequences do. The ASIC does not sanitize them.
 
+### What an engine hashes
+
+An engine searches for a Bitcoin block header whose double SHA-256 meets a threshold. It receives the first 64 bytes of
+the header already compressed, as a midstate, and hashes the rest. `[BZM2-HASH-001]`
+
+SHA-256 pads its input to whole 64-byte blocks and compresses them one at a time, 64 rounds per block, carrying a
+32-byte state from each block to the next ([FIPS 180-4](https://csrc.nist.gov/pubs/fips/180-4/upd1/final)). The
+proof-of-work hash is SHA-256 applied twice: to the 80-byte header, then to the 32-byte digest. The header spans two
+blocks; how it splits at the 64-byte boundary, and which job field or register carries each part, is in the protocol
+reference, [From a pool job to the four writes](blockscale-uart-protocol-reference.md#from-a-pool-job-to-the-four-writes).
+
+**The midstate is the SHA-256 state after the first block.** Nothing in the first block changes while an engine walks
+the nonce and the time, so the host compresses it once and sends the 32-byte state in place of the 64 bytes. For each
+candidate nonce the engine then:
+
+1. compresses the second block, starting from the midstate;
+2. hashes the 32-byte digest again, a single block from the standard initial state;
+3. compares the result with the reporting threshold (see
+   [Result threshold and the target register](blockscale-uart-protocol-reference.md#result-threshold-and-the-target-register)).
+
+That is two compressions, 128 rounds, per candidate. Without the midstate it would be three. The nonce comes from the
+engine's window (see
+[Nonce windows across ASICs, tiles and lanes](blockscale-uart-protocol-reference.md#nonce-windows-across-asics-tiles-and-lanes)),
+and the engine steps the time within a count the host sets.
+
+A job carries **four midstates**, one per job slot. They share the merkle root and the time and differ in the version
+field, so they stand for four different headers. A result's sequence ID says which of the four it was found under.
+
+The model is measured: results rebuilt on it from the job and the result frame meet their threshold at the rate the
+throughput formula predicts (see
+[RDS reference measurements](rds-measured-reference.md#result-rate-against-the-hashes-per-clock-model)).
+
+### Hashes per clock
+
+The throughput estimate's `236 * 4 * PLL_Frequency / 3` says that an addressable position completes **four header hashes
+every three PLL clocks**, both SHA-256 passes counted. `[BZM2-HASH-002]` At four engines per position
+`[BZM2-ENG-005]`, that is one hash per engine every three clocks.
+
+What is established, and on what basis:
+
+- **The rate is measured.** On three RDS boards, the results the chips returned matched positions x `4 / 3` x clock,
+  at the threshold in force, to within `0.08 %` once the results the host dropped were counted (see
+  [RDS reference measurements](rds-measured-reference.md#result-rate-against-the-hashes-per-clock-model)). A wrong
+  position count or a wrong factor would show as a result rate far from that.
+- **The split into four engines at a third of the clock each is not measured.** A result count tests the product. It
+  cannot tell four engines at one third of the clock from any other split of the same total; the four engines per
+  position are vendor-stated.
+- **Not established: why an engine takes three PLL clocks per hash**, that is, how the 128 rounds of one candidate map
+  onto the engine's clock cycles. Neither a public source nor a measurement in this reference settles it. Do not
+  derive anything from an assumed per-clock structure; use the measured product.
+
 
 ## Telemetry And Protection
 
@@ -665,6 +720,46 @@ numbers. The reusable sequence is:
 9. once the board-level operating region is found, fine-tune individual ASICs
    in smaller steps, for example `6.25 MHz`
 10. persist the resulting operating point for restart reuse
+
+### Pass rate
+
+The **pass rate** is the fraction of the hashes an engine group performs that come back as valid results. Measure it over
+a window as valid results divided by the results the hashes-per-clock rate predicts:
+
+```text
+expected results = active positions * 4 / 3 * PLL_Frequency * window / 2^(32 + ZerosToFind)
+pass rate        = valid results / expected results
+```
+
+`2^(32 + ZerosToFind)` is the number of hashes per reported result at the reporting threshold (see
+[Result threshold and the target register](blockscale-uart-protocol-reference.md#result-threshold-and-the-target-register)).
+A **valid** result is one whose rebuilt header hashes to at least the threshold. A **wrong** result is a returned nonce
+that does not. Measure per PLL, since each PLL clocks one stack, and use the frequency read back from the PLL, not the
+one requested.
+
+The pass rate is not the error ratio (wrong over valid plus wrong). The error ratio says how many of the returned
+results are bad; the pass rate also counts the results that never arrive or are thrown away.
+
+It reads below `1.0` for these reasons:
+
+- **Wrong results.** Of the results returned, the error-ratio share is not valid. The error ratio rises with clock and
+  differs from ASIC to ASIC (see [Start-frequency calibration](#start-frequency-calibration)).
+- **Results the host drops.** A result the host cannot attribute to a job it still holds cannot be checked, and is not
+  counted valid. Keep enough past jobs to resolve late results, and count the drops.
+- **Frames with the nonce-valid bit clear.** They are not results, so the work behind them is missing from the valid
+  count (see [Live clock changes on a hashing chain](#live-clock-changes-on-a-hashing-chain)).
+- **Result FIFO overflow.** An overflowed FIFO loses results (see
+  [Result Aggregation Model](blockscale-uart-protocol-reference.md#result-aggregation-model)).
+- **Positions that do not hash.** If the position count includes positions that are missing, disabled or still clock
+  gated, the pass rate falls by their share. Count only positions known to be present and running.
+
+With wrong and dropped results accounted for, the measured pass rate on an RDS was `(1 - error ratio) x (1 - dropped
+share)` to within `0.08 %` on each board (see
+[RDS reference measurements](rds-measured-reference.md#result-rate-against-the-hashes-per-clock-model)).
+
+A pass rate is a count, so it carries counting noise: one window scatters by about `1 / sqrt(expected results)` around
+its mean, and a short window can read above `1.0`. At 100 expected results that is about 10 %. Size windows from the
+expected count, and do not read a window too short to resolve the difference being looked for.
 
 ### Start-frequency calibration
 

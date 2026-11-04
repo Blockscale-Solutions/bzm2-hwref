@@ -588,7 +588,9 @@ Required setup before job submission:
 - enable TCE clocks via config register `0x01`
 - program `StartNonce` at `0x3C`
 - program `EndNonce` at `0x40`
-- program `Target` at `0x44`
+- program `Target` at `0x44` (the header's `nBits`; see
+  [Result threshold and the target register](#result-threshold-and-the-target-register))
+- program `ZerosToFind` at `0x49`
 - load the four midstates beginning at `0x10`
 
 `StartNonce` and `EndNonce` are written against the **addressable engine id** -
@@ -717,8 +719,9 @@ authorized, the version bits under the mask.
 
 #### Not established for the job path
 
-- What the engine does with the result threshold and `Target` beyond the
-  results observed: which comparison decides that a nonce is reported.
+- The comparison that decides a nonce is reported is in
+  [Result threshold and the target register](#result-threshold-and-the-target-register);
+  what it is based on is stated there.
 - How an engine walks its nonce window and its time count (order, stride), and
   whether the time field counts down in steps of one second of ntime in every
   case. The rebuild rule above is the one that matched every accepted share
@@ -727,6 +730,65 @@ authorized, the version bits under the mask.
   `0x3` is used in the runs cited.
 - Whether the four writes may legally carry different residues or timestamps.
   The cited runs always write the same values, as the table above requires.
+### Nonce windows across ASICs, tiles and lanes
+
+`StartNonce` and `EndNonce` bound a 32-bit **counter**, written as a little-endian register value like every other work
+register. The counter is the result frame's nonce field less `0x4c`, the value that
+[From a result frame back to a share](#from-a-result-frame-back-to-a-share) byte-reverses into the header's nonce. So
+a window is contiguous in counter values, not in header nonces. `[BZM2-HASH-003]`
+
+**The chip does not make work distinct.** Neither the ASIC ID nor the position enters the hash: the same job on two
+positions, or on two ASICs, returns the same nonces from each. `[BZM2-HASH-004]` Every split is the host's:
+
+| between | how they are kept apart |
+| --- | --- |
+| ASICs | a disjoint window per ASIC, written unicast to each, or a different merkle root per ASIC |
+| positions (tiles) on one ASIC | a different merkle root per position (a different extranonce2), or disjoint sub-windows; the register map has one window per position `[BZM2-ENG-002]` |
+| the four lanes of a position | **not by nonce.** All four job slots share the position's window, and each searches the whole of it under its own midstate. The four midstates differ in the version field, so the four lanes hash four different headers. |
+| successive candidates in one lane | the nonce within the window, then the time within the host-set count |
+
+Measured on an RDS: with a disjoint window per ASIC, all but `0.024 %` of the results flagged valid carried a counter
+inside their own ASIC's window, and each of the four job slots returned counters spread evenly over the whole window, odd
+and even alike (see
+[RDS reference measurements](rds-measured-reference.md#nonce-windows-and-job-slots)). Even endpoints do not mean that
+only even counters are searched.
+
+The Mujina BZM2 reference firmware gives each ASIC one hundredth of the counter space and each position its own merkle
+root, and divides an ASIC's window between positions only when there are fewer extranonce2 values than positions.
+
+Not established: the order in which an engine walks its window and its time count.
+
+### Result threshold and the target register
+
+Two registers decide what an engine does with a candidate. `[BZM2-HASH-005]`
+
+- **`ZerosToFind` (`0x49`, one byte)** sets the reporting threshold. The engine reports a candidate when its double
+  SHA-256, read as a 256-bit number the way Bitcoin compares it (the digest's bytes taken little-endian), has at least
+  `32 + ZerosToFind` leading zero bits. `0` reports every hash with 32 leading zero bits, one result per `2^32` hashes
+  on average; each step up halves the result rate.
+- **`Target` (`0x44`, four bytes)** is not a comparison value, despite its name. It holds the header's `nBits` field,
+  header bytes 72-75, which the engine hashes (see
+  [What an engine hashes](blockscale-asic-integration-guide.md#what-an-engine-hashes)). Write the job's own `nBits`
+  there. Any other value makes the engine hash a different header from the one the host rebuilds, and no result
+  validates.
+
+Relating the threshold to pool shares uses public arithmetic. A share at difficulty `D` is a hash at or below
+`T1 / D`, where `T1 = 0xFFFF * 2^208` is the difficulty-1 target
+([Bitcoin wiki, Difficulty](https://en.bitcoin.it/wiki/Difficulty);
+[Bitcoin developer reference, target nBits](https://developer.bitcoin.org/reference/block_chain.html#target-nbits)).
+`T1` has 32 leading zero bits, so difficulty 1 corresponds to `ZerosToFind = 0`, and a share at difficulty `D` takes
+about `D * 2^32` hashes.
+
+The threshold is a power of two; a share target in general is not. A host therefore:
+
+1. sets `ZerosToFind` to the share target's leading zero bits minus 32. Every hash at or below the target has at least
+   that many leading zeros, so no share is lost;
+2. rebuilds each reported header and computes its hash;
+3. submits the result only if the hash is at or below the exact share target. A reported hash with enough leading zeros
+   but above the target is a correct return, not a share: count it as valid and do not submit it.
+
+The Mujina BZM2 reference firmware sets thresholds of 32 to 64 leading zero bits (`ZerosToFind` 0 to 32). Whether the
+register accepts larger values is not established.
 
 ## Job Control Semantics
 

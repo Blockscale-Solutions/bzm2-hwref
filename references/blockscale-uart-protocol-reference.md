@@ -152,28 +152,56 @@ Enumeration rule:
 
 ### A single device and the default ID
 
-`[BZM2-UART-004]` `[BZM2-UART-005]`
+`[BZM2-UART-004]` `[BZM2-UART-005]` `[BZM2-UART-006]` `[BZM2-UART-007]` `[BZM2-UART-008]` `[BZM2-UART-009]`
+`[BZM2-UART-010]`
 
-**Assign an ID on a one-device board, exactly as on a chain.** Whether a device may run indefinitely at `0xFA` is not
-established: no public implementation leaves a device at the default ID once discovery has run, and no measurement of a
-device left there has been published. Assigning costs one register write and a readback.
+**Assign an ID on a one-device board, exactly as on a chain.** The device does not demand it: `0xFA` is only the
+reset value of its ID register, and a lone device left there is addressed at `0xFA` and answers at `0xFA`. The reasons
+to assign are on the host's side. One register write and a readback give a discovery pass that can end, and a TDM
+frame of one slot instead of at least 251.
 
-Public open-source firmware for this part assigns every device an ID below `0xFA` and confirms it by reading the
-`ASIC_ID` register back at the new ID. Once its devices are numbered it requires a `NOOP` to `0xFA` to draw no reply,
-so that a device left unnumbered is caught as a fault. Under the RDS stock
-firmware, a 100-device chain answers under IDs `0x00` to `0x63`; see
-[Engine grid and IDs on a stock chain](rds-measured-reference.md#engine-grid-and-ids-on-a-stock-chain).
+How the device uses its ID:
 
-Two consequences of staying at the default, inferred from the published addressing and TDM rules:
+- **The ID register.** `ASIC_ID` is local register `0x0B`. Bits 7:0 hold the ID and read `0xFA` after reset. Any write
+  to the register also sets bit 8, which lets the device pass host traffic on to the next device; nothing but a reset
+  clears it (vendor-stated). On a one-device board there is no next device, so that bit has no effect.
+- **Without TDM.** The TDM enable is bit 0 of local register `0x07` and is clear after reset. While it is clear a
+  device sends nothing unprompted: it answers each `READREG`, `READRESULT` or `DTS_VS` addressed to its ID. The vendor
+  describes this mode as enough for a single device. Vendor-stated.
+- **With TDM.** The same register holds the slot length in bit periods (bits 16:9) and the slot count (bits 8:1). The
+  device counts bit periods into slots and slots into a frame, wrapping at the slot count, and transmits in the slot
+  whose number equals its ID. The slot count is an 8-bit field (vendor-stated), so a frame has at most 255 slots.
+- **Measured on a stock chain.** On an RDS, the stock firmware numbers a 100-device chain `0x00` to `0x63` and writes
+  `0xFEC9` to register `0x07`: slot length `0x7F`, slot count `100`, TDM on (MJ-BRING-01, run `20260922T191903Z`).
+  Every device is then heard once per cycle in ascending ID order
+  (see the measured cycle under [TDM Overview](#tdm-overview)). A frame of `N` slots serves IDs
+  `0` to `N - 1`.
+
+Two consequences of staying at the default:
 
 - **Discovery cannot tell it apart from an unassigned device.** `0xFA` addresses whichever device has not yet been
   given an ID. A device left there answers every discovery probe, so a host cannot confirm the chain has ended, and
-  any later discovery pass takes it as a new device.
-- **It owns TDM slot `250`.** A device transmits in the slot that matches its ID ([TDM Overview](#tdm-overview)), so a
-  device at `0xFA` is heard only if the TDM frame has more than 250 slots. A device at `0x00` needs one. Whether the
-  part accepts a frame that long is not established.
+  any later discovery pass takes it as a new device. Public open-source firmware guards against exactly this: it
+  assigns every device an ID below `0xFA`, reads `ASIC_ID` back at the new ID, and once numbering is done treats a
+  `NOOP` reply at `0xFA` as a fault.
+- **Under TDM it owns slot `250`.** It is heard only with a slot count of at least `251`. The field holds that value,
+  so the described logic allows it, but every slot below `250` is then part of each frame. At `128` bit times per slot
+  and `5 Mbaud`, 251 slots come to about `6.4 ms` of slot time per frame by arithmetic, against about `26 us` for one
+  slot, before the per-slot overhead the measured cycle shows.
 
-Choose any ID below `0xFA`; never `0xFF`, which is the broadcast ID. A low ID keeps the TDM frame short.
+Rules that follow for any board:
+
+- **Set the slot count above the highest ID, not to the number of devices.** A device whose ID is at or above the
+  slot count never reaches its slot and sends no results or sensor data. The two agree only when IDs run densely from
+  `0x00`.
+- **Under TDM, at most 254 IDs are usable**: `0x00` to `0xFE` less `0xFA`. `0xFF` is the broadcast ID, and with at most
+  255 slots no device can be heard in slot `255` anyway.
+- Prefer IDs below `0xFA`, as every known implementation does; a low ID keeps the TDM frame short.
+
+Not established, all by measurement: that a device is heard in a slot above `99`, that a slot count above `100`
+behaves as described, and that bits 16:9 of register `0x07` read back what was written. One probe settles the first
+two: on one RDS chain, number the last device `0xFE` instead of `0x63`, set the slot count to `255`, and check that
+the device answers in TDM and that the cycle lengthens in proportion to the slot count.
 
 ## Routing Modes
 

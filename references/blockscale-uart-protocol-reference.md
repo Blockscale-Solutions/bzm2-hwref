@@ -108,6 +108,36 @@ Using one figure for both is a silent factor-of-four error. Nothing in the
 protocol reports it, and both numbers appear in vendor material without the unit
 being named.
 
+### Engine grid: rows, columns and stacks
+
+`[BZM2-ENG-007]`
+
+The two fields of the engine identifier name a position on a grid of **20 rows by 12 columns**: `row` runs `0` to
+`19` and `col` runs `0` to `11`. A **row** is one value of the identifier's low six bits; the twelve positions that
+share it differ only in column. Each grid position is one engine position (tile), the unit a register write, a nonce
+window or a dispatch entry addresses.
+
+The grid has 240 coordinates and **four of them are not populated**: (row `0`, col `4`), (row `0`, col `5`),
+(row `19`, col `5`) and (row `19`, col `11`). The other 236 are the addressable engine positions. Skip the four holes
+when building a dispatch table; do not count them in a denominator.
+
+Rows divide the positions between the two engine stacks:
+
+| rows | stack | populated positions | engines (at 4 per position) |
+| --- | --- | --- | --- |
+| `0` - `9` | bottom | 118 (120 less the two holes in row `0`) | 472 |
+| `10` - `19` | top | 118 (120 less the two holes in row `19`) | 472 |
+
+The two stacks carry the same number of positions. The engine count per stack follows from the four engines per
+position, which is vendor-stated `[BZM2-ENG-005]`.
+
+On an RDS, result frames captured under the stock firmware came from exactly these 236 positions, and from none of
+the four holes or any coordinate outside the grid; see
+[Engine grid and IDs on a stock chain](rds-measured-reference.md#engine-grid-and-ids-on-a-stock-chain).
+
+Not established: where rows and columns sit physically on the die, which PLL index clocks which stack, and how the
+row group that `MULTICAST_WRITE` addresses relates to a grid row.
+
 ## ASIC Identification
 
 Relevant ID values used during system bring-up:

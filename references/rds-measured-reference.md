@@ -47,6 +47,30 @@ Eleven clean holds, each about an hour at the stock firmware's own operating poi
 | tune-b0-later | 0 | `20261030T021147Z` |
 | tune-b1-later | 1 | `20261030T035225Z` |
 
+### Stock-firmware wire capture
+
+| label | board | run id |
+|---|---|---|
+| wire-1 | 0 | `MJ-OBS-01` `20260916T052158Z` |
+
+## Engine grid and IDs on a stock chain
+
+`[BZM2-ENG-006]`
+
+In *wire-1*, the chain UART of one RDS board was recorded at 5 Mbaud while the stock firmware's work was still
+returning results: about 120,000 result frames from 100 devices. Decoding each result frame's engine identifier
+([Engine identifier layout](blockscale-uart-protocol-reference.md#engine-identifier-layout)):
+
+- **236 distinct positions answered**, pooled over the 100 devices, on a grid of rows `0` to `19` and columns `0` to `11`.
+- **The four holes never answered**: (row `0`, col `4`), (row `0`, col `5`), (row `19`, col `5`), (row `19`, col `11`).
+  No frame carried a coordinate outside the grid.
+- **Results were spread across the positions**: 423 to 587 frames per position, pooled.
+
+Per device, between 231 and 236 positions answered in the window, which is what about 1,200 frames per device spread
+over 236 positions gives; the capture does not show whether a position missing on one device was idle or absent.
+
+Not established: the population on other boards or other parts, and whether any part has holes elsewhere.
+
 ## Board identity
 
 `[BZM2-RDS-001]` `[BZM2-RDS-002]`

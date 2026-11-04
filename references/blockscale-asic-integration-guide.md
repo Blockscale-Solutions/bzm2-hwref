@@ -698,13 +698,29 @@ A trip involves three parties. Each acts on its own signal and has its own clear
 
 | party | what it acts on | what it does | what clears it |
 | --- | --- | --- | --- |
-| the ASIC | its own sensor reading against the trip level the host programmed ([Temperature thresholds](#temperature-thresholds)) | asserts its trip output, and sets the trip bit in its thermal and voltage stream | not established |
-| the board's protection | the ASIC's trip output, wired to it | whatever the board is built to do: gate the core-rail enable, latch a fault, cut power | the board's own design |
+| the ASIC | its own sensor reading against the trip level the host programmed ([Temperature thresholds](#temperature-thresholds)), over a run of consecutive conversions | latches a trip status, reports it in its thermal and voltage stream, drives the chain's trip line, and is specified to halve its engine clock | only the host: turning the thermal sensor off, or resetting the sensor's conversion state machine (a power cycle also returns it to clear). Cooling does not |
+| the board's protection | the chain's trip line, wired to it | whatever the board is built to do: gate the core-rail enable, latch a fault, cut power | the board's own design |
 | the host | the trip bit in the sensor stream, its own limits on the sensor readings, and the board's fault status | stops work, and powers the board down if the condition persists | the host's policy |
 
-**Design as if the ASIC only signals.** Whether the part stops hashing or gates its own clocks at a trip is not
-established, and nothing in it removes core power. What brings the core down is the board protection or the host
-([Protection behavior](#protection-behavior)).
+**The ASIC's trip is a latch with a debounce, not a comparator with hysteresis.** `[BZM2-THM-004]` The sensor
+block re-measures the die continuously, each measurement a successive-approximation search taking a few
+milliseconds. Every result is compared with the trip level in the tune-code register, and a counter keeps the number
+of consecutive results above it. One result at or below the level returns that counter to zero, and so does turning
+the sensor off. Only when the counter reaches the threshold count the host programmed does the trip status (local
+register `0x31`, bit 0, and the stream's trip bit) go to 1. From then on the status stays at 1 however far the
+reading falls. Two writes clear it: bit 0 of the tune-code register (`0x30`) to 0, which also disarms the sensor, or
+1 to bit 0 of the sensor state-reset register (`0x35`). The register resets to 0, so a power cycle clears it too. The
+consecutive-count is the only filter; there is no hysteresis band. Clearing by disarming leaves the part unprotected,
+so a host that clears a trip this way must re-arm and confirm by readback
+([Arm the on-die protection](#arm-the-on-die-protection-before-raising-the-stack-and-confirm-it-took)).
+
+**What the part does besides signalling.** `[BZM2-THM-005]` `[BZM2-THM-006]` The trip line passes from part to part along
+the chain, as reset and the UART do: each part has a trip input and a trip output. A board's protection therefore sees one
+line per chain and cannot tell from it which ASIC tripped; the per-ASIC trip bit in the stream, or each ASIC's `0x31`,
+can. On a trip the part is specified to halve its engine clock as a last resort, and to leave any further control
+(a lower clock, idling engines) to the host. A halved clock lowers the heat but does not stop hashing, and nothing in
+the part removes core power. So the design rule is unchanged: **design as if the ASIC only signals**, and let the board
+protection or the host bring the core down ([Protection behavior](#protection-behavior)).
 
 **The public board-controller design latches the trip and leaves the clear to the host.** In the open-source
 board-controller firmware for a published multi-ASIC board, an asserted ASIC trip input moves the controller into a
@@ -714,20 +730,42 @@ it returns the board to its safe-off state, not to mining; the host must arm and
 firmware states that it has no independent cut of the core rail, so the core rail is left to the board's other
 protection.
 
-Recommended policy, which follows from the table:
+**The RDS stock firmware cuts the tripped board and leaves it off.** `[BZM2-THM-007]` `[BZM2-THM-008]` Each RDS
+hashboard has its own controller watching that board's trip line. When the line rises and is still high on five reads
+spread over about a millisecond, the controller switches the board's hash power off, lights the board's trip LED and
+queues a thermal-trip error for the host. It does this only while the host has trip protection turned on, and it
+holds no latch of its own: it acts on the rising edge, and it obeys a later power-on from the host whatever the line
+reads. The stock daemon turns protection on as it brings each board up and off when it powers a board down. When the
+controller reports a trip, the daemon waits about 3 s and reads the board's total voltage. Below 1 V it accepts the
+trip: it records a board error, powers the board off and marks it not working, and sets the board's LED to a fast
+flash and the unit's trip indicator. A voltage still in range is logged as a false alert and the board carries on.
+The other boards keep mining, and the daemon does not bring the tripped board back during the run; recovery is a
+restart after the unit has cooled, which brings every board up from the beginning. The daemon records the per-ASIC
+trip bits from the stream and shows them, but does not act on them; its own software shutdown, below the trip level,
+is the earlier tier ([Temperature thresholds](#temperature-thresholds)). The vendor material is not consistent on
+whether the controller's trip protection is on when the controller starts, so a host should set it explicitly at
+every bring-up.
 
-- **Latch at the board, clear at the host.** A trip that clears itself when the die cools lets the board cycle in and
-  out of the fault with nobody deciding to resume.
+Recommended policy, which follows from the above:
+
+- **Latch at the board, clear at the host.** The ASIC's own latch is lost the moment the board loses power, so the
+  record of a trip has to live outside the ASIC. A trip that clears itself when the die cools lets the board cycle in
+  and out of the fault with nobody deciding to resume.
 - **Never resume work automatically after a trip.** Return to a safe, powered-down state, find the cause, and bring
   the board up from the start of the bring-up sequence, re-arming the on-die protection
   ([Arm the on-die protection](#arm-the-on-die-protection-before-raising-the-stack-and-confirm-it-took)).
+- **Read which ASIC tripped before the power goes.** The chain's trip line names no part; the stream and `0x31` do,
+  and both are gone once the board is off.
 - **Give the board a backstop that needs no host.** A board controller that powers the board down on its own when the
   host's heartbeat stops covers a host that has hung; the RDS has one, measured in
   [Operational guidance: close order and kernel fault](rds-measured-reference.md#operational-guidance-close-order-and-kernel-fault).
 
-Not established: whether the ASIC's trip output and trip bit stay asserted until a reset or a register write, or
-deassert when the reading falls back below the trip level, and with what hysteresis; and what the RDS stock firmware
-does when an ASIC trips.
+Not established, and none of it yet observed on an RDS: that the part halves its clock at a trip; whether the trip
+output follows the latched status or the live comparison; and that the controller firmware on a shipped board behaves
+as described above. One cheap probe settles all three: on one idle board at a low clock, program a trip level just
+below the current reading and watch the stream's trip bit, the result rate and the board's power. Run it once with
+the controller's trip protection on, to see the cut, and once with it off, under the host's own temperature limit,
+and the level then raised back above the reading, to see whether the status and the line stay set.
 
 ## Calibration Methodology
 

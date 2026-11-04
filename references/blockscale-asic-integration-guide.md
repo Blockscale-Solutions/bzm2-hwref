@@ -606,6 +606,45 @@ Recommended policy:
 - treat temperature and differential stack voltage as shutdown-class signals
 - never rely on software polling alone for destructive fault containment
 
+### After a trip: what acts and who clears it
+
+`[BZM2-THM-002]` `[BZM2-THM-003]`
+
+A trip involves three parties. Each acts on its own signal and has its own clear; keep them apart in a design.
+
+| party | what it acts on | what it does | what clears it |
+| --- | --- | --- | --- |
+| the ASIC | its own sensor reading against the trip level the host programmed ([Temperature thresholds](#temperature-thresholds)) | asserts its trip output, and sets the trip bit in its thermal and voltage stream | not established |
+| the board's protection | the ASIC's trip output, wired to it | whatever the board is built to do: gate the core-rail enable, latch a fault, cut power | the board's own design |
+| the host | the trip bit in the sensor stream, its own limits on the sensor readings, and the board's fault status | stops work, and powers the board down if the condition persists | the host's policy |
+
+**Design as if the ASIC only signals.** Whether the part stops hashing or gates its own clocks at a trip is not
+established, and nothing in it removes core power. What brings the core down is the board protection or the host
+([Protection behavior](#protection-behavior)).
+
+**The public board-controller design latches the trip and leaves the clear to the host.** In the open-source
+board-controller firmware for a published multi-ASIC board, an asserted ASIC trip input moves the controller into a
+latched fault: it disables the 5 V supply, holds the ASICs in reset and runs the fan at full, and it overrides every
+later request until the host sends an explicit clear. The clear is refused while the trip input is still asserted, and
+it returns the board to its safe-off state, not to mining; the host must arm and power the board up again. The same
+firmware states that it has no independent cut of the core rail, so the core rail is left to the board's other
+protection.
+
+Recommended policy, which follows from the table:
+
+- **Latch at the board, clear at the host.** A trip that clears itself when the die cools lets the board cycle in and
+  out of the fault with nobody deciding to resume.
+- **Never resume work automatically after a trip.** Return to a safe, powered-down state, find the cause, and bring
+  the board up from the start of the bring-up sequence, re-arming the on-die protection
+  ([Arm the on-die protection](#arm-the-on-die-protection-before-raising-the-stack-and-confirm-it-took)).
+- **Give the board a backstop that needs no host.** A board controller that powers the board down on its own when the
+  host's heartbeat stops covers a host that has hung; the RDS has one, measured in
+  [Operational guidance: close order and kernel fault](rds-measured-reference.md#operational-guidance-close-order-and-kernel-fault).
+
+Not established: whether the ASIC's trip output and trip bit stay asserted until a reset or a register write, or
+deassert when the reading falls back below the trip level, and with what hysteresis; and what the RDS stock firmware
+does when an ASIC trips.
+
 ## Calibration Methodology
 
 The calibration material is useful as methodology, but not as a fixed set of

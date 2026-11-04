@@ -33,6 +33,8 @@ that evidence is:
 | `BZM2-ENG-006` | In a capture of an RDS chain under the stock firmware, result frames from 100 devices came from 236 distinct positions on a grid of rows 0 to 19 and columns 0 to 11, none from (0,4), (0,5), (19,5) or (19,11) and none from outside the grid (MJ-OBS-01, run `20260916T052158Z`). | `measured` |
 | `BZM2-ENG-007` | The engine positions sit on a 20-row by 12-column grid with four holes, (row 0, col 4), (0,5), (19,5) and (19,11); rows 0 to 9 are the bottom stack and rows 10 to 19 the top stack, 118 positions each. | `third-party` |
 | `BZM2-THM-001` | The BZM2's operating junction temperature range is 50 C to 85 C, with a 115 C absolute maximum. | `vendor-stated` |
+| `BZM2-THM-002` | A public board-controller design latches an asserted ASIC trip input as a fault, forces safe outputs (5 V off, ASIC reset held, fan at full), refuses the host's clear while the trip input is asserted, and on a clear returns to safe-off rather than resuming; it has no independent cut of the core rail. | `third-party` |
+| `BZM2-THM-003` | The device's thermal and voltage stream carries a thermal trip bit and a voltage trip bit, which a host can act on as they arrive. | `third-party` |
 | `BZM2-UART-001` | A broadcast register read is answered by each device under its own `ASIC_ID`, never under `0xFF`: on a 100-device RDS chain one broadcast read drew 99 replies, each under a distinct ID (MJ-OBS-01, run `20260921T144604Z`). | `measured` |
 | `BZM2-UART-002` | With the sensor stream at the fastest gap setting used, a 100-device RDS chain at 5 Mbaud cycled in strict ascending round robin at 19,543 frames/s: 5.117 ms per cycle, 51.17 us per slot; gap settings of 100 and 2000 gave about 1,000 and 2,260 frames/s (MJ-OBS-01, runs `20260921T145704Z`, `20260921T150701Z`, `20260921T151652Z`). | `measured` |
 | `BZM2-VS-001` | On a healthy part, `ch2` (midpoint error) is near zero at light load and grows with load current as an IR drop across the internal midpoint path; a `ch2` bound must scale with current. It is not `ch1 − ch0`; the per-ASIC span is `ch0 + ch2 + ch1`. | `our-inference` |
@@ -72,11 +74,13 @@ point of the kind. These resolve to
 | `BZM2-ENG-002` | `components/asic/bzm_work.c:33-34` writes `BZM_REG_START_NONCE` and `BZM_REG_END_NONCE` against `work->engine_id`, the same id used for every other work register at `:30-56`; offsets at `components/asic/bzm_work_registers.h:11-12` |
 | `BZM2-ENG-003` | `components/asic/include/bzm_topology.h:16` - `BZM_TOPOLOGY_ENGINE_COUNT 236U`, asserted as a hardware-validity gate at `components/asic/bzm_bringup.c:1031`. Independently corroborated by our own capture: 23,600 work engines across 100 devices |
 | `BZM2-ENG-007` | `components/asic/include/bzm_topology.h:13-17` - 20 rows, 12 columns, 236 positions, 118 per stack; holes at `components/asic/bzm_topology.c:52`; stack by row (`row < 10` is the bottom stack) at `components/asic/bzm_topology.c:41-44` |
+| `BZM2-THM-003` | `components/asic/bzm_telemetry.c:39` and `:44` decode the thermal and voltage trip bits from the stream; `:124-131` treats them as actionable at once |
 
 Rows that resolve to other public repositories:
 
 | id | where |
 | --- | --- |
+| `BZM2-THM-002` | [`bitaxeorg/bonanza-bridge-fw`](https://github.com/bitaxeorg/bonanza-bridge-fw) (GPL-3.0), `docs/safety-interlock.md:13-23` (safe outputs; no independent core-rail cut), `:44-48` (states and exits), `:94` (clear only with trip low, returns to safe-off), `:121` (trip latches) |
 | `BZM2-PWR-001` | [`bitaxeorg/bitaxeBIRDS`](https://github.com/bitaxeorg/bitaxeBIRDS) (CERN-OHL-S-2.0), `doc/specs.md`: voltage times current matches the power column within 0.8 %, and power over hash rate matches the efficiency column within 0.9 %, in all 25 rows |
 
 **`BZM2-ENG-005` deliberately has no public row.** The x4 is vendor-only. Note

@@ -434,6 +434,9 @@ The documented enumeration flow is:
 6. the next ASIC becomes reachable
 7. repeat until the chain is assigned
 
+A one-device board runs the same flow and still writes an ID; see
+[A single device and the default ID](blockscale-uart-protocol-reference.md#a-single-device-and-the-default-id).
+
 `NOOP` is the simplest chain-liveness check. Its reply, and the spelling trap
 in it, are in the protocol reference under [`NOOP`](blockscale-uart-protocol-reference.md#noop).
 

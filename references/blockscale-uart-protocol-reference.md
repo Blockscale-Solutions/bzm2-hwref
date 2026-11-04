@@ -150,6 +150,31 @@ Enumeration rule:
 - writing a unique `ASIC_ID` to an ASIC previously addressed at `0xFA` also
   unlocks forwarding so the next ASIC becomes reachable
 
+### A single device and the default ID
+
+`[BZM2-UART-004]` `[BZM2-UART-005]`
+
+**Assign an ID on a one-device board, exactly as on a chain.** Whether a device may run indefinitely at `0xFA` is not
+established: no public implementation leaves a device at the default ID once discovery has run, and no measurement of a
+device left there has been published. Assigning costs one register write and a readback.
+
+Public open-source firmware for this part assigns every device an ID below `0xFA` and confirms it by reading the
+`ASIC_ID` register back at the new ID. Once its devices are numbered it requires a `NOOP` to `0xFA` to draw no reply,
+so that a device left unnumbered is caught as a fault. Under the RDS stock
+firmware, a 100-device chain answers under IDs `0x00` to `0x63`; see
+[Engine grid and IDs on a stock chain](rds-measured-reference.md#engine-grid-and-ids-on-a-stock-chain).
+
+Two consequences of staying at the default, inferred from the published addressing and TDM rules:
+
+- **Discovery cannot tell it apart from an unassigned device.** `0xFA` addresses whichever device has not yet been
+  given an ID. A device left there answers every discovery probe, so a host cannot confirm the chain has ended, and
+  any later discovery pass takes it as a new device.
+- **It owns TDM slot `250`.** A device transmits in the slot that matches its ID ([TDM Overview](#tdm-overview)), so a
+  device at `0xFA` is heard only if the TDM frame has more than 250 slots. A device at `0x00` needs one. Whether the
+  part accepts a frame that long is not established.
+
+Choose any ID below `0xFA`; never `0xFF`, which is the broadcast ID. A low ID keeps the TDM frame short.
+
 ## Routing Modes
 
 ### Unicast

@@ -55,7 +55,7 @@ Eleven clean holds, each about an hour at the stock firmware's own operating poi
 
 ## Engine grid and IDs on a stock chain
 
-`[BZM2-ENG-006]`
+`[BZM2-ENG-006]` `[BZM2-UART-003]`
 
 In *wire-1*, the chain UART of one RDS board was recorded at 5 Mbaud while the stock firmware's work was still
 returning results: about 120,000 result frames from 100 devices. Decoding each result frame's engine identifier
@@ -65,6 +65,8 @@ returning results: about 120,000 result frames from 100 devices. Decoding each r
 - **The four holes never answered**: (row `0`, col `4`), (row `0`, col `5`), (row `19`, col `5`), (row `19`, col `11`).
   No frame carried a coordinate outside the grid.
 - **Results were spread across the positions**: 423 to 587 frames per position, pooled.
+- **The devices answered under IDs `0x00` to `0x63`**, one ID per device: the stock firmware numbers a 100-device
+  chain from zero.
 
 Per device, between 231 and 236 positions answered in the window, which is what about 1,200 frames per device spread
 over 236 positions gives; the capture does not show whether a position missing on one device was idle or absent.

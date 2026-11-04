@@ -37,6 +37,9 @@ that evidence is:
 | `BZM2-THM-003` | The device's thermal and voltage stream carries a thermal trip bit and a voltage trip bit, which a host can act on as they arrive. | `third-party` |
 | `BZM2-UART-001` | A broadcast register read is answered by each device under its own `ASIC_ID`, never under `0xFF`: on a 100-device RDS chain one broadcast read drew 99 replies, each under a distinct ID (MJ-OBS-01, run `20260921T144604Z`). | `measured` |
 | `BZM2-UART-002` | With the sensor stream at the fastest gap setting used, a 100-device RDS chain at 5 Mbaud cycled in strict ascending round robin at 19,543 frames/s: 5.117 ms per cycle, 51.17 us per slot; gap settings of 100 and 2000 gave about 1,000 and 2,260 frames/s (MJ-OBS-01, runs `20260921T145704Z`, `20260921T150701Z`, `20260921T151652Z`). | `measured` |
+| `BZM2-UART-003` | Under the RDS stock firmware, a 100-device chain answers under ASIC IDs 0x00 to 0x63, one per device (MJ-OBS-01, run `20260916T052158Z`). | `measured` |
+| `BZM2-UART-004` | Public open-source firmware assigns every device an ID below 0xFA, confirms each by reading `ASIC_ID` back at the new ID, and treats a NOOP reply at 0xFA after numbering as a fault. | `third-party` |
+| `BZM2-UART-005` | A device left at 0xFA stays the target of every discovery probe, so a host cannot confirm the chain has ended, and it owns TDM slot 250, so it is heard only in a frame of more than 250 slots. | `our-inference` |
 | `BZM2-VS-001` | On a healthy part, `ch2` (midpoint error) is near zero at light load and grows with load current as an IR drop across the internal midpoint path; a `ch2` bound must scale with current. It is not `ch1 − ch0`; the per-ASIC span is `ch0 + ch2 + ch1`. | `our-inference` |
 | `BZM2-PWR-001` | In the public 25-point single-ASIC sweep, each row's power is its core voltage times its current and its efficiency is that power over its hash rate, to within rounding: a core-level figure. | `third-party` |
 | `BZM2-PWR-002` | On a series stack one current flows through every level, so the rail's voltage times its current is the sum of every ASIC's core power plus the distribution loss; without a current measurement per level the per-ASIC core power is not readable from the rail. | `our-inference` |
@@ -75,6 +78,7 @@ point of the kind. These resolve to
 | `BZM2-ENG-003` | `components/asic/include/bzm_topology.h:16` - `BZM_TOPOLOGY_ENGINE_COUNT 236U`, asserted as a hardware-validity gate at `components/asic/bzm_bringup.c:1031`. Independently corroborated by our own capture: 23,600 work engines across 100 devices |
 | `BZM2-ENG-007` | `components/asic/include/bzm_topology.h:13-17` - 20 rows, 12 columns, 236 positions, 118 per stack; holes at `components/asic/bzm_topology.c:52`; stack by row (`row < 10` is the bottom stack) at `components/asic/bzm_topology.c:41-44` |
 | `BZM2-THM-003` | `components/asic/bzm_telemetry.c:39` and `:44` decode the thermal and voltage trip bits from the stream; `:124-131` treats them as actionable at once |
+| `BZM2-UART-004` | `components/asic/bzm_bringup.c:223-264` probes `0xFA`, writes each ID and reads `ASIC_ID` back at it; `:272-276` reports a reply at `0xFA` after numbering as an extra device |
 
 Rows that resolve to other public repositories:
 

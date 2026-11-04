@@ -570,21 +570,47 @@ throughput formula predicts (see
 ### Hashes per clock
 
 The throughput estimate's `236 * 4 * PLL_Frequency / 3` says that an addressable position completes **four header hashes
-every three PLL clocks**, both SHA-256 passes counted. `[BZM2-HASH-002]` At four engines per position
-`[BZM2-ENG-005]`, that is one hash per engine every three clocks.
+every three PLL clocks**, both SHA-256 passes counted. `[BZM2-HASH-002]` The vendor gives the same product for the
+whole part, `236 * 4 / 3`, about `314.67` hashes per PLL clock. `[BZM2-HASH-006]`
+
+How a position gets there:
+
+- **One candidate per engine cycle.** Each engine is a fully unrolled pipeline: all 128 rounds of the two compressions
+  in [What an engine hashes](#what-an-engine-hashes) exist as separate hardware stages, so a new nonce enters every
+  cycle and, once the pipeline is full, one finished double hash leaves every cycle. In the second block's compression,
+  the message words used before the nonce's own word arrives (merkle residue, time, `nBits`) hold still while the
+  nonce counts, so the engine works those opening rounds once per job instead of once per candidate. `[BZM2-HASH-006]`
+- **One engine cycle is three PLL clocks.** The PLL's output is not the engine's working clock. Each engine builds its
+  own three-phase clocking from it, and one pipeline step takes a full turn of the three phases. An engine therefore
+  steps at a third of the PLL frequency. `[BZM2-HASH-006]`
+- **Four engines per position, one per job slot.** The four engines of a position share one message scheduler for the
+  header's second block and each has its own digest path and its own second-pass scheduler. Job slot `k` (sequence
+  ID `k`) runs on engine `k`, and each engine walks the whole window from `StartNonce` to `EndNonce` on its own; the
+  four do not split the window between them. `[BZM2-ENG-005]` `[BZM2-HASH-007]` The sharing follows from the header
+  layout: the four midstates differ only in the version field, which lies in the first 64 bytes, so the second block
+  (merkle residue, time, `nBits`, nonce) is the same for all four at every step, while the second pass hashes each
+  engine's own first-pass digest.
+
+So a position does four engines x one hash per three PLL clocks, which is the `4 / 3`. Worked on a round, synthetic
+clock: at `1.2 GHz` an engine steps at `400 MHz`, and one engine takes `2^32 / 400e6`, about `10.7 s`, to walk a full
+32-bit window once.
 
 What is established, and on what basis:
 
-- **The rate is measured.** On three RDS boards, the results the chips returned matched positions x `4 / 3` x clock,
-  at the threshold in force, to within `0.08 %` once the results the host dropped were counted (see
-  [RDS reference measurements](rds-measured-reference.md#result-rate-against-the-hashes-per-clock-model)). A wrong
-  position count or a wrong factor would show as a result rate far from that.
-- **The split into four engines at a third of the clock each is not measured.** A result count tests the product. It
-  cannot tell four engines at one third of the clock from any other split of the same total; the four engines per
-  position are vendor-stated.
-- **Not established: why an engine takes three PLL clocks per hash**, that is, how the 128 rounds of one candidate map
-  onto the engine's clock cycles. Neither a public source nor a measurement in this reference settles it. Do not
-  derive anything from an assumed per-clock structure; use the measured product.
+- **The product is measured.** On three RDS boards, the results the chips returned matched positions x `4 / 3` x
+  clock, at the threshold in force, to within `0.08 %` once the results the host dropped were counted (see
+  [RDS reference measurements](rds-measured-reference.md#result-rate-against-the-hashes-per-clock-model)). It agrees
+  with the vendor's figure per clock. It also settles which clock the formula counts: the frequency read back from the
+  PLL is the one the engines divide by three. A formula read against any other clock would miss the measured rate by
+  a whole factor.
+- **The four slots run at one rate, measured.** In one run the four job slots returned result totals within `0.44 %`
+  of one another, each within two standard deviations of their mean on counting statistics (run *tune-b0-2*, see
+  [RDS reference measurements](rds-measured-reference.md#result-rate-against-the-hashes-per-clock-model)).
+  `[BZM2-HASH-008]` That is what four equal engines, one per slot, would show.
+- **The per-engine structure is vendor-stated.** The unrolled pipeline, the three-phase engine clock and the
+  one-engine-per-slot mapping come from the vendor's documentation, not from a measurement here. A result count tests
+  the product and the per-slot share; it cannot tell four engines at a third of the clock from one engine at four
+  thirds working the slots in turn. No measurement in this reference separates the two.
 
 
 ## Telemetry And Protection

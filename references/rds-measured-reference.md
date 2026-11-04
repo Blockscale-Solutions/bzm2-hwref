@@ -465,8 +465,15 @@ ratio, less whatever the host dropped.
 - **The dropped results are the whole shortfall.** They are results whose job the host no longer held when they
   arrived, so they could not be checked. No frame in the run had the nonce-valid bit clear, and none came from an
   unknown position.
-- **What the count cannot show.** It tests positions x `4 / 3` x clock as one product. It does not separate the four
-  engines of a position, and it says nothing of why an engine takes three clocks per hash.
+- **What the count cannot show.** It tests positions x `4 / 3` x clock as one product. The reason for the factor, four
+  engines per position each stepping once every three PLL clocks, is vendor-stated and set out in
+  [Hashes per clock](blockscale-asic-integration-guide.md#hashes-per-clock); this run agrees with it but does not
+  separate the four engines of a position.
+- **The four job slots return at one rate.** `[BZM2-HASH-008]` In run *tune-b0-2* (table under
+  [Nonce windows and job slots](#nonce-windows-and-job-slots)) the slots' totals were `480,759`, `479,357`, `481,157`
+  and `481,457` results: the largest and smallest differ by `0.44 %` of the mean, and every slot lies within two
+  standard deviations of the mean, taking the counting spread on a count near `480,000` as about `0.14 %`. That
+  is the share four equal engines, one per slot, would give; it does not rule out one engine working the slots in turn.
 
 ### Nonce windows and job slots
 

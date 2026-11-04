@@ -217,7 +217,7 @@ before committing limits.
 | Control / GPIO IO rail (`VDDIO`) | `1.2 V` nominal (`1.0 - 1.3 V` range), `1.3 V` abs max | UART, reset, trip signaling; per-pin input/output levels below |
 | Stack current, stock operating point | `~14 A` | roughly `10 W` core power; a public sweep gives `13.6 A / 9.4 W` at `1.05 GHz` and `14.2 A / 9.9 W` at `1.10 GHz` |
 | Stack current, maximum tuned point | `~27 A` | roughly `22 W`; plan copper for `~30 A` headroom. A public sweep's top row is `27.1 A / 21.95 W` at `0.810 V, 1.85 GHz` |
-| Efficiency | best at a low clock, worsening as the clock rises | A public sweep puts the best efficiency near `0.60-0.75 GHz` and the worst at the maximum tuned point. Chasing best efficiency costs hashrate, and a single efficiency number is meaningless without the clock it was measured at |
+| Efficiency | best at a low clock, worsening as the clock rises | A public sweep puts the best efficiency near `0.60-0.75 GHz` and the worst at the maximum tuned point. Chasing best efficiency costs hashrate, and a single efficiency number is meaningless without the clock it was measured at and the basis it was counted on ([What a J/TH figure counts](#what-a-jth-figure-counts)) |
 | Reference clock | up to `50 MHz` on `REFCLKIN` | `50 MHz` is the standard choice |
 | UART baud | see [Baud and signaling](blockscale-uart-protocol-reference.md#baud-and-signaling) | |
 | Junction temperature | `50 - 85 C` operating, `115 C` abs max `[BZM2-THM-001]` | a rating of the silicon, not the on-die sensor reading (see [Temperature thresholds](#temperature-thresholds)); plan top-side thermal extraction |
@@ -230,6 +230,60 @@ PDN guidance that follows directly from those numbers:
   put the capacitor bank on the bottom side under the FCLGA land field
 - at `0.71 V`, tens of millivolts of IR drop are several percent of the rail -
   measure remote-sense placement against your layout, not a reference design
+
+### What a J/TH figure counts
+
+`[BZM2-PWR-001]` `[BZM2-PWR-002]`
+
+Energy per hash, in J/TH, is a power in watts divided by a hash rate in TH/s. Neither half has one meaning, so a J/TH
+figure says nothing until both are named, and two figures counted on different bases cannot be compared.
+
+**The numerator: where the power is measured.** Each level contains the one before it.
+
+| level | what it counts | measured as |
+| --- | --- | --- |
+| core | one ASIC's engines: `VDD_HASH` times the stack current through the part | the core regulator's voltage and current readback, or a sense resistor at the rail |
+| board rail | every ASIC on the rail, plus the loss in the rail's planes, vias and connectors | the rail's voltage and current at the board |
+| board input | the board rail, plus the core regulator's own loss, the `VDDIO` and control rails, the board controller, the sensors and the clock | voltage and current at the board's input connector |
+| supply output | every board, plus whatever else the supply's output feeds (a control board, fans) | the supply's DC output voltage and current |
+| wall | the supply output, plus the supply's conversion loss and everything else on the cord | an AC meter at the inlet |
+
+A figure for the ASIC itself belongs at the core level; an operator's energy cost is the wall level. The levels
+between are the board's and the supply's losses.
+
+**On a series stack the per-ASIC core power is not readable from the rail.** One current flows through every level of
+the stack, so the rail's voltage times its current is the sum of the core power of every ASIC on it plus the stack's
+distribution loss. The part reports its own voltages ([Voltage sensor channels](#voltage-sensor-channels)) but not its
+current, so splitting the rail power among the ASICs needs a current measurement per level that most stacked boards do
+not have. A core-level figure for a stacked board is therefore an estimate unless it says how the split was made.
+
+**The denominator: which hash rate.**
+
+| hash rate | what it is | use it for |
+| --- | --- | --- |
+| nominal | the clock times the hashes per clock, with a pass rate of `1.0` ([ASIC At A Glance](#asic-at-a-glance)) | sizing; it is capacity, not a measurement |
+| result-counted | the valid results the host received in a window, each standing on average for `2^32` hashes times the difficulty it was reported at | the host's own measured rate |
+| pool-credited | the difficulty of the shares the pool accepted, times `2^32`, per second | the rate a payout is based on; over a long window it falls below the result-counted rate by the work that was stale or rejected |
+
+Result-counted and pool-credited rates are counts of random events, so over a short window they scatter. Quote the
+window length with the rate.
+
+**The published single-ASIC sweep is a core-level figure.** In the public 25-point sweep cited in the
+[Electrical Quick Reference](#electrical-quick-reference-per-asic), each row's power is that row's core voltage times
+its current, and each row's efficiency is that power divided by that row's hash rate, both to within rounding. It counts no regulator, control
+rail, fan or supply loss, so it is not comparable with a board-input or wall figure. The source does not say whether
+its hash-rate column is a measured or a nominal rate.
+
+To quote a J/TH figure, give with it: the power level and how it was measured, the hash-rate kind and its window, the
+clock, the core voltage and the temperature, and the test or run it came from.
+
+On the RDS only the supply output and the wall are measured; the board controller does not report a board current, so
+no board-rail or core-level figure can be formed from the RDS's own instruments. The gap between the supply output and
+the wall is modelled in
+[Stock supply, fan power and the wall's overhead](rds-measured-reference.md#stock-supply-fan-power-and-the-walls-overhead),
+and the supply's own input report is shown there not to be a wall meter.
+
+Not established: a measured difference between core-level and board-input power on any BZM2 board.
 
 ### IO DC thresholds (the 1.2 V domain)
 

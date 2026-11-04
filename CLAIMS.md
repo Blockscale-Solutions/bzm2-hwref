@@ -36,6 +36,8 @@ that evidence is:
 | `BZM2-UART-001` | A broadcast register read is answered by each device under its own `ASIC_ID`, never under `0xFF`: on a 100-device RDS chain one broadcast read drew 99 replies, each under a distinct ID (MJ-OBS-01, run `20260921T144604Z`). | `measured` |
 | `BZM2-UART-002` | With the sensor stream at the fastest gap setting used, a 100-device RDS chain at 5 Mbaud cycled in strict ascending round robin at 19,543 frames/s: 5.117 ms per cycle, 51.17 us per slot; gap settings of 100 and 2000 gave about 1,000 and 2,260 frames/s (MJ-OBS-01, runs `20260921T145704Z`, `20260921T150701Z`, `20260921T151652Z`). | `measured` |
 | `BZM2-VS-001` | On a healthy part, `ch2` (midpoint error) is near zero at light load and grows with load current as an IR drop across the internal midpoint path; a `ch2` bound must scale with current. It is not `ch1 − ch0`; the per-ASIC span is `ch0 + ch2 + ch1`. | `our-inference` |
+| `BZM2-PWR-001` | In the public 25-point single-ASIC sweep, each row's power is its core voltage times its current and its efficiency is that power over its hash rate, to within rounding: a core-level figure. | `third-party` |
+| `BZM2-PWR-002` | On a series stack one current flows through every level, so the rail's voltage times its current is the sum of every ASIC's core power plus the distribution loss; without a current measurement per level the per-ASIC core power is not readable from the rail. | `our-inference` |
 | `BZM2-PLL-001` | A live PLL move that changes the feedback divider alone re-locks: 753 of 753 sets read back locked (MJ-TUNE-02, run `bonanza.MJ-TUNE-02.v17550b0.20261029T071354Z`). | `measured` |
 | `BZM2-PLL-002` | While PLL sets run on a chain whose only dispatch path they hold, every ASIC on that chain returns result frames with the nonce-valid bit clear; they stop about 40 s after the last set; chains with no sets return about none (same run). | `measured` |
 | `BZM2-CAL-001` | At a uniform 800 MHz start the ASICs on one RDS board do not share one error rate: dispersion 7.9 to 11.1, median ASIC under 0.7 %, worst ASICs 4 to 7 % (MJ-TUNE-02 runs `20261029T135804Z`, `20261029T172540Z`, `20261030T011051Z`). | `measured` |
@@ -70,6 +72,12 @@ point of the kind. These resolve to
 | `BZM2-ENG-002` | `components/asic/bzm_work.c:33-34` writes `BZM_REG_START_NONCE` and `BZM_REG_END_NONCE` against `work->engine_id`, the same id used for every other work register at `:30-56`; offsets at `components/asic/bzm_work_registers.h:11-12` |
 | `BZM2-ENG-003` | `components/asic/include/bzm_topology.h:16` - `BZM_TOPOLOGY_ENGINE_COUNT 236U`, asserted as a hardware-validity gate at `components/asic/bzm_bringup.c:1031`. Independently corroborated by our own capture: 23,600 work engines across 100 devices |
 | `BZM2-ENG-007` | `components/asic/include/bzm_topology.h:13-17` - 20 rows, 12 columns, 236 positions, 118 per stack; holes at `components/asic/bzm_topology.c:52`; stack by row (`row < 10` is the bottom stack) at `components/asic/bzm_topology.c:41-44` |
+
+Rows that resolve to other public repositories:
+
+| id | where |
+| --- | --- |
+| `BZM2-PWR-001` | [`bitaxeorg/bitaxeBIRDS`](https://github.com/bitaxeorg/bitaxeBIRDS) (CERN-OHL-S-2.0), `doc/specs.md`: voltage times current matches the power column within 0.8 %, and power over hash rate matches the efficiency column within 0.9 %, in all 25 rows |
 
 **`BZM2-ENG-005` deliberately has no public row.** The x4 is vendor-only. Note
 that `944` appears in the same open-source firmware and means something else
